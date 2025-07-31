@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  31 JUL 2025 13:19
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  31 JUL 2025 13:31
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -481,12 +481,19 @@ LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/sb/n' will be
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/sb/it' will be
 (Font)              scaled to size 10.95pt on input line 87.
 
-Underfull \hbox (badness 10000) in paragraph at lines 93--94
+Underfull \hbox (badness 10000) in paragraph at lines 87--88
+
+ []
+
+LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/it' will be
+(Font)              scaled to size 10.95pt on input line 89.
+
+Underfull \hbox (badness 10000) in paragraph at lines 94--95
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 95--96
+Underfull \hbox (badness 10000) in paragraph at lines 96--97
 
  []
 
@@ -522,8 +529,6 @@ Package marginnote Info: Margin note 2.1 is on absolute page 2 on input line 11
 Package marginnote Info: right page because not two side mode on input line 114
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 114.
-LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/it' will be
-(Font)              scaled to size 10.95pt on input line 124.
 Package marginnote Info: Margin note 2.2 is on absolute page 2 on input line 12
 8.
 Package marginnote Info: right page because not two side mode on input line 128
@@ -576,6 +581,10 @@ LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/n' will be
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-11>
  ***********
+
+
+LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
+
 Package rerunfilecheck Info: File `CV_Kramer.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
@@ -586,14 +595,14 @@ Here is how much of TeX's memory you used:
  31647 multiletter control sequences out of 15000+600000
  656832 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,9n,82p,505b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 80i,9n,82p,527b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/qwp970/AppData/Local/Programs/MiKTeX/fonts/type1/public/ebgaramond/
 EBGaramond-Italic.pfb><C:/Users/qwp970/AppData/Local/Programs/MiKTeX/fonts/type
 1/public/ebgaramond/EBGaramond-Regular.pfb><C:/Users/qwp970/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiBold.pfb><C:/Users/qwp9
 70/AppData/Local/Programs/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiB
 oldItalic.pfb>
-Output written on CV_Kramer.pdf (2 pages, 96884 bytes).
+Output written on CV_Kramer.pdf (2 pages, 98780 bytes).
 PDF statistics:
  64 PDF objects out of 1000 (max. 8388607)
  20 named destinations out of 1000 (max. 500000)
