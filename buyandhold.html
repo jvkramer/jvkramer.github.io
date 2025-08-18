@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profit/Loss Shading – S&P 500 & MSCI World</title>
+  <!-- Plotly.js via CDN (pure client-side plotting) -->
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <style>
+    :root { --bg:#0b0d10; --fg:#e8eaed; --muted:#aeb4be; --accent:#6aa9ff; }
+    html, body { height:100%; margin:0; background:var(--bg); color:var(--fg); font:16px/1.4 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, sans-serif; }
+    .wrap { max-width: 1100px; margin: 24px auto; padding: 0 16px; }
+    h1 { font-size: 22px; margin: 0 0 10px; }
+    .panel { background:#11161c; border:1px solid #1e2732; border-radius:16px; padding:16px; box-shadow: 0 10px 30px rgba(0,0,0,.25); }
+    .controls { display:flex; flex-wrap:wrap; gap:12px; align-items:center; margin-bottom:12px; }
+    .controls label { font-size:14px; color:var(--muted); }
+    select, input[type="number"], input[type="range"] { background:#0e1318; color:var(--fg); border:1px solid #2a3542; border-radius:12px; padding:6px 10px; }
+    input[type="range"] { width: 320px; }
+    #chart { width: 100%; height: 560px; }
+    .small { font-size:12px; color:var(--muted); margin-top:8px; }
+    a { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>Profit/Loss Shading – Buy-&-Hold Backtest</h1>
+    <div class="panel">
+      <div class="controls">
+        <label>
+          Dataset
+          <select id="dataset">
+            <option value="sp500">S&P 500</option>
+            <option value="msci">MSCI World (URTH proxy)</option>
+          </select>
+        </label>
+        <label>
+          Horizon (trading days)
+          <input id="horizonNumber" type="number" min="1" step="1" value="252" />
+        </label>
+        <input id="horizonSlider" type="range" min="1" max="252" step="1" value="252" />
+        <label>
+          Scale
+          <select id="scale">
+            <option value="linear">Linear</option>
+            <option value="log">Log</option>
+          </select>
+        </label>
+      </div>
+      <div id="chart"></div>
+      <div class="small">
+        <strong>How it works:</strong> For each possible buy-day, we compare the price <em>horizon</em> days later. If the forward return is positive, we shade green; otherwise red. Shading is grouped into contiguous runs for performance.
+      </div>
+      <div class="small">Expected CSV format (in the same folder as this HTML): <code>Date,Close</code> with ISO dates like <code>1990-01-02</code>.
+        Filenames used: <code>sp500.csv</code> and <code>msci_world.csv</code> (URTH proxy).
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // -------------------------------
+    // Utilities
+    // -------------------------------
+
+    /** Parse a simple CSV with headers: Date,Close */
+    function parseCSV(text) {
+      const lines = text.trim().split(/\r?\n/);
+      const header = lines.shift().split(',').map(h => h.trim().toLowerCase());
+      const idxDate = header.indexOf('date');
+      const idxClose = header.indexOf('close');
+      if (idxDate === -1 || idxClose === -1) {
+        throw new Error('CSV must have Date and Close columns.');
+      }
+      const out = [];
+      for (const line of lines) {
+        if (!line) continue;
+        const parts = line.split(',');
+        const d = new Date(parts[idxDate]);
+        const y = Number(parts[idxClose]);
+        if (!Number.isFinite(y) || isNaN(d.getTime())) continue;
+        out.push({ x: d, y });
+      }
+      // Ensure ascending date order
+      out.sort((a, b) => a.x - b.x);
+      return out;
+    }
+
+    /** Build green/red segments for a given horizon. */
+    function buildSegments(series, horizon) {
+      const n = series.length;
+      const lastValid = n - horizon - 1; // last index where we can look ahead horizon days
+      if (lastValid < 0) return [];
+      const xs = series.map(p => p.x);
+      const vals = new Array(lastValid + 1);
+      for (let i = 0; i <= lastValid; i++) {
+        vals[i] = series[i + horizon].y > series[i].y; // true = profit, false = loss
+      }
+      const segs = [];
+      let segStart = 0;
+      for (let i = 1; i < vals.length; i++) {
+        if (vals[i] !== vals[i - 1]) {
+          segs.push({ start: xs[segStart], end: xs[i], profit: vals[i - 1] });
+          segStart = i;
+        }
+      }
+      // push final segment up to the last usable x (n - horizon)
+      segs.push({ start: xs[segStart], end: xs[vals.length], profit: vals[vals.length - 1] });
+      return segs;
+    }
+
+    /** Convert segments to Plotly rectangle shapes placed behind the line. */
+    function segmentsToShapes(segments) {
+      const shapes = [];
+      for (const s of segments) {
+        shapes.push({
+          type: 'rect', xref: 'x', yref: 'paper',
+          x0: s.start, x1: s.end, y0: 0, y1: 1,
+          fillcolor: s.profit ? 'green' : 'red',
+          opacity: 0.18, line: { width: 0 }, layer: 'below'
+        });
+      }
+      return shapes;
+    }
+
+    // -------------------------------
+    // Data loading (uses local CSV files)
+    // -------------------------------
+    const FILES = {
+      sp500: 'sp500.csv',            // S&P 500 (^GSPC) CSV you export once
+      msci:  'msci_world.csv'        // MSCI World via URTH proxy CSV you export once
+    };
+
+    const state = {
+      series: {},      // { sp500: [...], msci: [...] }
+      currentKey: 'sp500',
+      horizon: 252,
+      scale: 'linear'
+    };
+
+    async function loadSeries(key) {
+      const url = FILES[key];
+      const text = await fetch(url).then(r => {
+        if (!r.ok) throw new Error('Failed to load ' + url + ' – are you serving this over HTTP?');
+        return r.text();
+      });
+      return parseCSV(text);
+    }
+
+    async function init() {
+      // Load both CSVs in parallel
+      const [sp, msci] = await Promise.all([
+        loadSeries('sp500'),
+        loadSeries('msci')
+      ]);
+      state.series.sp500 = sp;
+      state.series.msci = msci;
+
+      // Initialize UI bounds based on default dataset
+      const maxH = Math.max(2, Math.min(2520, state.series[state.currentKey].length - 2));
+      horizonSlider.max = String(maxH);
+      horizonNumber.max = String(maxH);
+
+      draw();
+    }
+
+    function draw() {
+      const dataArr = state.series[state.currentKey];
+      const horizon = clamp(state.horizon, 1, Math.max(1, dataArr.length - 2));
+      if (horizon !== state.horizon) {
+        state.horizon = horizon;
+        horizonSlider.value = String(horizon);
+        horizonNumber.value = String(horizon);
+      }
+
+      const x = dataArr.map(p => p.x);
+      const y = dataArr.map(p => p.y);
+
+      const segments = buildSegments(dataArr, horizon);
+      const shapes = segmentsToShapes(segments);
+
+      const trace = {
+        x, y,
+        type: 'scatter', mode: 'lines',
+        line: { width: 1.6 },
+        name: state.currentKey === 'sp500' ? 'S&P 500' : 'MSCI World (URTH)'
+      };
+
+      const layout = {
+        paper_bgcolor: '#0b0d10', plot_bgcolor: '#0b0d10',
+        margin: { l: 60, r: 20, t: 50, b: 40 },
+        xaxis: { gridcolor: 'rgba(255,255,255,0.08)', zeroline: false },
+        yaxis: { gridcolor: 'rgba(255,255,255,0.08)', zeroline: false, type: state.scale },
+        font: { color: '#e8eaed' },
+        shapes,
+        showlegend: false,
+        title: (state.currentKey === 'sp500' ? 'S&P 500' : 'MSCI World (URTH)') +
+               ` – ${horizon} trading-day investment horizon`
+      };
+
+      const config = { responsive: true, displayModeBar: true };
+      Plotly.react('chart', [trace], layout, config);
+    }
+
+    function clamp(v, lo, hi) { return Math.max(lo, Math.min(hi, v)); }
+
+    // -------------------------------
+    // Wire up UI events
+    // -------------------------------
+    const datasetSel   = document.getElementById('dataset');
+    const horizonSlider= document.getElementById('horizonSlider');
+    const horizonNumber= document.getElementById('horizonNumber');
+    const scaleSel     = document.getElementById('scale');
+
+    datasetSel.addEventListener('change', () => {
+      state.currentKey = datasetSel.value;
+      const maxH = Math.max(2, Math.min(2520, state.series[state.currentKey].length - 2));
+      horizonSlider.max = String(maxH);
+      horizonNumber.max = String(maxH);
+      // Clamp current horizon to new bounds
+      state.horizon = clamp(state.horizon, 1, maxH);
+      horizonSlider.value = String(state.horizon);
+      horizonNumber.value = String(state.horizon);
+      draw();
+    });
+
+    horizonSlider.addEventListener('input', () => {
+      state.horizon = Number(horizonSlider.value);
+      horizonNumber.value = horizonSlider.value;
+      draw();
+    });
+
+    horizonNumber.addEventListener('input', () => {
+      const v = Number(horizonNumber.value);
+      if (Number.isFinite(v)) {
+        state.horizon = v;
+        horizonSlider.value = String(v);
+        draw();
+      }
+    });
+
+    scaleSel.addEventListener('change', () => {
+      state.scale = scaleSel.value;
+      draw();
+    });
+
+    // Kickoff
+    init().catch(err => {
+      document.getElementById('chart').innerHTML = '<div style="padding:16px;color:#f88">' +
+        'Error: ' + err.message + '<br/>Tip: you must serve this folder over HTTP (for example, run <code>python -m http.server</code>),\n' +
+        'and ensure <code>sp500.csv</code> and <code>msci_world.csv</code> are in the same folder as this HTML.' +
+        '</div>';
+      console.error(err);
+    });
+  </script>
+</body>
+</html>
