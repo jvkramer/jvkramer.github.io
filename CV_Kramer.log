@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  31 JUL 2025 13:31
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  29 OCT 2025 09:04
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -507,12 +507,12 @@ Package marginnote Info: Margin note 1.9 is on absolute page 1 on input line 10
 Package marginnote Info: right page because not two side mode on input line 106
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 106.
-Package marginnote Info: Margin note 1.10 is on absolute page 1 on input line 1
+Package marginnote Info: Margin note 1.10 is on absolute page 2 on input line 1
 08.
 Package marginnote Info: right page because not two side mode on input line 108
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 108.
-Package marginnote Info: Margin note 1.11 is on absolute page 1 on input line 1
+Package marginnote Info: Margin note 1.11 is on absolute page 2 on input line 1
 10.
 Package marginnote Info: right page because not two side mode on input line 110
 .
@@ -554,43 +554,39 @@ Package marginnote Info: Margin note 2.5 is on absolute page 2 on input line 13
 Package marginnote Info: right page because not two side mode on input line 139
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 139.
-Package marginnote Info: Margin note 2.6 is on absolute page 2 on input line 15
+Package marginnote Info: Margin note 2.6 is on absolute page 2 on input line 14
+9.
+Package marginnote Info: right page because not two side mode on input line 149
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 149.
+Package marginnote Info: Margin note 2.7 is on absolute page 2 on input line 15
 0.
 Package marginnote Info: right page because not two side mode on input line 150
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 150.
-Package marginnote Info: Margin note 2.7 is on absolute page 2 on input line 15
-1.
-Package marginnote Info: right page because not two side mode on input line 151
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 151.
 Package marginnote Info: Margin note 2.8 is on absolute page 2 on input line 17
-4.
-Package marginnote Info: right page because not two side mode on input line 174
+3.
+Package marginnote Info: right page because not two side mode on input line 173
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 174.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 173.
 
-Underfull \hbox (badness 10000) in paragraph at lines 174--176
+Underfull \hbox (badness 10000) in paragraph at lines 173--175
 
  []
 
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 183.
+(Font)              scaled to size 8.0pt on input line 182.
 [2] (CV_Kramer.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
 L3 programming layer <2023-08-11>
  ***********
-
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
 Package rerunfilecheck Info: File `CV_Kramer.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 10543 strings out of 475502
- 169460 string characters out of 5761341
+ 10541 strings out of 475502
+ 169438 string characters out of 5761341
  1933248 words of memory out of 5000000
  31647 multiletter control sequences out of 15000+600000
  656832 words of font info for 62 fonts, out of 8000000 for 9000
@@ -602,9 +598,9 @@ EBGaramond-Italic.pfb><C:/Users/qwp970/AppData/Local/Programs/MiKTeX/fonts/type
 ams/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiBold.pfb><C:/Users/qwp9
 70/AppData/Local/Programs/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiB
 oldItalic.pfb>
-Output written on CV_Kramer.pdf (2 pages, 98780 bytes).
+Output written on CV_Kramer.pdf (2 pages, 98382 bytes).
 PDF statistics:
- 64 PDF objects out of 1000 (max. 8388607)
- 20 named destinations out of 1000 (max. 500000)
+ 61 PDF objects out of 1000 (max. 8388607)
+ 18 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 
