@@ -18,18 +18,26 @@
 <h2>Investment Guess Game</h2>
 
 <div id="controls">
-    <label for="returnSlider">Hypothetical Return (%/yr):</label>
-    <input type="range" id="returnSlider" min="0" max="20" value="5" step="0.1">
-    <span id="returnValue">5</span>%
+    <div style="margin-bottom: 10px;">
+        <label for="returnSlider">Hypothetical Return (%/yr):</label><br>
+        <input type="range" id="returnSlider" min="0" max="20" value="5" step="0.1">
+        <span id="returnValue">5</span>%
+    </div>
 
-    <label for="startYear">Start Year:</label>
-    <input type="range" id="startYear" min="2004" max="2025" value="2005">
-    <span id="startYearValue">2005</span>
+    <div style="margin-bottom: 10px;">
+        <label for="startYear">Start Year:</label><br>
+        <input type="range" id="startYear" min="2004" max="2025" value="2005">
+        <span id="startYearValue">2005</span>
+    </div>
 
-    <label for="initialAmount">Initial Amount:</label>
-    <input type="number" id="initialAmount" value="1000000" step="1000">
+    <div style="margin-bottom: 10px;">
+        <label for="initialAmount">Initial Amount:</label><br>
+        <input type="number" id="initialAmount" value="1000000" step="1000">
+    </div>
 
-    <button id="revealBtn">Reveal MSCI Line</button>
+    <div style="margin-bottom: 10px;">
+        <button id="revealBtn">Reveal MSCI Line</button>
+    </div>
 </div>
 
 <div id="plot" style="width: 100%; height: 600px;"></div>
