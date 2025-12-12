@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Investment Guess Game</title>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #controls { margin-bottom: 20px; }
+    label { margin-right: 10px; }
+    input[type=number] { width: 100px; margin-right: 20px; }
+    input[type=range] { margin-right: 10px; }
+</style>
+</head>
+<body>
+
+<h2>Investment Guess Game</h2>
+
+<div id="controls">
+    <label for="returnSlider">Hypothetical Return (%/yr):</label>
+    <input type="range" id="returnSlider" min="0" max="20" value="5" step="0.1">
+    <span id="returnValue">5</span>%
+
+    <label for="startYear">Start Year:</label>
+    <input type="range" id="startYear" min="2004" max="2025" value="2005">
+    <span id="startYearValue">2005</span>
+
+    <label for="initialAmount">Initial Amount:</label>
+    <input type="number" id="initialAmount" value="1000000" step="1000">
+
+    <button id="revealBtn">Reveal MSCI Line</button>
+</div>
+
+<div id="plot" style="width: 100%; height: 600px;"></div>
+
+<script>
+let csvData;  // CSV from investment_comparison.csv
+let msciRevealed = false;
+
+// Load CSV
+Papa.parse("investment_comparison.csv", {
+    download: true,
+    header: true,
+    dynamicTyping: true,
+    complete: function(results) {
+        csvData = results.data;
+        updatePlot();
+    }
+});
+
+// Controls
+const returnSlider = document.getElementById("returnSlider");
+const returnLabel = document.getElementById("returnValue");
+const startYearSlider = document.getElementById("startYear");
+const startYearLabel = document.getElementById("startYearValue");
+const initialAmountInput = document.getElementById("initialAmount");
+const revealBtn = document.getElementById("revealBtn");
+
+returnSlider.addEventListener("input", () => { returnLabel.textContent = returnSlider.value; updatePlot(); });
+startYearSlider.addEventListener("input", () => { startYearLabel.textContent = startYearSlider.value; updatePlot(); });
+initialAmountInput.addEventListener("input", updatePlot);
+revealBtn.addEventListener("click", () => { msciRevealed = true; updatePlot(); });
+
+function updatePlot() {
+    if (!csvData) return;
+
+    const startYear = parseInt(startYearSlider.value);
+    const initialAmount = parseFloat(initialAmountInput.value);
+    const hypoReturn = parseFloat(returnSlider.value);
+
+    // Filter by start year
+    const filteredData = csvData.filter(row => {
+        const year = new Date(row.Date).getFullYear();
+        return year >= startYear;
+    });
+    if (filteredData.length === 0) return;
+
+    // Base values at start
+    const baseSavings = filteredData[0].savings_indexed;
+
+    const dates = [];
+    const savingsValues = [];
+    const hypoValues = [];
+    const msciValues = [];
+
+    filteredData.forEach(row => {
+        dates.push(row.Date);
+        // Savings
+        savingsValues.push(row.savings_indexed / baseSavings * initialAmount);
+        // Hypothetical investment
+        const days = (new Date(row.Date) - new Date(filteredData[0].Date)) / (1000*60*60*24);
+        const dailyFactor = Math.pow(1 + hypoReturn/100, 1/365);
+        hypoValues.push(initialAmount * Math.pow(dailyFactor, days));
+        // MSCI
+        msciValues.push(row.MSCI_indexed); // store raw for now
+    });
+
+    const traces = [
+        { x: dates, y: savingsValues, mode: 'lines', name: 'Savings Account', line: {width: 2} },
+        { x: dates, y: hypoValues, mode: 'lines', name: `Hypothetical ${hypoReturn}%`, line: {width: 2} }
+    ];
+
+    if (msciRevealed) {
+        // Scale MSCI to match initial amount at start year
+        const baseMSCI = msciValues[0];
+        const msciScaled = msciValues.map(v => v / baseMSCI * initialAmount);
+        traces.push({ x: dates, y: msciScaled, mode: 'lines', name: 'MSCI (DKK)', line: {width: 2, dash:'dot'} });
+    }
+
+    const layout = {
+        title: `Investment Comparison from ${startYear} (Initial = ${initialAmount.toLocaleString()})`,
+        xaxis: { title: "Date" },
+        yaxis: { title: "Value" },
+        legend: { orientation: "h" },
+        hovermode: "closest"
+    };
+
+    Plotly.newPlot('plot', traces, layout, {responsive: true});
+}
+</script>
+
+</body>
+</html>
