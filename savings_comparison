@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Investment Comparison</title>
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        #controls { margin-bottom: 20px; }
+        label { margin-right: 10px; }
+        input[type=number] { width: 100px; }
+    </style>
+</head>
+<body>
+
+<h2>Investment Comparison</h2>
+
+<div id="controls">
+    <label for="startYear">Start Year:</label>
+    <input type="range" id="startYear" min="2004" max="2025" value="2005">
+    <span id="startYearValue">2005</span>
+
+    <label for="initialAmount">Initial Amount:</label>
+    <input type="number" id="initialAmount" value="1000000" step="1000">
+</div>
+
+<div id="plot" style="width: 100%; height: 600px;"></div>
+
+<script>
+let csvData;  // To store parsed CSV data
+
+// Load CSV
+Papa.parse("investment_comparison.csv", {
+    download: true,
+    header: true,
+    dynamicTyping: true,
+    complete: function(results) {
+        csvData = results.data;
+        updatePlot();
+    }
+});
+
+// Controls
+const startYearSlider = document.getElementById("startYear");
+const startYearLabel = document.getElementById("startYearValue");
+const initialAmountInput = document.getElementById("initialAmount");
+
+startYearSlider.addEventListener("input", () => {
+    startYearLabel.textContent = startYearSlider.value;
+    updatePlot();
+});
+
+initialAmountInput.addEventListener("input", updatePlot);
+
+// Function to update the plot
+function updatePlot() {
+    if (!csvData) return;
+
+    const startYear = parseInt(startYearSlider.value);
+    const initialAmount = parseFloat(initialAmountInput.value);
+
+    // Filter data from selected start year
+    const filteredData = csvData.filter(row => {
+        const year = new Date(row.Date).getFullYear();
+        return year >= startYear;
+    });
+
+    if (filteredData.length === 0) return;
+
+    // Get base values at start
+    const baseMSCI = filteredData[0].MSCI_indexed;
+    const baseSavings = filteredData[0].savings_indexed;
+
+    // Compute scaled values
+    const dates = [];
+    const msciValues = [];
+    const savingsValues = [];
+
+    filteredData.forEach(row => {
+        dates.push(row.Date);
+        msciValues.push(row.MSCI_indexed / baseMSCI * initialAmount);
+        savingsValues.push(row.savings_indexed / baseSavings * initialAmount);
+    });
+
+    const traces = [
+        { x: dates, y: msciValues, mode: 'lines', name: 'MSCI (DKK)' },
+        { x: dates, y: savingsValues, mode: 'lines', name: 'Savings Account' }
+    ];
+
+    const layout = {
+        title: `Investment Comparison (Start Year: ${startYear}, Initial: ${initialAmount.toLocaleString()})`,
+        xaxis: { title: "Date" },
+        yaxis: { title: "Value", tickprefix: "", hoverformat: ".2f" },
+        legend: { orientation: "h" }
+    };
+
+    Plotly.newPlot('plot', traces, layout, {responsive: true});
+}
+</script>
+
+</body>
+</html>
