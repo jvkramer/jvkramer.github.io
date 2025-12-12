@@ -86,14 +86,13 @@ function updatePlot() {
 
     filteredData.forEach(row => {
         dates.push(row.Date);
-        // Savings
         savingsValues.push(row.savings_indexed / baseSavings * initialAmount);
-        // Hypothetical investment
+
         const days = (new Date(row.Date) - new Date(filteredData[0].Date)) / (1000*60*60*24);
         const dailyFactor = Math.pow(1 + hypoReturn/100, 1/365);
         hypoValues.push(initialAmount * Math.pow(dailyFactor, days));
-        // MSCI
-        msciValues.push(row.MSCI_indexed); // store raw for now
+
+        msciValues.push(row.MSCI_indexed); // raw values
     });
 
     const traces = [
@@ -101,23 +100,60 @@ function updatePlot() {
         { x: dates, y: hypoValues, mode: 'lines', name: `Hypothetical ${hypoReturn}%`, line: {width: 2} }
     ];
 
+    const annotations = [];
+
+    // Add MSCI line if revealed
     if (msciRevealed) {
-        // Scale MSCI to match initial amount at start year
         const baseMSCI = msciValues[0];
         const msciScaled = msciValues.map(v => v / baseMSCI * initialAmount);
         traces.push({ x: dates, y: msciScaled, mode: 'lines', name: 'MSCI (DKK)', line: {width: 2, dash:'dot'} });
+
+        // Label the last point
+        annotations.push({
+            x: dates[dates.length-1],
+            y: msciScaled[msciScaled.length-1],
+            xanchor: 'left',
+            yanchor: 'middle',
+            text: msciScaled[msciScaled.length-1].toLocaleString(undefined, {maximumFractionDigits:0}),
+            showarrow: true,
+            arrowhead: 2
+        });
     }
+
+    // Label savings last point
+    annotations.push({
+        x: dates[dates.length-1],
+        y: savingsValues[savingsValues.length-1],
+        xanchor: 'left',
+        yanchor: 'middle',
+        text: savingsValues[savingsValues.length-1].toLocaleString(undefined, {maximumFractionDigits:0}),
+        showarrow: true,
+        arrowhead: 2
+    });
+
+    // Label hypothetical last point
+    annotations.push({
+        x: dates[dates.length-1],
+        y: hypoValues[hypoValues.length-1],
+        xanchor: 'left',
+        yanchor: 'middle',
+        text: hypoValues[hypoValues.length-1].toLocaleString(undefined, {maximumFractionDigits:0}),
+        showarrow: true,
+        arrowhead: 2
+    });
 
     const layout = {
         title: `Investment Comparison from ${startYear} (Initial = ${initialAmount.toLocaleString()})`,
         xaxis: { title: "Date" },
         yaxis: { title: "Value" },
         legend: { orientation: "h" },
-        hovermode: "closest"
+        hovermode: "closest",
+        annotations: annotations
     };
 
     Plotly.newPlot('plot', traces, layout, {responsive: true});
 }
+
 </script>
 
 </body>
