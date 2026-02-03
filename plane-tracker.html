@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Overhead Plane Tracker</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #1a1a2e;
+            color: #eee;
+            min-height: 100vh;
+        }
+        h1 {
+            margin: 0 0 20px 0;
+            color: #00d4ff;
+            font-size: 1.8em;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .controls {
+            background: #16213e;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: flex-end;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        label {
+            font-size: 0.85em;
+            color: #aaa;
+        }
+        input[type="number"], input[type="text"] {
+            padding: 8px 12px;
+            border: 1px solid #333;
+            border-radius: 5px;
+            background: #0f0f23;
+            color: #fff;
+            font-size: 1em;
+            width: 120px;
+        }
+        input:focus {
+            outline: none;
+            border-color: #00d4ff;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: all 0.2s;
+        }
+        .btn-primary {
+            background: #00d4ff;
+            color: #000;
+        }
+        .btn-primary:hover {
+            background: #00a8cc;
+        }
+        .btn-secondary {
+            background: #333;
+            color: #fff;
+        }
+        .btn-secondary:hover {
+            background: #444;
+        }
+        .btn-danger {
+            background: #ff4757;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background: #ff3344;
+        }
+        #map {
+            height: 400px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .status {
+            background: #16213e;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .status-text {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #666;
+        }
+        .status-dot.active {
+            background: #00ff88;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .planes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 15px;
+        }
+        .plane-card {
+            background: #16213e;
+            border-radius: 10px;
+            padding: 20px;
+            border-left: 4px solid #00d4ff;
+        }
+        .plane-card.closest {
+            border-left-color: #00ff88;
+            box-shadow: 0 0 20px rgba(0, 255, 136, 0.2);
+        }
+        .plane-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+        .callsign {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #00d4ff;
+            font-family: monospace;
+        }
+        .distance {
+            background: #0f0f23;
+            padding: 5px 10px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+        .plane-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        .detail {
+            display: flex;
+            flex-direction: column;
+        }
+        .detail-label {
+            font-size: 0.75em;
+            color: #888;
+            text-transform: uppercase;
+        }
+        .detail-value {
+            font-size: 1.1em;
+            color: #fff;
+        }
+        .no-planes {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+            font-size: 1.2em;
+        }
+        .error {
+            background: #ff475720;
+            border: 1px solid #ff4757;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+        .closest-label {
+            background: #00ff88;
+            color: #000;
+            padding: 2px 8px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+        footer {
+            margin-top: 30px;
+            text-align: center;
+            color: #666;
+            font-size: 0.85em;
+        }
+        footer a {
+            color: #00d4ff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Overhead Plane Tracker</h1>
+
+        <div class="controls">
+            <div class="control-group">
+                <label for="latitude">Latitude</label>
+                <input type="number" id="latitude" step="0.0001" placeholder="55.6761">
+            </div>
+            <div class="control-group">
+                <label for="longitude">Longitude</label>
+                <input type="number" id="longitude" step="0.0001" placeholder="12.5683">
+            </div>
+            <div class="control-group">
+                <label for="radius">Radius (km)</label>
+                <input type="number" id="radius" value="10" min="1" max="100">
+            </div>
+            <div class="control-group">
+                <label for="interval">Update interval (sec)</label>
+                <input type="number" id="interval" value="10" min="5" max="120">
+            </div>
+            <button class="btn-secondary" onclick="useMyLocation()">Use My Location</button>
+            <button class="btn-primary" id="startBtn" onclick="startTracking()">Start Tracking</button>
+            <button class="btn-danger" id="stopBtn" onclick="stopTracking()" style="display:none;">Stop</button>
+        </div>
+
+        <div id="error" class="error" style="display:none;"></div>
+
+        <div class="status">
+            <div class="status-text">
+                <div class="status-dot" id="statusDot"></div>
+                <span id="statusText">Not tracking</span>
+            </div>
+            <div id="lastUpdate"></div>
+        </div>
+
+        <div id="map"></div>
+
+        <div id="planesContainer" class="planes-container">
+            <div class="no-planes">Enter your coordinates and click "Start Tracking" to find planes overhead.</div>
+        </div>
+
+        <footer>
+            Data from <a href="https://opensky-network.org" target="_blank">OpenSky Network</a> |
+            Updates may be delayed up to 15 seconds
+        </footer>
+    </div>
+
+    <script>
+        let map;
+        let trackingInterval = null;
+        let markers = [];
+        let myLocationMarker = null;
+        let searchCircle = null;
+
+        // Initialize map
+        function initMap() {
+            map = L.map('map').setView([55.6761, 12.5683], 10);
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; OpenStreetMap, &copy; CARTO'
+            }).addTo(map);
+        }
+
+        // Calculate distance between two coordinates (Haversine formula)
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371; // Earth's radius in km
+            const dLat = (lat2 - lat1) * Math.PI / 180;
+            const dLon = (lon2 - lon1) * Math.PI / 180;
+            const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                      Math.sin(dLon/2) * Math.sin(dLon/2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+            return R * c;
+        }
+
+        // Use browser geolocation
+        function useMyLocation() {
+            if (!navigator.geolocation) {
+                showError('Geolocation is not supported by your browser');
+                return;
+            }
+
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    document.getElementById('latitude').value = position.coords.latitude.toFixed(4);
+                    document.getElementById('longitude').value = position.coords.longitude.toFixed(4);
+                    updateMapCenter();
+                },
+                (error) => {
+                    showError('Unable to get your location: ' + error.message);
+                }
+            );
+        }
+
+        // Update map center and marker
+        function updateMapCenter() {
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lon = parseFloat(document.getElementById('longitude').value);
+            const radius = parseFloat(document.getElementById('radius').value);
+
+            if (isNaN(lat) || isNaN(lon)) return;
+
+            map.setView([lat, lon], 11);
+
+            // Update location marker
+            if (myLocationMarker) {
+                myLocationMarker.setLatLng([lat, lon]);
+            } else {
+                myLocationMarker = L.circleMarker([lat, lon], {
+                    radius: 8,
+                    fillColor: '#00ff88',
+                    color: '#fff',
+                    weight: 2,
+                    fillOpacity: 1
+                }).addTo(map).bindPopup('Your Location');
+            }
+
+            // Update search radius circle
+            if (searchCircle) {
+                searchCircle.setLatLng([lat, lon]);
+                searchCircle.setRadius(radius * 1000);
+            } else {
+                searchCircle = L.circle([lat, lon], {
+                    radius: radius * 1000,
+                    color: '#00d4ff',
+                    fillColor: '#00d4ff',
+                    fillOpacity: 0.1,
+                    weight: 1
+                }).addTo(map);
+            }
+        }
+
+        // Create plane icon
+        function createPlaneIcon(heading) {
+            return L.divIcon({
+                className: 'plane-icon',
+                html: `<div style="transform: rotate(${heading || 0}deg); font-size: 24px; color: #00d4ff;">✈</div>`,
+                iconSize: [24, 24],
+                iconAnchor: [12, 12]
+            });
+        }
+
+        // Fetch planes from OpenSky Network
+        async function fetchPlanes() {
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lon = parseFloat(document.getElementById('longitude').value);
+            const radius = parseFloat(document.getElementById('radius').value);
+
+            if (isNaN(lat) || isNaN(lon)) {
+                showError('Please enter valid coordinates');
+                return;
+            }
+
+            // Calculate bounding box (approximate)
+            const latDelta = radius / 111; // 1 degree latitude ≈ 111 km
+            const lonDelta = radius / (111 * Math.cos(lat * Math.PI / 180));
+
+            const lamin = lat - latDelta;
+            const lamax = lat + latDelta;
+            const lomin = lon - lonDelta;
+            const lomax = lon + lonDelta;
+
+            const url = `https://opensky-network.org/api/states/all?lamin=${lamin}&lomin=${lomin}&lamax=${lamax}&lomax=${lomax}`;
+
+            try {
+                const response = await fetch(url);
+
+                if (!response.ok) {
+                    if (response.status === 429) {
+                        showError('Rate limited by OpenSky API. Try increasing the update interval.');
+                        return;
+                    }
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const data = await response.json();
+                hideError();
+                processPlanes(data, lat, lon, radius);
+            } catch (error) {
+                showError(`Failed to fetch data: ${error.message}. This may be due to CORS restrictions - try using a browser extension or running locally.`);
+            }
+        }
+
+        // Process and display planes
+        function processPlanes(data, userLat, userLon, radius) {
+            // Clear old markers
+            markers.forEach(m => map.removeLayer(m));
+            markers = [];
+
+            if (!data.states || data.states.length === 0) {
+                document.getElementById('planesContainer').innerHTML =
+                    '<div class="no-planes">No planes detected in your area right now.</div>';
+                updateStatus(0);
+                return;
+            }
+
+            // Parse planes and calculate distances
+            // OpenSky API response format:
+            // 0: icao24, 1: callsign, 2: origin_country, 3: time_position,
+            // 4: last_contact, 5: longitude, 6: latitude, 7: baro_altitude,
+            // 8: on_ground, 9: velocity, 10: true_track, 11: vertical_rate,
+            // 12: sensors, 13: geo_altitude, 14: squawk, 15: spi, 16: position_source
+
+            let planes = data.states
+                .filter(s => s[5] !== null && s[6] !== null && !s[8]) // Has position and not on ground
+                .map(s => {
+                    const planeLat = s[6];
+                    const planeLon = s[5];
+                    const distance = calculateDistance(userLat, userLon, planeLat, planeLon);
+
+                    return {
+                        icao24: s[0],
+                        callsign: (s[1] || '').trim() || 'Unknown',
+                        country: s[2],
+                        latitude: planeLat,
+                        longitude: planeLon,
+                        altitude: s[7] || s[13], // baro or geo altitude
+                        velocity: s[9],
+                        heading: s[10],
+                        verticalRate: s[11],
+                        squawk: s[14],
+                        distance: distance
+                    };
+                })
+                .filter(p => p.distance <= radius)
+                .sort((a, b) => a.distance - b.distance);
+
+            updateStatus(planes.length);
+
+            if (planes.length === 0) {
+                document.getElementById('planesContainer').innerHTML =
+                    '<div class="no-planes">No planes detected within your radius.</div>';
+                return;
+            }
+
+            // Add markers to map
+            planes.forEach((plane, index) => {
+                const marker = L.marker([plane.latitude, plane.longitude], {
+                    icon: createPlaneIcon(plane.heading)
+                }).addTo(map);
+
+                marker.bindPopup(`
+                    <strong>${plane.callsign}</strong><br>
+                    Altitude: ${plane.altitude ? Math.round(plane.altitude) + ' m' : 'N/A'}<br>
+                    Speed: ${plane.velocity ? Math.round(plane.velocity * 3.6) + ' km/h' : 'N/A'}<br>
+                    Distance: ${plane.distance.toFixed(1)} km
+                `);
+
+                markers.push(marker);
+            });
+
+            // Render plane cards
+            const container = document.getElementById('planesContainer');
+            container.innerHTML = planes.map((plane, index) => `
+                <div class="plane-card ${index === 0 ? 'closest' : ''}">
+                    <div class="plane-header">
+                        <div>
+                            <div class="callsign">${plane.callsign}</div>
+                            <div style="color: #888; font-size: 0.85em;">${plane.country}</div>
+                        </div>
+                        <div>
+                            ${index === 0 ? '<span class="closest-label">CLOSEST</span><br>' : ''}
+                            <span class="distance">${plane.distance.toFixed(1)} km</span>
+                        </div>
+                    </div>
+                    <div class="plane-details">
+                        <div class="detail">
+                            <span class="detail-label">Altitude</span>
+                            <span class="detail-value">${plane.altitude ? Math.round(plane.altitude).toLocaleString() + ' m' : 'N/A'}</span>
+                        </div>
+                        <div class="detail">
+                            <span class="detail-label">Speed</span>
+                            <span class="detail-value">${plane.velocity ? Math.round(plane.velocity * 3.6) + ' km/h' : 'N/A'}</span>
+                        </div>
+                        <div class="detail">
+                            <span class="detail-label">Heading</span>
+                            <span class="detail-value">${plane.heading ? Math.round(plane.heading) + '°' : 'N/A'}</span>
+                        </div>
+                        <div class="detail">
+                            <span class="detail-label">Vertical Rate</span>
+                            <span class="detail-value">${plane.verticalRate ? (plane.verticalRate > 0 ? '↑' : '↓') + ' ' + Math.abs(Math.round(plane.verticalRate)) + ' m/s' : '—'}</span>
+                        </div>
+                        <div class="detail">
+                            <span class="detail-label">ICAO24</span>
+                            <span class="detail-value" style="font-family: monospace;">${plane.icao24.toUpperCase()}</span>
+                        </div>
+                        <div class="detail">
+                            <span class="detail-label">Squawk</span>
+                            <span class="detail-value" style="font-family: monospace;">${plane.squawk || 'N/A'}</span>
+                        </div>
+                    </div>
+                    <div style="margin-top: 15px;">
+                        <a href="https://www.flightradar24.com/${plane.callsign}" target="_blank"
+                           style="color: #00d4ff; font-size: 0.85em;">View on FlightRadar24 →</a>
+                    </div>
+                </div>
+            `).join('');
+
+            document.getElementById('lastUpdate').textContent = 'Last update: ' + new Date().toLocaleTimeString();
+        }
+
+        // Update status display
+        function updateStatus(count) {
+            document.getElementById('statusText').textContent =
+                `Tracking: ${count} plane${count !== 1 ? 's' : ''} in range`;
+        }
+
+        // Start tracking
+        function startTracking() {
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lon = parseFloat(document.getElementById('longitude').value);
+
+            if (isNaN(lat) || isNaN(lon)) {
+                showError('Please enter valid coordinates or use "Use My Location"');
+                return;
+            }
+
+            updateMapCenter();
+
+            const interval = parseInt(document.getElementById('interval').value) * 1000;
+
+            document.getElementById('statusDot').classList.add('active');
+            document.getElementById('startBtn').style.display = 'none';
+            document.getElementById('stopBtn').style.display = 'inline-block';
+
+            fetchPlanes(); // Fetch immediately
+            trackingInterval = setInterval(fetchPlanes, interval);
+        }
+
+        // Stop tracking
+        function stopTracking() {
+            if (trackingInterval) {
+                clearInterval(trackingInterval);
+                trackingInterval = null;
+            }
+
+            document.getElementById('statusDot').classList.remove('active');
+            document.getElementById('statusText').textContent = 'Tracking stopped';
+            document.getElementById('startBtn').style.display = 'inline-block';
+            document.getElementById('stopBtn').style.display = 'none';
+        }
+
+        // Show error message
+        function showError(message) {
+            const errorEl = document.getElementById('error');
+            errorEl.textContent = message;
+            errorEl.style.display = 'block';
+        }
+
+        // Hide error message
+        function hideError() {
+            document.getElementById('error').style.display = 'none';
+        }
+
+        // Initialize
+        initMap();
+
+        // Update map when inputs change
+        document.getElementById('latitude').addEventListener('change', updateMapCenter);
+        document.getElementById('longitude').addEventListener('change', updateMapCenter);
+        document.getElementById('radius').addEventListener('change', updateMapCenter);
+    </script>
+</body>
+</html>
