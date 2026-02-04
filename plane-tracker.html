@@ -549,17 +549,40 @@
                 return;
             }
 
-            // Fetch routes for all planes in parallel
-            const routePromises = planes.map(p => fetchRoute(p.callsign));
-            const routes = await Promise.all(routePromises);
-            planes.forEach((plane, i) => {
-                plane.route = routes[i];
-                // Calculate ETA if we have destination coordinates and velocity
-                if (plane.route?.destLat && plane.route?.destLon && plane.velocity > 0) {
-                    const distToDest = calculateDistance(plane.latitude, plane.longitude, plane.route.destLat, plane.route.destLon);
-                    plane.etaMinutes = (distToDest / (plane.velocity * 3.6)) * 60; // velocity is m/s, convert to km/h
-                }
-            });
+            // Render plane cards - show immediately, then update with route data
+            const container = document.getElementById('planesContainer');
+
+            function renderPlaneCards() {
+                container.innerHTML = planes.map((plane, index) => `
+                    <div class="plane-card ${index === 0 ? 'closest' : ''}">
+                        <div class="plane-header">
+                            <div>
+                                <div class="callsign">${plane.callsign}</div>
+                                ${plane.route
+                                    ? `<div class="route">${plane.route.destCity} <span style="color: #888; font-size: 0.85em;">(${plane.route.destCode})</span></div>`
+                                    : `<div style="color: #666; font-size: 0.75em;">From: ${plane.country}</div>`}
+                            </div>
+                            <div style="text-align: right;">
+                                ${index === 0 ? '<span class="closest-label">CLOSEST</span><br>' : ''}
+                                <span class="distance">${plane.distance.toFixed(1)} km</span>
+                            </div>
+                        </div>
+                        ${plane.route ? `
+                        <div style="display: flex; gap: 15px; margin-top: 6px; font-size: 0.8em;">
+                            <div><span style="color: #888;">From:</span> ${plane.route.originCity} <span style="color: #666;">(${plane.route.originCode})</span></div>
+                            ${plane.etaMinutes ? `<div><span style="color: #888;">ETA:</span> <span style="color: #00ff88;">${formatETA(plane.etaMinutes)}</span></div>` : ''}
+                        </div>
+                        ` : ''}
+                        <div style="margin-top: 8px; font-size: 0.7em;">
+                            <a href="https://www.flightradar24.com/${plane.callsign}" target="_blank"
+                               style="color: #00d4ff;">FlightRadar24 →</a>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render immediately with basic info
+            renderPlaneCards();
 
             // Add markers to map
             planes.forEach((plane, index) => {
@@ -577,32 +600,26 @@
                 markers.push(marker);
             });
 
-            // Render plane cards
-            const container = document.getElementById('planesContainer');
-            container.innerHTML = planes.map((plane, index) => `
-                <div class="plane-card ${index === 0 ? 'closest' : ''}">
-                    <div class="plane-header">
-                        <div>
-                            <div class="callsign">${plane.callsign}</div>
-                            ${plane.route ? `<div class="route">${plane.route.destCity} <span style="color: #888; font-size: 0.85em;">(${plane.route.destCode})</span></div>` : `<div style="color: #666; font-size: 0.75em;">${plane.country}</div>`}
-                        </div>
-                        <div style="text-align: right;">
-                            ${index === 0 ? '<span class="closest-label">CLOSEST</span><br>' : ''}
-                            <span class="distance">${plane.distance.toFixed(1)} km</span>
-                        </div>
-                    </div>
-                    ${plane.route || plane.etaMinutes ? `
-                    <div style="display: flex; gap: 15px; margin-top: 6px; font-size: 0.8em;">
-                        ${plane.route ? `<div><span style="color: #888;">From:</span> ${plane.route.originCity} <span style="color: #666;">(${plane.route.originCode})</span></div>` : ''}
-                        ${plane.etaMinutes ? `<div><span style="color: #888;">ETA:</span> <span style="color: #00ff88;">${formatETA(plane.etaMinutes)}</span></div>` : ''}
-                    </div>
-                    ` : ''}
-                    <div style="margin-top: 8px; font-size: 0.7em;">
-                        <a href="https://www.flightradar24.com/${plane.callsign}" target="_blank"
-                           style="color: #00d4ff;">FlightRadar24 →</a>
-                    </div>
-                </div>
-            `).join('');
+            // Fetch routes for all planes in parallel (may require auth)
+            const routePromises = planes.map(p => fetchRoute(p.callsign));
+            Promise.all(routePromises).then(routes => {
+                let hasAnyRoute = false;
+                routes.forEach((route, i) => {
+                    if (route) {
+                        hasAnyRoute = true;
+                        planes[i].route = route;
+                        // Calculate ETA if we have destination coordinates and velocity
+                        if (route.destLat && route.destLon && planes[i].velocity > 0) {
+                            const distToDest = calculateDistance(planes[i].latitude, planes[i].longitude, route.destLat, route.destLon);
+                            planes[i].etaMinutes = (distToDest / (planes[i].velocity * 3.6)) * 60;
+                        }
+                    }
+                });
+                // Re-render if we got any route data
+                if (hasAnyRoute) {
+                    renderPlaneCards();
+                }
+            });
 
             document.getElementById('lastUpdate').textContent = 'Last update: ' + new Date().toLocaleTimeString();
         }
