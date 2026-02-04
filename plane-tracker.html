@@ -374,7 +374,20 @@
             return date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
         }
 
-        // Render departures table
+        // Get current time as HH:MM string
+        function getCurrentTimeString() {
+            const now = new Date();
+            return now.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+        }
+
+        // Parse time string to minutes since midnight
+        function timeToMinutes(timeStr) {
+            if (!timeStr) return 0;
+            const [hours, minutes] = timeStr.split(':').map(Number);
+            return hours * 60 + minutes;
+        }
+
+        // Render departures table - filtered to show around current time
         function renderDepartures() {
             const tbody = document.getElementById('departuresBody');
             if (recentDepartures.length === 0) {
@@ -382,9 +395,32 @@
                 return;
             }
 
-            tbody.innerHTML = recentDepartures.slice(0, 10).map(dep => {
+            // Get current time in minutes
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+
+            // Filter to show departures from 30 min ago to 2 hours ahead
+            const filtered = recentDepartures.filter(dep => {
+                const depMinutes = timeToMinutes(dep.time);
+                return depMinutes >= currentMinutes - 30 && depMinutes <= currentMinutes + 120;
+            });
+
+            // If no departures in range, show the next upcoming ones
+            const toShow = filtered.length > 0 ? filtered : recentDepartures.filter(dep => {
+                const depMinutes = timeToMinutes(dep.time);
+                return depMinutes >= currentMinutes;
+            });
+
+            if (toShow.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4" style="color: #666; text-align: center;">No upcoming departures</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = toShow.slice(0, 10).map(dep => {
+                const depMinutes = timeToMinutes(dep.time);
+                const isPast = depMinutes < currentMinutes;
                 return `
-                    <tr>
+                    <tr style="${isPast ? 'opacity: 0.5;' : ''}">
                         <td class="dep-time">${dep.time}</td>
                         <td class="dep-flight">${dep.flightNumber}</td>
                         <td class="dep-dest">${dep.destCity}</td>
@@ -459,22 +495,37 @@
         // Look up flight in departure data
         function lookupDeparture(callsign) {
             if (!callsign) return null;
+            const cs = callsign.toUpperCase().trim();
 
-            // Try direct callsign match
-            const direct = departureData.get(callsign.toUpperCase());
+            // Try direct callsign match (e.g., TAP1036)
+            const direct = departureData.get(cs);
             if (direct) return direct;
 
-            // Try IATA flight number
-            const flightNum = callsignToFlightNumber(callsign);
+            // Try converting ICAO callsign to IATA flight number (e.g., TAP1036 -> TP1036)
+            const flightNum = callsignToFlightNumber(cs);
             if (flightNum) {
                 const byFlightNum = departureData.get(flightNum.toUpperCase());
                 if (byFlightNum) return byFlightNum;
             }
 
-            // Try without leading zeros in flight number
-            const trimmed = callsign.replace(/^([A-Z]{3})0+/, '$1');
-            if (trimmed !== callsign) {
-                return departureData.get(trimmed.toUpperCase());
+            // Try without leading zeros in flight number (e.g., TAP0668 -> TAP668)
+            const trimmedZeros = cs.replace(/^([A-Z]{2,3})0+(\d)/, '$1$2');
+            if (trimmedZeros !== cs) {
+                const result = departureData.get(trimmedZeros);
+                if (result) return result;
+            }
+
+            // Extract just the numeric part and airline code, try variations
+            const match = cs.match(/^([A-Z]{2,3})(\d+)/);
+            if (match) {
+                const [, airlineCode, numPart] = match;
+                // Try with IATA code
+                const iataCode = airlineIcaoToIata[airlineCode];
+                if (iataCode) {
+                    const iataFlight = iataCode + numPart;
+                    const byIata = departureData.get(iataFlight);
+                    if (byIata) return byIata;
+                }
             }
 
             return null;
@@ -901,6 +952,13 @@
         // Initialize
         initMap();
         fetchDepartures(); // Load departures on page load
+
+        // Refresh departures display every minute to keep time filtering current
+        setInterval(() => {
+            if (recentDepartures.length > 0) {
+                renderDepartures();
+            }
+        }, 60000);
 
         // Update map when inputs change
         document.getElementById('latitude').addEventListener('change', updateMapCenter);
