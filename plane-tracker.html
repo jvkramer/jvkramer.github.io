@@ -397,6 +397,7 @@
         // Fetch departures from Lisbon airport
         async function fetchDepartures() {
             const now = Date.now();
+            const nowSeconds = Math.floor(now / 1000);
             // Only refresh every 2 minutes
             if (now - lastDepartureRefresh < 120000 && departureData.size > 0) {
                 return;
@@ -405,7 +406,7 @@
             try {
                 // Try FlightRadar24's API via CORS proxy
                 const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const fr24Url = encodeURIComponent('https://api.flightradar24.com/common/v1/airport.json?code=lis&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=' + Math.floor(now/1000));
+                const fr24Url = encodeURIComponent('https://api.flightradar24.com/common/v1/airport.json?code=lis&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=' + nowSeconds);
 
                 const response = await fetch(proxyUrl + fr24Url);
                 if (response.ok) {
@@ -422,7 +423,7 @@
                             const destIcao = flight.flight?.airport?.destination?.code?.icao;
                             const scheduledTime = flight.flight?.time?.scheduled?.departure;
                             const actualTime = flight.flight?.time?.real?.departure || flight.flight?.time?.estimated?.departure;
-                            const status = flight.flight?.status?.text;
+                            const status = flight.flight?.status?.text || '';
 
                             if (flightNumber && destCity) {
                                 const destInfo = airports[destIcao] || { city: destCity, code: destCode, lat: null, lon: null };
@@ -438,9 +439,16 @@
                                 };
 
                                 departureData.set(flightNumber.toUpperCase(), depData);
-                                recentDepartures.push(depData);
 
-                                // Also store with ICAO callsign format
+                                // Only add to display list if actually departed (has actual time in past or status says departed)
+                                const isDeparted = status.toLowerCase().includes('departed') ||
+                                                   status.toLowerCase().includes('airborne') ||
+                                                   (actualTime && actualTime < nowSeconds);
+                                if (isDeparted) {
+                                    recentDepartures.push(depData);
+                                }
+
+                                // Also store with ICAO callsign format for plane matching
                                 const callsign = flight.flight?.identification?.callsign;
                                 if (callsign) {
                                     departureData.set(callsign.toUpperCase(), depData);
@@ -448,7 +456,7 @@
                             }
                         });
 
-                        // Sort by actual/scheduled time, most recent first
+                        // Sort by actual departure time, most recent first
                         recentDepartures.sort((a, b) => {
                             const timeA = a.actualTime || a.scheduledTime || 0;
                             const timeB = b.actualTime || b.scheduledTime || 0;
@@ -456,7 +464,7 @@
                         });
 
                         lastDepartureRefresh = now;
-                        console.log(`Loaded ${departureData.size} departures from Lisbon`);
+                        console.log(`Loaded ${departureData.size} departures, ${recentDepartures.length} actually departed`);
                         renderDepartures();
                     }
                 }
