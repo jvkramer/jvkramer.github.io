@@ -204,11 +204,11 @@
         <div class="controls">
             <div class="control-group">
                 <label for="latitude">Latitude</label>
-                <input type="number" id="latitude" step="0.0001" placeholder="55.6761">
+                <input type="number" id="latitude" step="0.0001" value="38.7756" placeholder="38.7756">
             </div>
             <div class="control-group">
                 <label for="longitude">Longitude</label>
-                <input type="number" id="longitude" step="0.0001" placeholder="12.5683">
+                <input type="number" id="longitude" step="0.0001" value="-9.1354" placeholder="-9.1354">
             </div>
             <div class="control-group">
                 <label for="radius">Radius (km)</label>
@@ -240,8 +240,8 @@
         <div id="map"></div>
 
         <footer>
-            Data from <a href="https://opensky-network.org" target="_blank">OpenSky Network</a> |
-            Updates may be delayed up to 15 seconds
+            Aircraft data from <a href="https://opensky-network.org" target="_blank">OpenSky Network</a> |
+            Destinations from <a href="https://www.flightradar24.com/airport/lis" target="_blank">Lisbon Airport (LIS)</a> departures
         </footer>
     </div>
 
@@ -252,6 +252,136 @@
         let myLocationMarker = null;
         let searchCircle = null;
         const routeCache = new Map(); // Cache routes to avoid repeated API calls
+        let departureData = new Map(); // Cache departure info from airport
+        let lastDepartureRefresh = 0;
+
+        // Airline ICAO to IATA code mapping (for matching callsigns to flight numbers)
+        const airlineIcaoToIata = {
+            'TAP': 'TP',   // TAP Air Portugal
+            'RYR': 'FR',   // Ryanair
+            'EZY': 'U2',   // easyJet
+            'VLG': 'VY',   // Vueling
+            'IBE': 'IB',   // Iberia
+            'UAE': 'EK',   // Emirates
+            'BAW': 'BA',   // British Airways
+            'AFR': 'AF',   // Air France
+            'DLH': 'LH',   // Lufthansa
+            'KLM': 'KL',   // KLM
+            'AZA': 'AZ',   // ITA Airways
+            'SAS': 'SK',   // SAS
+            'THY': 'TK',   // Turkish Airlines
+            'SWR': 'LX',   // Swiss
+            'AUA': 'OS',   // Austrian
+            'BEL': 'SN',   // Brussels Airlines
+            'EZS': 'DS',   // easyJet Switzerland
+            'NAX': 'DY',   // Norwegian
+            'TVS': 'TP',   // Smartwings
+            'TRA': 'HV',   // Transavia
+            'WZZ': 'W6',   // Wizz Air
+            'AAL': 'AA',   // American Airlines
+            'UAL': 'UA',   // United
+            'DAL': 'DL',   // Delta
+            'QTR': 'QR',   // Qatar Airways
+            'ETD': 'EY',   // Etihad
+            'SAA': 'SA',   // South African
+            'RAM': 'AT',   // Royal Air Maroc
+            'NOS': 'YW',   // Portugalia (TAP Express)
+        };
+
+        // Convert ICAO callsign to IATA flight number
+        function callsignToFlightNumber(callsign) {
+            if (!callsign || callsign.length < 4) return null;
+            const airlineCode = callsign.substring(0, 3);
+            const flightNum = callsign.substring(3);
+            const iataCode = airlineIcaoToIata[airlineCode];
+            if (iataCode) {
+                return iataCode + flightNum;
+            }
+            // Try without conversion (some airlines use same code)
+            return callsign;
+        }
+
+        // Fetch departures from Lisbon airport
+        async function fetchDepartures() {
+            const now = Date.now();
+            // Only refresh every 2 minutes
+            if (now - lastDepartureRefresh < 120000 && departureData.size > 0) {
+                return;
+            }
+
+            try {
+                // Try FlightRadar24's API via CORS proxy
+                const proxyUrl = 'https://api.allorigins.win/raw?url=';
+                const fr24Url = encodeURIComponent('https://api.flightradar24.com/common/v1/airport.json?code=lis&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=' + Math.floor(now/1000));
+
+                const response = await fetch(proxyUrl + fr24Url);
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.result?.response?.airport?.pluginData?.schedule?.departures?.data) {
+                        const departures = data.result.response.airport.pluginData.schedule.departures.data;
+                        departureData.clear();
+
+                        departures.forEach(flight => {
+                            const flightNumber = flight.flight?.identification?.number?.default;
+                            const destCity = flight.flight?.airport?.destination?.position?.region?.city;
+                            const destCode = flight.flight?.airport?.destination?.code?.iata;
+                            const destIcao = flight.flight?.airport?.destination?.code?.icao;
+                            const scheduledTime = flight.flight?.time?.scheduled?.departure;
+                            const actualTime = flight.flight?.time?.real?.departure || flight.flight?.time?.estimated?.departure;
+                            const status = flight.flight?.status?.text;
+
+                            if (flightNumber && destCity) {
+                                const destInfo = airports[destIcao] || { city: destCity, code: destCode, lat: null, lon: null };
+                                departureData.set(flightNumber.toUpperCase(), {
+                                    destCity: destInfo.city || destCity,
+                                    destCode: destCode || destIcao,
+                                    destLat: destInfo.lat || flight.flight?.airport?.destination?.position?.latitude,
+                                    destLon: destInfo.lon || flight.flight?.airport?.destination?.position?.longitude,
+                                    scheduledTime: scheduledTime,
+                                    actualTime: actualTime,
+                                    status: status
+                                });
+                                // Also store with ICAO callsign format
+                                const callsign = flight.flight?.identification?.callsign;
+                                if (callsign) {
+                                    departureData.set(callsign.toUpperCase(), departureData.get(flightNumber.toUpperCase()));
+                                }
+                            }
+                        });
+
+                        lastDepartureRefresh = now;
+                        console.log(`Loaded ${departureData.size} departures from Lisbon`);
+                    }
+                }
+            } catch (e) {
+                console.log('Failed to fetch departures:', e.message);
+                // Not critical, will try again next time
+            }
+        }
+
+        // Look up flight in departure data
+        function lookupDeparture(callsign) {
+            if (!callsign) return null;
+
+            // Try direct callsign match
+            const direct = departureData.get(callsign.toUpperCase());
+            if (direct) return direct;
+
+            // Try IATA flight number
+            const flightNum = callsignToFlightNumber(callsign);
+            if (flightNum) {
+                const byFlightNum = departureData.get(flightNum.toUpperCase());
+                if (byFlightNum) return byFlightNum;
+            }
+
+            // Try without leading zeros in flight number
+            const trimmed = callsign.replace(/^([A-Z]{3})0+/, '$1');
+            if (trimmed !== callsign) {
+                return departureData.get(trimmed.toUpperCase());
+            }
+
+            return null;
+        }
 
         // Airport database with city names and coordinates (ICAO codes)
         const airports = {
@@ -336,7 +466,7 @@
 
         // Initialize map
         function initMap() {
-            map = L.map('map').setView([55.6761, 12.5683], 10);
+            map = L.map('map').setView([38.7756, -9.1354], 12);
             L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
                 attribution: '&copy; OpenStreetMap, &copy; CARTO'
             }).addTo(map);
@@ -431,6 +561,9 @@
                 showError('Please enter valid coordinates');
                 return;
             }
+
+            // Fetch departures in parallel with plane data
+            fetchDepartures();
 
             // Calculate bounding box (approximate)
             const latDelta = radius / 111; // 1 degree latitude ≈ 111 km
@@ -549,7 +682,20 @@
                 return;
             }
 
-            // Render plane cards - show immediately, then update with route data
+            // Look up departure info for each plane from airport data
+            planes.forEach(plane => {
+                const depInfo = lookupDeparture(plane.callsign);
+                if (depInfo) {
+                    plane.departure = depInfo;
+                    // Calculate ETA if we have destination coordinates and velocity
+                    if (depInfo.destLat && depInfo.destLon && plane.velocity > 0) {
+                        const distToDest = calculateDistance(plane.latitude, plane.longitude, depInfo.destLat, depInfo.destLon);
+                        plane.etaMinutes = (distToDest / (plane.velocity * 3.6)) * 60;
+                    }
+                }
+            });
+
+            // Render plane cards
             const container = document.getElementById('planesContainer');
 
             function renderPlaneCards() {
@@ -558,8 +704,8 @@
                         <div class="plane-header">
                             <div>
                                 <div class="callsign">${plane.callsign}</div>
-                                ${plane.route
-                                    ? `<div class="route">${plane.route.destCity} <span style="color: #888; font-size: 0.85em;">(${plane.route.destCode})</span></div>`
+                                ${plane.departure
+                                    ? `<div class="route">${plane.departure.destCity} <span style="color: #888; font-size: 0.85em;">(${plane.departure.destCode})</span></div>`
                                     : `<div style="color: #666; font-size: 0.75em;">From: ${plane.country}</div>`}
                             </div>
                             <div style="text-align: right;">
@@ -567,10 +713,9 @@
                                 <span class="distance">${plane.distance.toFixed(1)} km</span>
                             </div>
                         </div>
-                        ${plane.route ? `
-                        <div style="display: flex; gap: 15px; margin-top: 6px; font-size: 0.8em;">
-                            <div><span style="color: #888;">From:</span> ${plane.route.originCity} <span style="color: #666;">(${plane.route.originCode})</span></div>
-                            ${plane.etaMinutes ? `<div><span style="color: #888;">ETA:</span> <span style="color: #00ff88;">${formatETA(plane.etaMinutes)}</span></div>` : ''}
+                        ${plane.departure && plane.etaMinutes ? `
+                        <div style="margin-top: 6px; font-size: 0.8em;">
+                            <span style="color: #888;">ETA:</span> <span style="color: #00ff88;">${formatETA(plane.etaMinutes)}</span>
                         </div>
                         ` : ''}
                         <div style="margin-top: 8px; font-size: 0.7em;">
@@ -581,7 +726,7 @@
                 `).join('');
             }
 
-            // Render immediately with basic info
+            // Render cards
             renderPlaneCards();
 
             // Add markers to map
@@ -590,35 +735,14 @@
                     icon: createPlaneIcon(plane.heading)
                 }).addTo(map);
 
-                const routeStr = plane.route ? `${plane.route.originCity} → ${plane.route.destCity}` : '';
+                const destStr = plane.departure ? `→ ${plane.departure.destCity}` : '';
                 marker.bindPopup(`
-                    <strong>${plane.callsign}</strong>${routeStr ? '<br>' + routeStr : ''}<br>
+                    <strong>${plane.callsign}</strong>${destStr ? ' ' + destStr : ''}<br>
                     ${plane.etaMinutes ? 'ETA: ' + formatETA(plane.etaMinutes) + '<br>' : ''}
                     Distance: ${plane.distance.toFixed(1)} km
                 `);
 
                 markers.push(marker);
-            });
-
-            // Fetch routes for all planes in parallel (may require auth)
-            const routePromises = planes.map(p => fetchRoute(p.callsign));
-            Promise.all(routePromises).then(routes => {
-                let hasAnyRoute = false;
-                routes.forEach((route, i) => {
-                    if (route) {
-                        hasAnyRoute = true;
-                        planes[i].route = route;
-                        // Calculate ETA if we have destination coordinates and velocity
-                        if (route.destLat && route.destLon && planes[i].velocity > 0) {
-                            const distToDest = calculateDistance(planes[i].latitude, planes[i].longitude, route.destLat, route.destLon);
-                            planes[i].etaMinutes = (distToDest / (planes[i].velocity * 3.6)) * 60;
-                        }
-                    }
-                });
-                // Re-render if we got any route data
-                if (hasAnyRoute) {
-                    renderPlaneCards();
-                }
             });
 
             document.getElementById('lastUpdate').textContent = 'Last update: ' + new Date().toLocaleTimeString();
