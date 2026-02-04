@@ -6,6 +6,7 @@
     <title>Overhead Plane Tracker</title>
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
     <style>
         * { box-sizing: border-box; }
         body {
@@ -294,7 +295,7 @@
                         <th>Time</th>
                         <th>Flight</th>
                         <th>Destination</th>
-                        <th>Status</th>
+                        <th>Airline</th>
                     </tr>
                 </thead>
                 <tbody id="departuresBody">
@@ -305,7 +306,7 @@
 
         <footer>
             Aircraft data from <a href="https://opensky-network.org" target="_blank">OpenSky Network</a> |
-            Destinations from <a href="https://www.flightradar24.com/airport/lis" target="_blank">Lisbon Airport (LIS)</a> departures
+            Departures from <a href="https://www.lisbonairport.pt/en/lis/flights-destinations/find-flights/real-time-departures" target="_blank">Lisbon Airport (LIS)</a>
         </footer>
     </div>
 
@@ -382,96 +383,77 @@
             }
 
             tbody.innerHTML = recentDepartures.slice(0, 10).map(dep => {
-                const statusClass = dep.status?.toLowerCase().includes('departed') ? 'departed' : 'scheduled';
                 return `
                     <tr>
-                        <td class="dep-time">${formatTime(dep.actualTime || dep.scheduledTime)}</td>
+                        <td class="dep-time">${dep.time}</td>
                         <td class="dep-flight">${dep.flightNumber}</td>
-                        <td class="dep-dest">${dep.destCity} <span style="color: #666;">(${dep.destCode})</span></td>
-                        <td class="dep-status ${statusClass}">${dep.status || 'Scheduled'}</td>
+                        <td class="dep-dest">${dep.destCity}</td>
+                        <td class="dep-status scheduled">${dep.airline || ''}</td>
                     </tr>
                 `;
             }).join('');
         }
 
-        // Fetch departures from Lisbon airport
+        // Fetch departures from Lisbon airport CSV
         async function fetchDepartures() {
-            const now = Date.now();
-            const nowSeconds = Math.floor(now / 1000);
-            // Only refresh every 2 minutes
-            if (now - lastDepartureRefresh < 120000 && departureData.size > 0) {
+            // Only load once (CSV is static)
+            if (departureData.size > 0) {
                 return;
             }
 
-            try {
-                // Try FlightRadar24's API via CORS proxy
-                const proxyUrl = 'https://api.allorigins.win/raw?url=';
-                const fr24Url = encodeURIComponent('https://api.flightradar24.com/common/v1/airport.json?code=lis&plugin[]=schedule&plugin-setting[schedule][mode]=departures&plugin-setting[schedule][timestamp]=' + nowSeconds);
+            Papa.parse('lisbonairport.csv', {
+                download: true,
+                header: true,
+                complete: function(results) {
+                    departureData.clear();
+                    recentDepartures = [];
 
-                const response = await fetch(proxyUrl + fr24Url);
-                if (response.ok) {
-                    const data = await response.json();
-                    if (data.result?.response?.airport?.pluginData?.schedule?.departures?.data) {
-                        const departures = data.result.response.airport.pluginData.schedule.departures.data;
-                        departureData.clear();
-                        recentDepartures = [];
+                    results.data.forEach(row => {
+                        const time = row['td-time'];
+                        // Flight number is in center-in-same-flight for TAP, td-flight for others
+                        let flightNumber = row['center-in-same-flight'] || row['td-flight'] || '';
+                        flightNumber = flightNumber.trim().replace(/\s+/g, ''); // Remove spaces: "TP 668" -> "TP668"
+                        const destCity = row['td-destination'];
+                        const airline = row['td-airline'];
 
-                        departures.forEach(flight => {
-                            const flightNumber = flight.flight?.identification?.number?.default;
-                            const destCity = flight.flight?.airport?.destination?.position?.region?.city;
-                            const destCode = flight.flight?.airport?.destination?.code?.iata;
-                            const destIcao = flight.flight?.airport?.destination?.code?.icao;
-                            const scheduledTime = flight.flight?.time?.scheduled?.departure;
-                            const actualTime = flight.flight?.time?.real?.departure || flight.flight?.time?.estimated?.departure;
-                            const status = flight.flight?.status?.text || '';
+                        if (time && destCity && flightNumber) {
+                            const depData = {
+                                flightNumber: flightNumber,
+                                time: time,
+                                destCity: destCity,
+                                destCode: '', // CSV doesn't have airport codes
+                                airline: airline,
+                                status: 'Scheduled'
+                            };
 
-                            if (flightNumber && destCity) {
-                                const destInfo = airports[destIcao] || { city: destCity, code: destCode, lat: null, lon: null };
-                                const depData = {
-                                    flightNumber: flightNumber,
-                                    destCity: destInfo.city || destCity,
-                                    destCode: destCode || destIcao,
-                                    destLat: destInfo.lat || flight.flight?.airport?.destination?.position?.latitude,
-                                    destLon: destInfo.lon || flight.flight?.airport?.destination?.position?.longitude,
-                                    scheduledTime: scheduledTime,
-                                    actualTime: actualTime,
-                                    status: status
-                                };
+                            // Store by flight number (e.g., "TP668")
+                            departureData.set(flightNumber.toUpperCase(), depData);
 
-                                departureData.set(flightNumber.toUpperCase(), depData);
+                            // Also store without numbers prefix for matching (e.g., "TAP668" -> "TP668")
+                            // Convert IATA to ICAO style for matching with OpenSky callsigns
+                            const iataCode = flightNumber.match(/^([A-Z]{2})/)?.[1];
+                            const flightNum = flightNumber.replace(/^[A-Z]+/, '');
 
-                                // Only add to display list if actually departed (has actual time in past or status says departed)
-                                const isDeparted = status.toLowerCase().includes('departed') ||
-                                                   status.toLowerCase().includes('airborne') ||
-                                                   (actualTime && actualTime < nowSeconds);
-                                if (isDeparted) {
-                                    recentDepartures.push(depData);
-                                }
-
-                                // Also store with ICAO callsign format for plane matching
-                                const callsign = flight.flight?.identification?.callsign;
-                                if (callsign) {
-                                    departureData.set(callsign.toUpperCase(), depData);
+                            // Find ICAO code for this IATA code
+                            for (const [icao, iata] of Object.entries(airlineIcaoToIata)) {
+                                if (iata === iataCode) {
+                                    const icaoCallsign = icao + flightNum;
+                                    departureData.set(icaoCallsign.toUpperCase(), depData);
+                                    break;
                                 }
                             }
-                        });
 
-                        // Sort by actual departure time, most recent first
-                        recentDepartures.sort((a, b) => {
-                            const timeA = a.actualTime || a.scheduledTime || 0;
-                            const timeB = b.actualTime || b.scheduledTime || 0;
-                            return timeB - timeA;
-                        });
+                            recentDepartures.push(depData);
+                        }
+                    });
 
-                        lastDepartureRefresh = now;
-                        console.log(`Loaded ${departureData.size} departures, ${recentDepartures.length} actually departed`);
-                        renderDepartures();
-                    }
+                    console.log(`Loaded ${departureData.size} departures from CSV`);
+                    renderDepartures();
+                },
+                error: function(err) {
+                    console.log('Failed to load departures CSV:', err);
                 }
-            } catch (e) {
-                console.log('Failed to fetch departures:', e.message);
-                // Not critical, will try again next time
-            }
+            });
         }
 
         // Look up flight in departure data
