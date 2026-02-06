@@ -30,6 +30,7 @@ KEYEVENTF_UNICODE = 0x0004
 KEYEVENTF_KEYUP = 0x0002
 
 VK_RETURN = 0x0D
+VK_ESCAPE = 0x1B
 
 
 # ── Win32 structures for SendInput ──────────────────────────────────────────
@@ -148,12 +149,23 @@ def _make_vk_key_events(vk: int) -> list[INPUT]:
     return [down, up]
 
 
+def _escape_pressed() -> bool:
+    """Return True if the Escape key is currently held down."""
+    # GetAsyncKeyState returns a SHORT; the high bit (0x8000) means
+    # the key is currently down.
+    return bool(user32.GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+
+
 def type_text(text: str, interval_ms: float = 5) -> None:
-    """Simulate typing *text* one character at a time."""
+    """Simulate typing *text* one character at a time.  Press Escape to stop."""
     interval_s = interval_ms / 1000.0
     total = len(text)
 
     for i, char in enumerate(text, 1):
+        if _escape_pressed():
+            print(f"\n  Escape pressed — stopped after {i - 1}/{total} characters.")
+            return
+
         # For newlines, press the Enter virtual key so apps that don't
         # respond to a unicode U+000A still get a proper newline.
         if char in ("\n", "\r"):
@@ -211,6 +223,7 @@ def main() -> None:
     # 2. Countdown so the user can focus the target window
     delay = args.delay
     print(f"Typing will begin in {delay:.0f} seconds — switch to the target window!")
+    print("Press Escape at any time to stop.")
     deadline = time.time() + delay
     while True:
         remaining = deadline - time.time()
