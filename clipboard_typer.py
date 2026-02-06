@@ -33,6 +33,20 @@ VK_RETURN = 0x0D
 
 
 # ── Win32 structures for SendInput ──────────────────────────────────────────
+# All three union members must be present so that sizeof(INPUT) matches what
+# Windows expects (40 bytes on x64).  Without MOUSEINPUT (the largest member),
+# the struct is too small and SendInput silently ignores every call.
+
+class MOUSEINPUT(ctypes.Structure):
+    _fields_ = [
+        ("dx", ctypes.wintypes.LONG),
+        ("dy", ctypes.wintypes.LONG),
+        ("mouseData", ctypes.wintypes.DWORD),
+        ("dwFlags", ctypes.wintypes.DWORD),
+        ("time", ctypes.wintypes.DWORD),
+        ("dwExtraInfo", ctypes.POINTER(ctypes.c_ulong)),
+    ]
+
 
 class KEYBDINPUT(ctypes.Structure):
     _fields_ = [
@@ -44,9 +58,21 @@ class KEYBDINPUT(ctypes.Structure):
     ]
 
 
+class HARDWAREINPUT(ctypes.Structure):
+    _fields_ = [
+        ("uMsg", ctypes.wintypes.DWORD),
+        ("wParamL", ctypes.wintypes.WORD),
+        ("wParamH", ctypes.wintypes.WORD),
+    ]
+
+
 class INPUT(ctypes.Structure):
     class _INPUT_UNION(ctypes.Union):
-        _fields_ = [("ki", KEYBDINPUT)]
+        _fields_ = [
+            ("mi", MOUSEINPUT),
+            ("ki", KEYBDINPUT),
+            ("hi", HARDWAREINPUT),
+        ]
 
     _fields_ = [
         ("type", ctypes.wintypes.DWORD),
