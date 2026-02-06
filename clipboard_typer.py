@@ -59,6 +59,14 @@ class INPUT(ctypes.Structure):
 user32 = ctypes.windll.user32
 kernel32 = ctypes.windll.kernel32
 
+# Set correct 64-bit-safe return types for Win32 clipboard/memory functions.
+# Without these, ctypes defaults to c_int (32-bit) and truncates 64-bit
+# handles/pointers on x64 Windows, causing access violations.
+user32.GetClipboardData.restype = ctypes.c_void_p
+kernel32.GlobalLock.restype = ctypes.c_void_p
+kernel32.GlobalLock.argtypes = [ctypes.c_void_p]
+kernel32.GlobalUnlock.argtypes = [ctypes.c_void_p]
+
 
 def get_clipboard_text() -> str:
     """Return the current Unicode text on the clipboard, or empty string."""
@@ -68,7 +76,6 @@ def get_clipboard_text() -> str:
         handle = user32.GetClipboardData(CF_UNICODETEXT)
         if not handle:
             return ""
-        kernel32.GlobalLock.restype = ctypes.c_void_p
         ptr = kernel32.GlobalLock(handle)
         if not ptr:
             return ""
