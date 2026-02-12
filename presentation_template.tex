@@ -1,0 +1,394 @@
+% ============================================================================
+%  Clean Beamer Presentation Template
+%  -----------------------------------
+%  Inspired by the Banco de Portugal slide deck aesthetic.
+%
+%  HOW TO CHANGE THE COLOUR SCHEME:
+%    Edit the three colours defined under "COLOUR SCHEME" below.
+%    - PrimaryColor : vertical bar, titles, section labels
+%    - AccentColor  : subtle highlights (progress-bar background)
+%    - TextColor    : body text
+%
+%  HOW TO CHANGE THE LOGO:
+%    Replace the file referenced in \logofile (default: logo.png).
+%    A small version is placed top-right on every content slide.
+%
+%  HOW TO CHANGE THE TITLE-SLIDE IMAGE:
+%    Pass a different file to \titleimage.
+%
+%  Compile with:  pdflatex  (or lualatex / xelatex for system fonts)
+% ============================================================================
+
+\documentclass[aspectratio=169, 11pt]{beamer}
+
+% === packages ===============================================================
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}              % clean serif fallback
+\usepackage{tikz}
+\usepackage{graphicx}
+\usepackage{calc}
+\usepackage{etoolbox}
+\usetikzlibrary{calc}
+
+% === remove beamer chrome ===================================================
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{footline}{}
+\setbeamertemplate{headline}{}
+
+% ============================================================================
+%  COLOUR SCHEME  –  edit these three lines to rebrand
+% ============================================================================
+\definecolor{PrimaryColor}{RGB}{163, 127, 68}   % gold / dark amber
+\definecolor{AccentColor}{RGB}{220, 200, 160}    % light gold (bar bg)
+\definecolor{TextColor}{RGB}{60, 60, 60}         % dark grey body text
+\definecolor{LightGray}{RGB}{245, 245, 245}      % background tint
+
+% === apply colours to beamer elements =======================================
+\setbeamercolor{normal text}{fg=TextColor}
+\setbeamercolor{frametitle}{fg=PrimaryColor}
+\setbeamercolor{itemize item}{fg=PrimaryColor}
+\setbeamercolor{itemize subitem}{fg=PrimaryColor}
+\setbeamercolor{enumerate item}{fg=PrimaryColor}
+\setbeamercolor{enumerate subitem}{fg=PrimaryColor}
+\setbeamercolor{block title}{fg=white, bg=PrimaryColor}
+\setbeamercolor{block body}{bg=LightGray}
+
+\setbeamerfont{frametitle}{size=\Large, series=\bfseries}
+\setbeamerfont{framesubtitle}{size=\normalsize, series=\mdseries}
+
+% === bullet style ===========================================================
+\setbeamertemplate{itemize item}{\small\raise1pt\hbox{\textbullet}}
+\setbeamertemplate{itemize subitem}{\scriptsize\raise1pt\hbox{--}}
+
+% ============================================================================
+%  USER METADATA  –  fill these in for your talk
+% ============================================================================
+\newcommand{\presentationtitle}{Presentation Title}
+\newcommand{\presentationsubtitle}{Subtitle Goes Here}
+\newcommand{\presentationauthor}{Author Name}
+\newcommand{\presentationrole}{Role / Affiliation}
+\newcommand{\presentationdate}{12 Feb.\ 2026}
+\newcommand{\presentationlocation}{City}
+\newcommand{\logofile}{logo.png}       % path to your institution's logo
+\newcommand{\titleimage}{titlephoto.jpg} % path to title-slide photo
+
+% store total frame count for progress bar
+\newcounter{totalframes}
+
+% ============================================================================
+%  PROGRESS BAR (right-side vertical bar)
+% ============================================================================
+%  The bar spans the full height of the slide along the right edge.
+%  The filled portion grows from BOTTOM to TOP as you advance through
+%  the presentation.
+% ============================================================================
+\newcommand{\barwidth}{0.35cm}          % width of the vertical bar
+
+\newcommand{\drawprogressbar}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    % background bar (full height, light colour)
+    \fill[AccentColor]
+      ([xshift=-\barwidth]current page.north east)
+      rectangle
+      (current page.south east);
+    % filled portion (progress, strong colour)
+    \ifnum\value{totalframes}>0
+      \pgfmathsetmacro{\progress}{%
+        (\insertframenumber-1) / (\value{totalframes}-1)
+      }
+    \else
+      \pgfmathsetmacro{\progress}{0}
+    \fi
+    \fill[PrimaryColor]
+      ([xshift=-\barwidth]current page.south east)
+      rectangle
+      ([xshift=0cm, yshift={\progress*\paperheight}]current page.south east);
+  \end{tikzpicture}%
+}
+
+% ============================================================================
+%  LOGO HELPER  –  small logo, top-right corner
+% ============================================================================
+\newcommand{\drawlogo}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    \node[anchor=north east, inner sep=0pt]
+      at ([xshift=-\barwidth-0.35cm, yshift=-0.35cm]current page.north east)
+      {\IfFileExists{\logofile}%
+        {\includegraphics[height=0.55cm]{\logofile}}%
+        {%
+          % Placeholder when logo file is missing
+          \tikz\node[rounded corners=2pt, fill=PrimaryColor,
+                      text=white, font=\tiny\bfseries,
+                      minimum height=0.55cm, minimum width=1.4cm]{LOGO};%
+        }%
+      };
+  \end{tikzpicture}%
+}
+
+% ============================================================================
+%  FOOTER  –  presentation title (left) · date + slide number (right)
+% ============================================================================
+\newcommand{\drawfooter}{%
+  \begin{tikzpicture}[remember picture, overlay]
+    % left: presentation title
+    \node[anchor=south west, inner sep=0pt,
+          font=\tiny\color{TextColor!60}]
+      at ([xshift=0.5cm, yshift=0.25cm]current page.south west)
+      {\MakeUppercase{\presentationtitle}};
+    % right: date | page
+    \node[anchor=south east, inner sep=0pt,
+          font=\tiny\color{TextColor!60}]
+      at ([xshift=-\barwidth-0.35cm, yshift=0.25cm]current page.south east)
+      {\presentationdate\enspace|\enspace\insertframenumber\,/\,\inserttotalframenumber};
+  \end{tikzpicture}%
+}
+
+% ============================================================================
+%  CONTENT-SLIDE BACKGROUND TEMPLATE
+% ============================================================================
+\setbeamertemplate{background}{%
+  % Only draw on non-title frames
+  \ifnum\insertframenumber>1\relax
+    \drawprogressbar
+    \drawlogo
+    \drawfooter
+    % thin top rule
+    \begin{tikzpicture}[remember picture, overlay]
+      \draw[PrimaryColor!30, line width=0.4pt]
+        ([yshift=-1.15cm, xshift=0.5cm]current page.north west) --
+        ([yshift=-1.15cm, xshift=-\barwidth-0.35cm]current page.north east);
+    \end{tikzpicture}
+  \fi
+}
+
+% ============================================================================
+%  FRAME TITLE FORMAT  –  small running header + large title
+% ============================================================================
+\setbeamertemplate{frametitle}{%
+  \vskip2pt
+  {\tiny\color{TextColor!50}\MakeUppercase{\presentationtitle}}\\[-2pt]
+  \rule{0pt}{0.55cm}%  vertical strut
+  {\usebeamerfont{frametitle}\usebeamercolor[fg]{frametitle}\insertframetitle}%
+  \ifx\insertframesubtitle\empty\else
+    \\[2pt]{\usebeamerfont{framesubtitle}\color{TextColor!70}\insertframesubtitle}%
+  \fi
+}
+
+% ============================================================================
+%  TITLE PAGE TEMPLATE
+% ============================================================================
+\defbeamertemplate*{title page}{custom}[1][]{%
+  % We build the entire title page with TikZ for precise placement.
+  \begin{tikzpicture}[remember picture, overlay]
+    %
+    % --- left half: photo -------------------------------------------------
+    \IfFileExists{\titleimage}{%
+      \node[anchor=west, inner sep=0pt] at (current page.west)
+        {\includegraphics[height=\paperheight, width=0.48\paperwidth,
+                          keepaspectratio=false]{\titleimage}};
+    }{%
+      % Placeholder gradient when image file is missing
+      \fill[left color=PrimaryColor!25, right color=PrimaryColor!5]
+        (current page.south west) rectangle
+        ([xshift=0.48\paperwidth]current page.north west);
+      \node[font=\small\color{PrimaryColor!60}, rotate=90]
+        at ([xshift=0.24\paperwidth]current page.center |- current page.center)
+        {Set \texttt{\textbackslash titleimage} to your photo};
+    }
+    %
+    % --- subtle divider line ----------------------------------------------
+    \draw[PrimaryColor!30, line width=0.6pt]
+      ([xshift=0.48\paperwidth]current page.south west) --
+      ([xshift=0.48\paperwidth]current page.north west);
+    %
+    % --- right half: text -------------------------------------------------
+    \node[anchor=north west, text width=0.42\paperwidth,
+          inner sep=0pt]
+      at ([xshift=0.52\paperwidth, yshift=-1.8cm]current page.north west)
+      {%
+        {\color{PrimaryColor}\LARGE\bfseries
+         \presentationtitle\par}
+        \vskip6pt
+        {\color{PrimaryColor!80}\large \presentationsubtitle\par}
+      };
+    %
+    % --- date / location --------------------------------------------------
+    \node[anchor=south west, inner sep=0pt,
+          text width=0.42\paperwidth]
+      at ([xshift=0.52\paperwidth, yshift=2.2cm]current page.south west)
+      {%
+        {\small\color{TextColor!70}%
+         \MakeUppercase{\presentationdate}
+         \enspace|\enspace
+         \MakeUppercase{\presentationlocation}\par}
+        \vskip4pt
+        {\small\color{TextColor}%
+         \MakeUppercase{\presentationauthor}
+         \enspace|\enspace
+         \MakeUppercase{\presentationrole}\par}
+      };
+    %
+    % --- logo on title page (bottom right) --------------------------------
+    \node[anchor=south east, inner sep=0pt]
+      at ([xshift=-0.6cm, yshift=0.6cm]current page.south east)
+      {\IfFileExists{\logofile}%
+        {\includegraphics[height=0.7cm]{\logofile}}%
+        {\tikz\node[rounded corners=2pt, fill=PrimaryColor,
+                    text=white, font=\tiny\bfseries,
+                    minimum height=0.7cm, minimum width=1.6cm]{LOGO};}%
+      };
+    %
+    % --- vertical bar (static, no progress on title slide) ----------------
+    \fill[AccentColor]
+      ([xshift=-\barwidth]current page.north east)
+      rectangle (current page.south east);
+  \end{tikzpicture}
+}
+
+% ============================================================================
+%  SECTION PAGES  –  optional, clean divider
+% ============================================================================
+\AtBeginSection[]{%
+  \begin{frame}[plain,noframenumbering]
+    \drawprogressbar
+    \begin{tikzpicture}[remember picture, overlay]
+      \node[anchor=center, text width=0.7\paperwidth, align=center]
+        at ([yshift=0.4cm]current page.center)
+        {{\color{PrimaryColor}\Huge\bfseries \insertsection}};
+      \draw[PrimaryColor, line width=1pt]
+        ([xshift=3cm, yshift=-0.4cm]current page.center) --
+        ([xshift=-3cm, yshift=-0.4cm]current page.center);
+    \end{tikzpicture}
+  \end{frame}
+}
+
+% ============================================================================
+%  STORE TOTAL FRAME COUNT  (needed for progress bar calculation)
+% ============================================================================
+\AtEndDocument{\immediate\write\@auxout{%
+  \string\setcounter{totalframes}{\the\value{framenumber}}}}
+
+% ============================================================================
+% ============================================================================
+%  DOCUMENT START  –  demo slides (replace with your own content)
+% ============================================================================
+% ============================================================================
+
+\begin{document}
+
+% --- title slide -----------------------------------------------------------
+{
+  \setbeamertemplate{background}{}  % suppress normal bg on title page
+  \begin{frame}[plain,noframenumbering]
+    \titlepage
+  \end{frame}
+}
+
+% --- content slides --------------------------------------------------------
+\section{Introduction}
+
+\begin{frame}{How to Use This Template}
+  \textcolor{PrimaryColor}{\textbf{Getting started}} \\[6pt]
+  \begin{itemize}
+    \item Edit the metadata block near the top of the \texttt{.tex} file
+    \item Replace \texttt{logo.png} and \texttt{titlephoto.jpg} with your own files
+    \item Change \texttt{PrimaryColor}, \texttt{AccentColor}, and
+          \texttt{TextColor} to match your institution
+  \end{itemize}
+
+  \vskip12pt
+  \textcolor{PrimaryColor}{\textbf{Compilation}} \\[6pt]
+  \begin{itemize}
+    \item Compile twice so the progress bar picks up the total frame count
+    \item Works with \texttt{pdflatex}, \texttt{lualatex}, or \texttt{xelatex}
+  \end{itemize}
+\end{frame}
+
+\section{Features}
+
+\begin{frame}{Design Elements}
+  \begin{columns}[T]
+    \begin{column}{0.47\textwidth}
+      \textcolor{PrimaryColor}{\textbf{Layout}} \\[4pt]
+      \begin{itemize}
+        \item 16:9 aspect ratio
+        \item Clean, minimal chrome
+        \item Right-side progress bar
+        \item Running title in footer
+        \item Small logo, top-right
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.47\textwidth}
+      \textcolor{PrimaryColor}{\textbf{Title slide}} \\[4pt]
+      \begin{itemize}
+        \item Half-image layout
+        \item Doesn't feel cramped
+        \item Author, date, location
+        \item Logo in bottom-right
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Colour Scheme}
+  Changing the palette is a one-line edit:
+
+  \vskip10pt
+  \begin{columns}[c]
+    \begin{column}{0.5\textwidth}
+      \centering
+      \begin{tikzpicture}
+        \fill[PrimaryColor] (0,0) rectangle (2.2,1);
+        \node[white, font=\small\bfseries] at (1.1,0.5) {Primary};
+      \end{tikzpicture}\\[4pt]
+      \texttt{\footnotesize\{163,\,127,\,68\}}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \centering
+      \begin{tikzpicture}
+        \fill[AccentColor] (0,0) rectangle (2.2,1);
+        \node[TextColor, font=\small\bfseries] at (1.1,0.5) {Accent};
+      \end{tikzpicture}\\[4pt]
+      \texttt{\footnotesize\{220,\,200,\,160\}}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\section{Examples}
+
+\begin{frame}{Blocks and Emphasis}
+  \begin{block}{A block title}
+    Blocks automatically pick up the primary colour.
+  \end{block}
+
+  \vskip8pt
+  You can use \textcolor{PrimaryColor}{\textbf{coloured bold text}} for
+  inline section labels, just like the original PowerPoint template.
+
+  \vskip8pt
+  \begin{enumerate}
+    \item First numbered point
+    \item Second numbered point
+    \item Third numbered point
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{A Slide with a Subtitle}
+  \framesubtitle{Subtitles appear in a lighter weight below the title}
+
+  This demonstrates the subtitle feature. Use it for additional context
+  without cluttering the main title.
+
+  \vskip12pt
+  \textcolor{PrimaryColor}{\textbf{Tip:}} Keep slides focused on one idea.
+\end{frame}
+
+\begin{frame}{Thank You}
+  \centering
+  \vskip1.5cm
+  {\color{PrimaryColor}\Huge\bfseries Thank you.}\\[12pt]
+  {\large \presentationauthor}\\[2pt]
+  {\small\color{TextColor!60} \presentationrole}
+\end{frame}
+
+\end{document}
