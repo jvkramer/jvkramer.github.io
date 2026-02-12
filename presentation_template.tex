@@ -265,8 +265,10 @@
 % ============================================================================
 %  STORE TOTAL FRAME COUNT  (needed for progress bar calculation)
 % ============================================================================
+\makeatletter
 \AtEndDocument{\immediate\write\@auxout{%
   \string\setcounter{totalframes}{\the\value{framenumber}}}}
+\makeatother
 
 % ============================================================================
 % ============================================================================
