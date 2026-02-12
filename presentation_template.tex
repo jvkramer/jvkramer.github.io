@@ -76,21 +76,24 @@
 \newcounter{totalframes}
 
 % ============================================================================
-%  PROGRESS BAR (right-side vertical bar)
+%  PROGRESS BAR (free-floating thin vertical bar, left side)
 % ============================================================================
-%  The bar spans the full height of the slide along the right edge.
-%  The filled portion grows from BOTTOM to TOP as you advance through
-%  the presentation.
+%  A narrow bar floats on the left margin.  The filled portion grows
+%  from BOTTOM to TOP as you advance through the presentation.
 % ============================================================================
-\newcommand{\barwidth}{0.35cm}          % width of the vertical bar
+\newcommand{\barwidth}{2pt}             % thin, like the original
+\newcommand{\barxoffset}{0.38cm}        % distance from left edge
+\newcommand{\bartopmargin}{0.7cm}       % gap from top of slide
+\newcommand{\barbotmargin}{0.7cm}       % gap from bottom of slide
 
 \newcommand{\drawprogressbar}{%
   \begin{tikzpicture}[remember picture, overlay]
-    % background bar (full height, light colour)
-    \fill[AccentColor]
-      ([xshift=-\barwidth]current page.north east)
-      rectangle
-      (current page.south east);
+    % coordinates for the bar endpoints
+    \coordinate (barbot) at ([xshift=\barxoffset, yshift=\barbotmargin]current page.south west);
+    \coordinate (bartop) at ([xshift=\barxoffset, yshift=-\bartopmargin]current page.north west);
+    % background bar (full length, light colour)
+    \fill[AccentColor, rounded corners=0.5pt]
+      ([xshift=-\barwidth/2]barbot) rectangle ([xshift=\barwidth/2]bartop);
     % filled portion (progress, strong colour)
     \ifnum\value{totalframes}>0
       \pgfmathsetmacro{\progress}{%
@@ -99,10 +102,11 @@
     \else
       \pgfmathsetmacro{\progress}{0}
     \fi
-    \fill[PrimaryColor]
-      ([xshift=-\barwidth]current page.south east)
-      rectangle
-      ([xshift=0cm, yshift={\progress*\paperheight}]current page.south east);
+    \path let \p1 = (barbot), \p2 = (bartop),
+              \n1 = {\y2-\y1} in
+      coordinate (barfill) at ([yshift={\progress*\n1}]barbot);
+    \fill[PrimaryColor, rounded corners=0.5pt]
+      ([xshift=-\barwidth/2]barbot) rectangle ([xshift=\barwidth/2]barfill);
   \end{tikzpicture}%
 }
 
@@ -112,7 +116,7 @@
 \newcommand{\drawlogo}{%
   \begin{tikzpicture}[remember picture, overlay]
     \node[anchor=north east, inner sep=0pt]
-      at ([xshift=-\barwidth-0.35cm, yshift=-0.35cm]current page.north east)
+      at ([xshift=-0.35cm, yshift=-0.35cm]current page.north east)
       {\IfFileExists{\logofile}%
         {\includegraphics[height=0.55cm]{\logofile}}%
         {%
@@ -138,7 +142,7 @@
     % right: date | page
     \node[anchor=south east, inner sep=0pt,
           font=\tiny\color{TextColor!60}]
-      at ([xshift=-\barwidth-0.35cm, yshift=0.25cm]current page.south east)
+      at ([xshift=-0.5cm, yshift=0.25cm]current page.south east)
       {\presentationdate\enspace|\enspace\insertframenumber\,/\,\inserttotalframenumber};
   \end{tikzpicture}%
 }
@@ -156,7 +160,7 @@
     \begin{tikzpicture}[remember picture, overlay]
       \draw[PrimaryColor!30, line width=0.4pt]
         ([yshift=-1.15cm, xshift=0.5cm]current page.north west) --
-        ([yshift=-1.15cm, xshift=-\barwidth-0.35cm]current page.north east);
+        ([yshift=-1.15cm, xshift=-0.5cm]current page.north east);
     \end{tikzpicture}
   \fi
 }
@@ -239,9 +243,10 @@
       };
     %
     % --- vertical bar (static, no progress on title slide) ----------------
-    \fill[AccentColor]
-      ([xshift=-\barwidth]current page.north east)
-      rectangle (current page.south east);
+    \coordinate (tbarbot) at ([xshift=\barxoffset, yshift=\barbotmargin]current page.south west);
+    \coordinate (tbartop) at ([xshift=\barxoffset, yshift=-\bartopmargin]current page.north west);
+    \fill[AccentColor, rounded corners=0.5pt]
+      ([xshift=-\barwidth/2]tbarbot) rectangle ([xshift=\barwidth/2]tbartop);
   \end{tikzpicture}
 }
 
@@ -315,7 +320,7 @@
       \begin{itemize}
         \item 16:9 aspect ratio
         \item Clean, minimal chrome
-        \item Right-side progress bar
+        \item Left-side progress bar
         \item Running title in footer
         \item Small logo, top-right
       \end{itemize}
