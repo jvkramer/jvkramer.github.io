@@ -31,6 +31,10 @@ KEYEVENTF_KEYUP = 0x0002
 
 VK_RETURN = 0x0D
 VK_ESCAPE = 0x1B
+VK_SHIFT = 0x10
+VK_HOME = 0x24
+VK_END = 0x23
+VK_DELETE = 0x2E
 
 
 # ── Win32 structures for SendInput ──────────────────────────────────────────
@@ -149,11 +153,52 @@ def _make_vk_key_events(vk: int) -> list[INPUT]:
     return [down, up]
 
 
+def _make_clear_auto_indent_events() -> list[INPUT]:
+    """Build a Home, Shift+End, Delete sequence to wipe auto-indentation.
+
+    Editors like VS Code insert whitespace automatically after Enter.
+    This selects whatever was auto-inserted on the new line and deletes
+    it so the original indentation from the clipboard text is preserved.
+    """
+    events: list[INPUT] = []
+
+    # Home – move cursor to column 0
+    events.extend(_make_vk_key_events(VK_HOME))
+
+    # Shift down
+    shift_down = INPUT()
+    shift_down.type = INPUT_KEYBOARD
+    shift_down.union.ki.wVk = VK_SHIFT
+    shift_down.union.ki.dwFlags = 0
+    events.append(shift_down)
+
+    # End (while Shift is held) – selects any auto-indent
+    events.extend(_make_vk_key_events(VK_END))
+
+    # Shift up
+    shift_up = INPUT()
+    shift_up.type = INPUT_KEYBOARD
+    shift_up.union.ki.wVk = VK_SHIFT
+    shift_up.union.ki.dwFlags = KEYEVENTF_KEYUP
+    events.append(shift_up)
+
+    # Delete – remove selected text
+    events.extend(_make_vk_key_events(VK_DELETE))
+
+    return events
+
+
 def _escape_pressed() -> bool:
     """Return True if the Escape key is currently held down."""
     # GetAsyncKeyState returns a SHORT; the high bit (0x8000) means
     # the key is currently down.
     return bool(user32.GetAsyncKeyState(VK_ESCAPE) & 0x8000)
+
+
+def _send_events(events: list[INPUT]) -> None:
+    """Send a list of INPUT events via SendInput."""
+    arr = (INPUT * len(events))(*events)
+    user32.SendInput(len(events), arr, ctypes.sizeof(INPUT))
 
 
 def type_text(text: str, interval_ms: float = 5) -> None:
@@ -170,11 +215,13 @@ def type_text(text: str, interval_ms: float = 5) -> None:
         # respond to a unicode U+000A still get a proper newline.
         if char in ("\n", "\r"):
             events = _make_vk_key_events(VK_RETURN)
+            _send_events(events)
+            # Clear any auto-indentation the editor may have inserted.
+            time.sleep(interval_s)
+            _send_events(_make_clear_auto_indent_events())
         else:
             events = _make_unicode_key_events(char)
-
-        arr = (INPUT * len(events))(*events)
-        user32.SendInput(len(events), arr, ctypes.sizeof(INPUT))
+            _send_events(events)
 
         if interval_s > 0:
             time.sleep(interval_s)
