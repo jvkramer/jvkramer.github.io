@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  29 OCT 2025 09:04
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  2 APR 2026 15:25
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -530,52 +530,52 @@ Package marginnote Info: right page because not two side mode on input line 114
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 114.
 Package marginnote Info: Margin note 2.2 is on absolute page 2 on input line 12
-8.
-Package marginnote Info: right page because not two side mode on input line 128
+7.
+Package marginnote Info: right page because not two side mode on input line 127
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 128.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 127.
 
-Underfull \hbox (badness 10000) in paragraph at lines 128--129
+Underfull \hbox (badness 10000) in paragraph at lines 127--128
 
  []
 
 Package marginnote Info: Margin note 2.3 is on absolute page 2 on input line 13
+6.
+Package marginnote Info: right page because not two side mode on input line 136
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 136.
+Package marginnote Info: Margin note 2.4 is on absolute page 2 on input line 13
 7.
 Package marginnote Info: right page because not two side mode on input line 137
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 137.
-Package marginnote Info: Margin note 2.4 is on absolute page 2 on input line 13
+Package marginnote Info: Margin note 2.5 is on absolute page 2 on input line 13
 8.
 Package marginnote Info: right page because not two side mode on input line 138
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 138.
-Package marginnote Info: Margin note 2.5 is on absolute page 2 on input line 13
-9.
-Package marginnote Info: right page because not two side mode on input line 139
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 139.
 Package marginnote Info: Margin note 2.6 is on absolute page 2 on input line 14
+8.
+Package marginnote Info: right page because not two side mode on input line 148
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 148.
+Package marginnote Info: Margin note 2.7 is on absolute page 2 on input line 14
 9.
 Package marginnote Info: right page because not two side mode on input line 149
 .
 Package marginnote Info: xpos seems to be 93.89418pt on input line 149.
-Package marginnote Info: Margin note 2.7 is on absolute page 2 on input line 15
-0.
-Package marginnote Info: right page because not two side mode on input line 150
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 150.
 Package marginnote Info: Margin note 2.8 is on absolute page 2 on input line 17
-3.
-Package marginnote Info: right page because not two side mode on input line 173
+2.
+Package marginnote Info: right page because not two side mode on input line 172
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 173.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 172.
 
-Underfull \hbox (badness 10000) in paragraph at lines 173--175
+Underfull \hbox (badness 10000) in paragraph at lines 172--174
 
  []
 
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 182.
+(Font)              scaled to size 8.0pt on input line 181.
 [2] (CV_Kramer.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
@@ -598,7 +598,7 @@ EBGaramond-Italic.pfb><C:/Users/qwp970/AppData/Local/Programs/MiKTeX/fonts/type
 ams/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiBold.pfb><C:/Users/qwp9
 70/AppData/Local/Programs/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiB
 oldItalic.pfb>
-Output written on CV_Kramer.pdf (2 pages, 98382 bytes).
+Output written on CV_Kramer.pdf (2 pages, 98555 bytes).
 PDF statistics:
  61 PDF objects out of 1000 (max. 8388607)
  18 named destinations out of 1000 (max. 500000)
