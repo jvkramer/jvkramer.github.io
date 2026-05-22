@@ -107,7 +107,9 @@ def get_clipboard_text() -> str:
         if not ptr:
             return ""
         try:
-            return ctypes.wstring_at(ptr)
+            text = ctypes.wstring_at(ptr)
+            # Normalize line endings: CRLF and bare CR → LF
+            return text.replace("\r\n", "\n").replace("\r", "\n")
         finally:
             kernel32.GlobalUnlock(handle)
     finally:
