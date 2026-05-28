@@ -1,0 +1,1053 @@
+\documentclass[10pt, aspectratio = 169]{beamer} %
+
+\usetheme[progressbar=frametitle,numbering=fraction]{metropolis}
+\usepackage{appendixnumberbeamer}
+
+\usepackage{booktabs}
+\usepackage[scale=2]{ccicons}
+\usefonttheme[onlymath]{serif}
+%\usepackage[sfdefault]{FiraSans}  % Metropolis default, very similar to Open Sans
+\usepackage[default]{sourcesanspro}
+
+\usepackage{pgfplots}
+\usepgfplotslibrary{dateplot}
+\usepackage{tikz}
+\usepackage{graphicx}
+
+\usepackage{subcaption}
+\usepackage{multicol}
+
+\usepackage{xspace}
+\newcommand{\themename}{\textbf{\textsc{metropolis}}\xspace}
+
+\usepackage{empheq}
+\usepackage[many]{tcolorbox}
+
+\usepackage{MnSymbol,wasysym}
+\usepackage{hanging}
+\setbeamertemplate{footnote}{\hangpara{2em}{1}\makebox[2em][l]{\insertfootnotemark}\footnotesize\insertfootnotetext\par}
+\usetikzlibrary{fadings,positioning,calc,shadows}
+\usepackage{setspace}
+\usepackage[en-US]{datetime2}
+\usepackage{picture}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
+\newcommand{\Var}{\mathrm{Var}}
+\newcommand{\Cov}{\mathrm{Cov}}
+\newcommand{\yhat}{\widehat{y}}
+\newcommand{\by}{\bm y}
+\newcommand{\bZ}{(\bm X \bm C)}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\M}{\mathcal{M}}
+\newcommand{\La}{\mathcal{L}}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\plim}{\xrightarrow[]{p}}
+\newcommand{\dlim}{\xrightarrow[]{d}}
+\newcommand{\infsum}{\sum_{t=0}^\infty}
+\newcommand{\infint}{\int_{0}^\infty}
+\newcommand{\intone}{\int_{0}^1}
+\usetikzlibrary{arrows.meta,positioning}
+\usepackage[capposition=top]{floatrow}
+\usepackage{subcaption}
+\usepackage{booktabs}
+\usepackage{array}
+
+\usepackage{jambro-annotations}
+\definecolor{carandache}{RGB}{144,26,30}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Color pallette
+\definecolor{cph_red}{RGB}{144,26,30}
+\definecolor{cph_grey}{RGB}{102,102,102}
+\setbeamercolor{palette primary}{fg=cph_red, bg= white} %{fg=white, bg= cph_red}
+
+\setbeamercolor{button}{bg=cph_red}
+\setbeamercolor{title}{fg=black}
+\setbeamercolor{section title}{fg=cph_red!100}
+\setbeamercolor{progress bar}{fg=cph_grey, bg= white}
+\setbeamercolor{itemize item}{fg=cph_red,bg=white}
+
+\setbeamercolor{alerted text}{fg=cph_red, bg= white}
+
+% Change annotation color to cph red
+\definecolor{carandache}{RGB}{0,0,128}   % define your own
+
+\makeatletter
+\setlength{\metropolis@titleseparator@linewidth}{2pt}
+\setlength{\metropolis@progressonsectionpage@linewidth}{2pt}
+\setlength{\metropolis@progressinheadfoot@linewidth}{2pt}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\tcbset{highlight math style={enhanced,
+  colframe=red!60!black,colback=yellow!50!white,arc=4pt,boxrule=1pt,
+  }}
+
+
+\tikzset{
+    bluenode/.style={
+        draw,
+        black,
+        top color=orange!50!white,
+        bottom color=orange!90!white,
+        rounded corners,drop shadow
+    },
+    graynode/.style={
+        draw,
+        top color=gray!50!white!20,
+        bottom color=gray!50!black!20,drop shadow
+    }}
+\title{The Curious Incidence of Monetary Policy Across the Income
+Distribution}
+
+\date{\today}
+\author{Tobias Broer \ \ \   John Kramer \ \ \  Kurt Mitman}
+\DTMlangsetup{showdayofmonth=false}
+
+\makeatletter
+\def\th@mystyle{%
+    \normalfont % body font
+    \setbeamercolor{block title example}{bg=orange,fg=white}
+    \setbeamercolor{block body example}{bg=orange!20,fg=black}
+    \def\inserttheoremblockenv{exampleblock}
+  }
+\makeatother
+\theoremstyle{mystyle}
+\newtheorem*{conjecture}{Conjecture}
+
+% From stata regression table
+\def\sym#1{\ifmmode^{#1}\else\(^{#1}\)\fi}
+
+%\institute{\today}
+% \titlegraphic{\hfill\includegraphics[height=1.5cm]{logo.pdf}}
+
+\begin{document}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamercolor{progress bar}{fg=cph_red, bg= white}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}[noframenumbering, plain]
+\maketitle
+\begin{tikzpicture}[overlay, remember picture]
+\node[above left=0.3cm and 0.6cm of current page.south east]{\includegraphics[width=5cm,trim = 31cm 10cm 1cm 15cm,clip]{Presentations/KU_RGB.pdf}};
+\end{tikzpicture}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\setbeamercolor{progress bar}{fg=cph_grey, bg= white}
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Motivation}
+\onslide<1->{\alert{Understanding the effects of monetary policy}
+\begin{itemize}
+    \item Recent aggressive monetary tightening raises distributional concerns
+    \item Limited evidence on who bears the cost of monetary policy interventions
+    \item Theory suggests heterogeneity may amplify or dampen aggregate effects
+\end{itemize}}
+\onslide<2>{{\centering \large \alert{Key questions:}\par}
+\begin{itemize}
+    \item How does monetary policy affect individuals across the income distribution? 
+    \item Does this heterogeneity matter for transmission of MP to  aggregate demand? 
+\end{itemize}
+$\implies$ empirical \& theoretical analysis}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Empirical Analysis}
+
+\alert{Approach}
+\begin{itemize}
+    \item Using German administrative data, we estimate responses to monetary policy
+\begin{itemize}
+     \item for earnings growth
+     \item for labor market transitions probabilities
+\end{itemize}
+across the permanent income distribution
+\end{itemize}
+
+\onslide<2->{\alert{Findings}
+\begin{itemize}
+    \item Monetary policy impacts earnings growth at the bottom twice as much as at the top
+    \item Heterogeneity is driven by extensive margin transitions
+    \item Employed workers show uniform earnings responses
+    \item Effects are long-lasting for those who become unemployed
+\end{itemize}}
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Theoretical Framework}
+
+\alert{Model}
+\begin{itemize}
+\item HANK model to study transmission of monetary policy
+\item Permanent type heterogeneity in permanent income
+\item Heterogeneous and counter-cyclical unemployment risk 
+\end{itemize}
+
+\onslide<2>{\alert{Findings}
+\begin{itemize}
+    \item Heterogeneous and counter-cyclical \lapis[cph_red]{unemployment} risk amplifies effects of monetary policy by 20\% relative to pure \lapis[cph_red]{income} risk
+    \begin{itemize}
+        \item Precautionary savings from unemployment risk drive half of the amplification
+        \item Rest is driven by realized income differences
+    \end{itemize}
+\end{itemize}
+\textbf{Bottom line:} Labor income heterogeneity is crucial for understanding monetary policy effectiveness }
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Literature and contribution}
+
+
+\alert{Empirical evidence on heterogeneous effects of monetary policy}
+\begin{itemize}
+    \item \footnotesize{Coibion et al (2017), Guvenen et al (2017), D’Acunto et al (2019a,b), Patterson (2018), De Giorgi \& Gambetti (2017), Alves et al (2019), Almgren et al (2019), Holm et al (2021), \lapis[cph_red]{Amberg et al (2022)}, \lapis[cph_red]{Andersen et al (2023)}, Hubert \& Savignac (2024),...}
+\end{itemize}
+\alert{What we add:} Heterogeneous earnings responses driven by \textbf{unemployment}
+\vspace{0.5cm}
+
+\alert{(Quantitative) Theory:}
+\begin{itemize}
+    \item \footnotesize{Gornemann et al (2012), Auclert (2019), Kaplan et al (2018), \lapis[cph_red]{Werning (2015)}, Broer et al (2019), Hagedorn et al (2019a,b), {Bilbiie (2018)}, \lapis[cph_red]{Ravn \& Sterk (2017, 2021)}, {Acharya and Dogra (2020)}, Auclert et al (2021), Bilbiie et al (2022), \lapis[cph_red]{Graves (2025)},...}
+\end{itemize}
+\alert{What we add:} \textbf{Heterogeneous}, countercyclical \textbf{unemployment risk} amplifies output responses
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Data}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{German administrative micro-data}
+Social security data from German federal employment agency (SIAB sample)
+\begin{itemize}
+    \item 2\% of all individuals in social-insurance system (excl public employees \& self-employed)
+    \item Employment history \& ``Daily'' employment status (agg to \lapis[cph_red]{monthly})
+    \item Main variables of interest:\\
+    \vspace{2pt}
+    - \lapis[cph_red]{Employment} spells (start and end date)\\
+    \vspace{2pt}
+    - Within-spell average pre-tax labor \lapis[cph_red]{earnings} (impute top coded$\sim 6$ \%)
+    \item Restrict to closely attached: employed \& unemployed 
+    \item Sample period: 2000-2013 (excl zero lower bound)
+\end{itemize}
+\alert{$\to$ Allows for clean decomposition of earnings movements}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Heterogeneous effects along the income distribution}\label{hetintro}
+\alert{Income distribution}  \hyperlink{descr}{\beamergotobutton{Descriptive statistics}}
+\begin{itemize}
+    \item Sort individuals in \textbf{5-year-average earnings} quantiles $q$ conditional on age and gender
+    \item Similar results for other measures of permanent income
+\end{itemize}
+
+\onslide<2>{\alert{Effects of monetary policy} \hyperlink{aggs0}{\beamergotobutton{Aggregates}}
+\begin{align*}
+    \ln \left(\overline{earn}_{t+k} \right) - \ln \left(\overline{earn}_{t-1} \right) = \alpha^q_{k} + \beta^q_{k} \Delta i_{t} +\theta^q_{k}  X_{t}+\epsilon^q_{t+k}\quad \text{for} \quad k = 12
+\end{align*}
+\vspace{-0.5cm}
+\begin{itemize}
+    \item Instrument policy rate w/ OIS rate changes around announcement (Almgren et al. 2022)
+    \item Separate IV estimates for individuals in quantile $q$ in $t-1$
+    \item Dependent variables $x^q_{t+k}$:
+    \begin{itemize}
+        \item Change in \textbf{quantile earnings} from $t$ to $t+k$
+    \end{itemize}
+    \item Scale $\Delta i_{t}$ to cause 1pp rise in average earnings $\overline{earn}_t$
+\end{itemize}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Empirical results}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Monetary policy incidence on earnings growth across the distribution}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/earn_n_tot.pdf} 
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+    \begin{itemize}
+        \item \textbf{Earnings growth most affected at the bottom} 
+        
+        \footnotesize $\sim$ Patterson (2023), Amberg et al (2022)
+        \vspace{.5cm}
+        \item \normalsize Uptick at the top likely due to imputation
+        \vspace{0.5cm}
+        \item \normalsize Monetary policy impact similar to unconditional 
+        
+         \footnotesize $\sim$ Guvenen et al (2017)
+    \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Decomposition into earnings and employment}\label{decomposition}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+    \includegraphics[width=\linewidth]{Figures/earn_n_e2e_dash.pdf} 
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+    \begin{align*}
+    &\ln \left(\overline{earn}_{t} \right) = \ln \left(s^{emp}_t \cdot\overline{earn}^e_{t} \right) = \\
+    &\ln\left( s^{emp}_t \right) + \ln \left(\overline{earn}^e_{t} \right)
+\end{align*}
+    \begin{itemize}
+        \item Earnings of the employed homogeneously procyclical  
+        \hyperlink{semp}{\beamergotobutton{Complement}} \hyperlink{UI}{\beamergotobutton{with UI}} 
+    \end{itemize}
+\end{column}
+\end{columns}
+
+\vspace{5mm}
+\centering
+\alert{Unemployment is driving higher incidence of monetary policy on the poor}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{How does monetary policy affect (un)employment?}
+\alert{Compute transition probabilities}
+\begin{itemize}
+    \item Define transition probability as share of individuals in quantile $q$ in state $s_{t-1}\in\{U,E\}$ who move to state $s_{t+k}\in\{U,E \}$
+    \item[$\to$] Times series of transition probabilities by quantile
+\end{itemize}
+\vspace{0.5cm}
+\alert{Effect of monetary policy on labor market transitions}
+\begin{align*}
+    TR^{q,s_1, s_2}_{t+k} = \alpha^q_{k} + \beta^q_{k} \Delta i_{t} +\theta^q_{k}  X_{t}+\epsilon^q_{t+k}\quad \text{for} \quad k = 12
+\end{align*}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Incidence of monetary policy on transition probabilities}\label{transprob}
+\begin{columns}[c]
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Separations} --- $s_{t-1}=E; s_{t+12} =U$
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/trans_n_e2u.pdf}
+    \begin{itemize}
+        \item Separations fall for bottom, top unaffected
+    \end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Job-finding} --- $s_{t-1}=U; s_{t+12} =E$
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/trans_n_u2e.pdf}
+    \begin{itemize}
+        \item Impact on job-finding homogeneous \hyperlink{switching}{\beamergotobutton{Job switching}}
+
+    \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Taking stock}\label{stock}
+\alert{Empirical results} \ \ \ \hyperlink{LRempl}{\beamergotobutton{Long-run employment}} \hyperlink{LRearn}{\beamergotobutton{Long-run earnings}} \hyperlink{gini}{\beamergotobutton{Inequality}}
+\begin{itemize}
+    \item Earnings growth at the bottom of the income distribution is most affected by monetary policy
+    \item The main driver behind the heterogeneity are \textbf{extensive margin transitions} 
+    \item \textbf{Separation probabilities are very counter-cyclical} at the bottom of the distribution
+\end{itemize}
+\alert{Two implications}
+\vspace{2pt}
+\begin{enumerate}
+    \item Less productive workers have more cyclical earnings growth rates
+\item Due to both higher \underline{and} more cyclical unemployment risk
+\end{enumerate}
+\vspace{5pt}
+\textbf{Rest of the talk}\\
+\vspace{2pt}
+\hspace{5pt} Show how this matters for the transmission of monetary policy
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Model}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Model setup}\label{modelsetup}
+\alert{Heterogeneity by permanent income}
+\begin{itemize}
+    \item Introduce ex-ante, permanent heterogeneity 
+    \item Types $g$ differ by productivity, discount factor and unemployment risk 
+\end{itemize}
+
+\onslide<2->{\alert{Earnings risk}
+\begin{itemize}
+    \item Common, persistent income process when employed ($x_{i,t}$)
+    \item Exogenous, type specific unemployment probability
+\end{itemize}
+}
+\onslide<3->{
+\alert{Heterogeneous, countercyclical unemployment risk}
+\begin{itemize}
+    \item Exogenous feedback from aggregates to unemployment risk
+\end{itemize}
+
+Otherwise standard quarterly HANK model \hyperlink{firmdetails}{\beamergotobutton{Details}}
+}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Income risk for households}
+\alert{Households utility and budget}
+\begin{align*}
+\max \quad \mathbb{E}_0 \sum_{t=0}^{\infty} \beta_g^t
+\left(
+\frac{c_{i,t}^{1-\gamma}}{1-\gamma}\right) \quad \text{ s.t. } \quad 
+c_{i,t} + a_{i,t+1} =\marker{return}{$(1+r^p_t)$}a_{i,t}+(1-\tau)y_{i,t}+\marker{transfer}{$T_t$}; \quad \quad a_{i,t} \geq 0
+\end{align*}
+\onslide<3->{\alert{Labor income}
+\vspace{-0.3cm}
+\begin{align*}
+    y^e_{i,t} = w_t h_{g,t} z_g x_{i,t}
+\end{align*}
+\vspace{-0.7cm}
+\begin{itemize}
+    \item Varies because of the real wage $w_t$, type specific hours $h_{g,t}$, or individual productivity $x_{i,t}$ 
+    \item Replacement rate in unemployment is 60\%, as in the data
+\end{itemize}}
+\onslide<4->{
+\alert{Unemployment}
+\vspace{-0.3cm}
+\begin{align*}
+    u_{g,t} = \delta_{g,t}(1-u_{g,t-1})+(1-f_{g,t})u_{g,t-1}
+\end{align*}
+\vspace{-0.7cm}
+\begin{itemize}
+    \item Separation rate $\delta_{g,t}$ and job-finding rate $f_{g,t}$ are cyclical, as in the data
+\end{itemize}
+}
+% Add annotations
+\onslide<2>{\lapisnote[from=north,color=cph_red, yshift=0.6cm, xshift=0.5cm]{return}{Return on mutual fund}
+\lapisnote[from=north east,color=cph_red, xshift=0.6cm, yshift=0.3cm]{transfer}{Transfers}}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Counter-cyclical risk }
+Baseline: \alert{``Endogenous'', type-specific separation and job-finding rates } 
+\begin{align*}
+  \delta^g(w) &= d^g_0 + d^g_1 \left(\log(w)-\log(w_{ss})\right) \\
+  f^g(w) &= f^g_0 + f^g_1 \left(\log(w)-\log(w_{ss})\right) 
+\end{align*}
+\vspace{-.5cm}
+\begin{itemize}
+    \item Exogenous wage Phillips curve: 
+    \begin{itemize}
+        \item real wage drives labor-input fluctuations
+    \end{itemize}
+    \item Simple setup makes counterfactual implementation easy 
+    \item Steady state deviations make things more stable
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Calibration}\label{calibration}
+
+\alert{Discount factors} 
+\begin{itemize}
+    \item Target the same MPC distribution across all counterfactuals \hyperlink{table3}{\beamergotobutton{Internally calibrated parameters}}
+    \item MPCs by permanent income type: [0.30, 0.25, 0.20] (Fagereng et al. 2021; Boehm et al. 2025)
+\end{itemize}
+
+\alert{Earnings risk}
+\begin{itemize}
+    \item Persistent risk of the employed following Krueger et al. (2016) 
+    \item Transition probability process and productivities from the data \hyperlink{table2}{\beamergotobutton{Transition parameters}}
+\end{itemize}
+
+\alert{Other parameters}
+\begin{itemize}
+    \item Standard HANK calibration \hyperlink{table1}{\beamergotobutton{Externally calibrated parameters}}
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Baseline responses to contractionary monetary policy}\label{Cirf}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+    \includegraphics[trim=0cm 6cm 0cm 6.5cm, clip, width=\linewidth]{modelresults/single_CTlev_bgy397_tp0_ui6_sr0.pdf}
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+\begin{itemize}
+    \item 25BP monetary policy shock reduces consumption by 1.4\%
+\vspace{0.5cm}
+    \item Unemployment rises by about 1 percentage point
+\vspace{0.5cm}
+    \item The real wage falls  \hyperlink{baseirf1}{\beamergotobutton{Other irfs}}
+\end{itemize}
+\end{column}
+\end{columns}
+
+\centering
+\alert{Question:} How much is driven by unemployment risk?
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Counterfactual economies}
+\alert{Four counterfactuals}
+\begin{itemize}
+    \item Unemployment transitions or hours adjust in response to shocks
+    \item Incidence is heterogeneous or homogeneous in steady state and along transition
+\end{itemize}
+\begin{center}
+\begin{tabular}{>{\centering\arraybackslash}m{2.2cm}
+                >{\centering\arraybackslash}m{3.2cm}
+                >{\centering\arraybackslash}m{3.2cm}}
+    & \multicolumn{2}{c}{\textbf{Incidence}} \\
+    \cmidrule(lr){2-3}
+    \textbf{Margin} 
+        & \textbf{\tikz[remember picture] \node (hetHead) {Heterogeneous};} 
+        & \textbf{Homogeneous} \\
+    \midrule
+    \textbf{Unemployment} 
+        & \tikz[remember picture] \node (hetU) {\alert{Heterogeneous U}}; 
+        & Homogeneous U \\
+    \midrule
+    \textbf{Hours} 
+        & \tikz[remember picture] \node (hetH) {Heterogeneous H}; 
+        & Homogeneous H \\
+    \bottomrule
+\end{tabular}
+\end{center}
+\onslide<2>{\begin{tikzpicture}[remember picture, overlay]
+\node[pencil,draw=cph_red, thick,
+      fit=(hetHead) (hetU) (hetH),
+      inner sep=6pt] { };
+\end{tikzpicture}}
+
+\alert{Keep things comparable}
+\begin{itemize}
+    \item Relationship between real wage movements and total labor input constant 
+    \item For homogeneous transition probabilities, re-compute elasticities
+\end{itemize}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Hours vs unemployment and the importance of risk}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+    \includegraphics[trim=0cm 6cm 0cm 6.5cm, clip, width=\linewidth]{modelresults/Consumption_Comparison.pdf}
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+\begin{itemize}
+    \item Heterogeneous risk loaded on hours attenuates response
+
+    $\to$ \lapis[cph_red]{unemployment matters}
+\vspace{0.5cm}
+    
+    \onslide<2>{\item Does \textbf{risk} matter? 
+    
+    \item[$\to$] Economy with expected unemployment but hours movements:
+    $C_t^{risk} = \int \Omega^{Het H} C_{i}^{Het U} \ di$
+\vspace{0.5cm}
+    \item Unemployment \lapis[cph_red]{risk} drives half of the difference}
+\end{itemize}
+\end{column}
+\end{columns}
+
+\centering
+\onslide<2>{\alert{Unemployment risk amplifies the effects of monetary policy}}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{The importance of heterogeneous incidence}\label{hetinc0}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+    \includegraphics[trim=0cm 6cm 0cm 6.5cm, clip, width=\linewidth]{modelresults/aggs3_1_CTlev_bgy397_tp0_ui6_sr.pdf}
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+\begin{itemize}
+    \item \lapis[cph_red]{Homogeneity attenuates} consumption response
+    \vspace{0.3cm}
+
+    \item[$\to$] loads more unemployment on highly productive workers, hence smaller $U$ movements 
+
+    \vspace{0.3cm}
+    \item[$\to$] smaller income fluctuations for poor, high MPC agents
+    
+    \vspace{0.3cm}
+    \item[$\to$] Different steady state \hyperlink{hetinc}{\beamergotobutton{Decomposition}}
+    
+\end{itemize}
+\end{column}
+\end{columns}
+
+\centering
+\onslide<2>{\alert{Heterogeneity is important in driving consumption response}}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Conclusion}
+     \alert{Monetary policy has significantly larger effects on low-income workers' earnings}
+    \begin{itemize}
+        \item Heterogeneity driven primarily by unemployment risk at the bottom
+        \item No heterogeneity in earnings response of the employed 
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    
+     \alert{Heterogeneous unemployment risk amplifies monetary policy transmission}
+    \begin{itemize}
+        \item Precautionary savings channel leads to large consumption drop
+        \item Heterogeneity loads on high-MPC workers
+        \item Consumption response increases by about one-third relative to homogeneous-risk models
+    \end{itemize}
+    
+    \vspace{0.3cm}
+    
+     \textbf{Bottom line:} Labor income heterogeneity is crucial for understanding monetary policy effectiveness and its distributional consequences
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+\appendix
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Sample aggregates}\label{aggs0}
+
+\alert{Aggregate effects} 
+\vspace{-3mm}
+\begin{align*}
+    \Delta x_{t+k}= \alpha_{k} + \beta_{k}\Delta i_{t}     +\theta_{k}    X_{t}+\epsilon_{t+k}
+\end{align*}
+
+
+
+\begin{columns}[t]
+\begin{column}{0.48\textwidth}
+    \centering
+    \footnotesize
+    Aggregate earnings growth 
+    
+    $ \Delta x_{t+k}=\ln(\overline{earn}_{t+k})-\ln(\overline{earn}_{t-1})$ 
+    \vspace{1mm}
+    \includegraphics[width=.9\linewidth]{Figures/agg_n_agg_earn.pdf}
+\end{column}
+\begin{column}{0.48\textwidth}
+    \centering
+    \footnotesize
+    Probability of staying employed
+    
+    $\Delta x_{t+k}=\overline{emp}_{t+k}|emp_{it-1}=1$ 
+    \vspace{1mm}
+    \includegraphics[width=.9\linewidth]{Figures/agg_n_employed_fa.pdf}
+\end{column}
+\end{columns}
+
+\hyperlink{hetintro}{\beamergotobutton{Back}}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Aggregate effects}\label{aggs}
+
+\begin{columns}[t]
+\begin{column}{0.48\textwidth}
+    \centering
+    \small
+    Inflation
+    
+    \includegraphics[width=.7\linewidth]{Figures/agg_n_cpi.pdf}
+    
+    Unemployment rate
+    
+    \includegraphics[width=.7\linewidth]{Figures/agg_n_u_rate.pdf}
+\end{column}
+\begin{column}{0.48\textwidth}
+    \centering
+    \small
+    Industrial production
+    
+    \includegraphics[width=.7\linewidth]{Figures/agg_n_IP.pdf}
+    
+    Real rate
+    
+    \includegraphics[width=.7\linewidth]{Figures/agg_n_r.pdf}
+\end{column}
+\end{columns}
+\hfill \hyperlink{hetintro}{\beamergotobutton{Back}}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Descriptive statistics by decile}\label{descr}
+\centering
+\resizebox{\textwidth}{!}{\input{Figures/graph2010fa_new}}
+
+\hyperlink{hetintro}{\beamergotobutton{Back}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Externally calibrated parameters
+}\label{table1}
+\centering
+\resizebox{0.7\textwidth}{!}{\input{tex/calibrationtable}}
+
+\hyperlink{calibration}{\beamergotobutton{Back}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Slide 1: Supply Side
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Model: Supply Side}\label{firmdetails}
+
+\textbf{Final Good Producer}
+\[
+Y_t = \left( \int_0^1 Y_{j,t}^{\frac{\varepsilon-1}{\varepsilon}} dj \right)^{\frac{\varepsilon}{\varepsilon-1}}, \quad P_t = \left( \int_0^1 p_{j,t}^{1-\varepsilon} dj \right)^{\frac{1}{1-\varepsilon}}
+\]
+
+\textbf{Intermediate Goods Firms}
+\begin{itemize}
+    \item Linear production: $Y_{j,t} = H_{j,t}$, marginal cost $mc_{j,t} = w_t$
+    \item Rotemberg pricing $\Rightarrow$ standard NKPC
+    \item Fixed operating cost $F$ (zero steady-state profits)
+\end{itemize}
+
+\textbf{Mutual Fund}
+\begin{itemize}
+    \item Collects household savings, invests in government bonds
+    \item Owns firms, distributes profits: $r^p_t = r_t + \pi_t / A_{t-1}$
+\end{itemize}
+\hyperlink{modelsetup}{\beamergotobutton{Back}}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Slide 2: Government & Equilibrium
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Model: Government \& Equilibrium}
+
+\textbf{Fiscal Policy}
+\[
+B_t = (1+r_t)B_{t-1} + G_t + (1-\tau) UI_t + T_t - \tau W_t H_t
+\]
+Transfers $T_t$ adjust to balance the budget each period.
+
+\textbf{Monetary Policy (Taylor Rule)}
+\[
+i_t = \bar{i} + \phi_\pi \pi_t + \varepsilon_t^{mp}
+\]
+
+\textbf{Market Clearing}
+\begin{itemize}
+    \item Goods: $Y_t = C_t + G_t - F$
+    \item Assets: $A_t = B_t$
+    \item Distribution: $\Omega_{t+1} = \mathcal{H}(\Omega_t)$
+\end{itemize}
+\hyperlink{modelsetup}{\beamergotobutton{Back}}
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Parameters governing unemployment risk 
+}\label{table2}
+\centering
+\resizebox{0.7\textwidth}{!}{\input{tex/elasticity_table}}
+
+\hyperlink{calibration}{\beamergotobutton{Back}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Model earnings elasticities}
+\centering
+\resizebox{0.7\textwidth}{!}{\input{tex/elasticities_by_type}}
+
+\hyperlink{calibration}{\beamergotobutton{Back}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Internally calibrated parameters
+}\label{table3}
+\centering
+{\input{tex/betascalibration}}
+
+{\input{tex/mpcemp_table}}
+
+\hyperlink{calibration}{\beamergotobutton{Back}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Heterogeneous effect on employment}\label{semp}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+\includegraphics[height = 0.7\textheight]{Figures/res_empl_log.pdf}
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+    \begin{itemize}
+        \item Employment share rises most at the bottom
+        \vspace{0.5cm}
+        \item Top almost unaffected
+        \vspace{0.5cm}
+        
+\hyperlink{decomposition}{\beamergotobutton{Back to decomposition}} 
+    \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Probability of switching jobs}\label{switching}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+\includegraphics[height = 0.7\textheight]{Figures/trans_n_switch.pdf}
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+    \begin{itemize}
+        \item Job switching probability rarely significantly affected
+        \vspace{0.5cm}
+        \item Slight effect at the top
+        \vspace{0.5cm}
+        
+    \hyperlink{transprob}{\beamergotobutton{Back}}
+    \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Incidence of monetary policy with unemployment benefits}\label{UI}
+\begin{columns}[c]
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Earnings response with UI benefits} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/earn_n_totUI.pdf}
+    \begin{itemize}
+        \item Still downward sloping, less pronounced
+    \end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Excluding extensive margin} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/earn_n_e2e_dashUI.pdf}
+    \begin{itemize}
+        \item Extensive margin still matters \hyperlink{decomposition}{\beamergotobutton{Back}}
+
+    \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Long-run employment impact of monetary policy}\label{LRempl}
+\vspace{-8mm}
+\begin{align*}
+    empl^q_{t+h} = \alpha_{x,h} + \gamma_{x,h} \Delta i_t + \theta_{x,h} X_t + \epsilon_{x,t}, \quad h = -6, \ldots, 36 
+\end{align*}
+\begin{columns}[c]
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Probability of employment} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/irf_u_employed_fa_n_1.pdf}
+\end{column}
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Marginal effects by type} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/irf_u_employed_fa_n_3raw.pdf}
+\end{column}
+\end{columns}
+\vspace{5pt}
+\textbf{Higher long-run re-employment probability after expansionary policy}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Long-run earnings (incl. UI) impact of monetary policy}\label{LRearn}
+\vspace{-8mm}
+\begin{align*}
+    earn^q_{t+h} = \alpha_{x,h} + \gamma_{x,h} \Delta i_t + \theta_{x,h} X_t + \epsilon_{x,t}, \quad h = -6, \ldots, 36 
+\end{align*}
+\begin{columns}[c]
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Earnings including UI} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/irf_u_earnUI_n_1.pdf}
+\end{column}
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Marginal effects by type} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/irf_u_earnUI_n_3raw.pdf}
+\end{column}
+\end{columns}
+\vspace{5pt}
+\textbf{Expansionary policy leads to higher long-run earnings after unemployment} \hyperlink{stock}{\beamergotobutton{Back}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Gini coefficient after expansionary monetary policy}\label{gini}
+\begin{columns}[c]
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/gini_n_.pdf}
+\end{column}
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Marginal effects by type} 
+    
+    \vspace{3pt}
+    \includegraphics[width=\linewidth]{Figures/gini_n_UI.pdf}
+\end{column}
+\end{columns}
+\vspace{5pt}
+\textbf{Expansionary policy leads to lower inequality} \hyperlink{stock}{\beamergotobutton{Back}}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{More baseline model impulse responses}\label{baseirf1}
+\begin{columns}[c]
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Unemployment} 
+    
+    \vspace{3pt}
+    \includegraphics[trim=0cm 6cm 0cm 6.5cm, clip, width=\linewidth]{modelresults/single_Uagg_T_bgy397_tp0_ui6_sr0.pdf}
+    \begin{itemize}
+        \item Unemployment rises
+    \end{itemize}
+\end{column}
+\begin{column}{0.49\textwidth}
+    \centering
+    \alert{Excluding extensive margin} 
+    
+    \vspace{3pt}
+    \includegraphics[trim=0cm 6cm 0cm 6.5cm, clip, width=\linewidth]{modelresults/single_wTlev_bgy397_tp0_ui6_sr0.pdf}
+    \begin{itemize}
+        \item Real wage falls, forcing transitions \hyperlink{Cirf}{\beamergotobutton{Back}}
+    \end{itemize}
+\end{column}
+\end{columns}
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}{Heterogeneous vs homogeneous incidence decomposition}\label{hetinc}
+\begin{columns}[c]
+\begin{column}{0.6\textwidth}
+    \centering
+    \includegraphics[trim=0cm 6cm 0cm 6.5cm, clip, width=\linewidth]{modelresults/aggs3_2_CTlev_bgy397_tp0_ui6_sr.pdf}
+\end{column}
+\hspace{-10mm}
+\begin{column}{0.4\textwidth}
+\begin{itemize}
+    \item Keep Het U steady state \& apply homogeneous unemployment movements
+        \vspace{0.3cm}
+
+    \item Same labor input conditional on $w$
+    
+    \vspace{0.3cm}
+    \item[$\to$] Heterogeneous transitions explain about 30\% of difference 
+
+    \hyperlink{hetinc0}{\beamergotobutton{Back}}
+    
+\end{itemize}
+\end{column}
+\end{columns}
+
+
+\end{frame}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+\end{document}

@@ -1,0 +1,623 @@
+%% jambro-annotations.sty
+%% ===========================================================================
+%% Hand-Drawn Annotation Package for LaTeX Beamer
+%% Extracted from beamerthemejambro.sty by Ambrogio Cesa-Bianchi
+%% Standalone version: Feb 2026
+%% ===========================================================================
+%%
+%% DESCRIPTION:
+%% Provides hand-drawn (pencil-style) annotation capabilities including:
+%% - Pencil-style arrows and underlines
+%% - Hand-drawn boxes around text
+%% - Annotation notes with curved arrows
+%% - Inline directional arrows
+%% - Text highlighting
+%% - Marker nodes for TikZ overlay positioning
+%%
+%% USAGE:
+%% \usepackage{jambro-annotations}
+%% \usepackage[night]{jambro-annotations}     % Dark mode colors
+%% \usepackage[red]{jambro-annotations}       % Red color scheme
+%%
+%% ===========================================================================
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{jambro-annotations}[2026/02/13 Hand-drawn annotation tools]
+
+%=============================================================================
+%  PACKAGE OPTIONS
+%=============================================================================
+
+\newif\if@JambroRed
+\newif\if@JambroNight
+
+\@JambroRedfalse
+\@JambroNightfalse
+
+\DeclareOption{red}{\@JambroRedtrue}
+\DeclareOption{night}{\@JambroNighttrue}
+\ProcessOptions\relax
+
+
+%=============================================================================
+%  REQUIRED PACKAGES
+%=============================================================================
+
+\RequirePackage{xcolor}
+\RequirePackage{tikz}
+\RequirePackage{soul}
+\RequirePackage{xparse}
+
+% Load TikZ libraries
+\usetikzlibrary{
+    calc,
+    positioning,
+    tikzmark,
+    arrows,
+    decorations,
+    decorations.pathmorphing,
+    decorations.pathreplacing,
+    fit
+}
+
+
+%=============================================================================
+%  COLOR DEFINITIONS
+%=============================================================================
+
+% --- Base color palette (default blue scheme) ---
+\definecolor{jambro@title}{RGB}{7,40,91}
+\definecolor{jambro@main}{RGB}{57,83,124}
+\definecolor{jambro@text}{RGB}{0,0,0}
+\definecolor{jambro@light}{RGB}{255,255,255}
+\definecolor{jambro@hlight}{RGB}{235,203,139}
+\definecolor{jambro@carandache}{RGB}{218,165,32}
+
+% --- Extended color palette ---
+\definecolor{jambro@tomato}{RGB}{217,83,79}
+\definecolor{jambro@cobalt}{RGB}{0,124,146}
+\definecolor{jambro@blue}{RGB}{7,40,91}
+\definecolor{jambro@gold}{RGB}{218,165,32}
+\definecolor{jambro@green}{RGB}{0,179,0}
+\definecolor{jambro@purple}{RGB}{150,40,160}
+\definecolor{jambro@brick}{RGB}{203,92,65}
+\definecolor{jambro@maroon}{RGB}{128,0,0}
+
+% --- Bank of England colors (additional accents) ---
+\definecolor{jambro@BoEacqua}{RGB}{61,215,217}
+\definecolor{jambro@BoEorange}{RGB}{255,114,0}
+\definecolor{jambro@BoEpurple}{RGB}{159,112,225}
+\definecolor{jambro@BoEgold}{RGB}{213,175,54}
+\definecolor{jambro@BoEred}{RGB}{254,1,91}
+
+% --- Red theme override ---
+\if@JambroRed
+    \definecolor{jambro@title}{RGB}{153,0,0}
+    \definecolor{jambro@main}{RGB}{173,51,51}
+    \definecolor{jambro@hlight}{RGB}{235,203,139}
+    \definecolor{jambro@carandache}{RGB}{153,0,0}
+\fi
+
+% --- Night mode override ---
+\if@JambroNight
+    \definecolor{jambro@title}{RGB}{129,161,193}
+    \definecolor{jambro@main}{RGB}{154,180,205}
+    \definecolor{jambro@text}{RGB}{216,222,233}
+    \definecolor{jambro@light}{RGB}{46,52,64}
+    \definecolor{jambro@hlight}{RGB}{126,100,121}
+    \definecolor{jambro@carandache}{RGB}{148,111,169}
+\fi
+
+% --- User-accessible color aliases ---
+\colorlet{carandache}{jambro@carandache}
+\colorlet{hlight}{jambro@hlight}
+\colorlet{jambromain}{jambro@main}
+\colorlet{jambrotitle}{jambro@title}
+\colorlet{jambrotomato}{jambro@tomato}
+\colorlet{jambrocobalt}{jambro@cobalt}
+\colorlet{jambrogold}{jambro@gold}
+\colorlet{jambrogreen}{jambro@green}
+\colorlet{jambropurple}{jambro@purple}
+\colorlet{jambrobrick}{jambro@brick}
+
+% --- Command to change default annotation color ---
+% Usage: \setannotationcolor{RGB}{144,26,30}
+%    or: \setannotationcolor{named}{jambrotomato}
+\newcommand{\setannotationcolor}[2]{%
+    \ifx#1RGB\relax
+        \definecolor{carandache}{RGB}{#2}%
+    \else
+        \colorlet{carandache}{#2}%
+    \fi
+}
+
+
+%=============================================================================
+%  HANDWRITING FONT
+%=============================================================================
+
+% --- Handwriting font declaration (Augie) ---
+% Note: Requires the 'augie' font to be installed
+\DeclareRobustCommand{\hand}{%
+    \fontfamily{augie}\fontshape{n}\selectfont
+}
+\DeclareTextFontCommand{\textaugie}{\hand}
+
+
+%=============================================================================
+%  TIKZ DECORATIONS AND STYLES
+%=============================================================================
+
+% --- Custom decoration: hand-drawn line effect ---
+\makeatletter
+\pgfset{
+    /pgf/decoration/randomness/.initial=2,
+    /pgf/decoration/wavelength/.initial=150
+}
+
+\pgfdeclaredecoration{sketch}{init}{
+    \state{init}[width=0pt,next state=draw,
+        persistent precomputation={\pgfmathsetmacro\pgf@lib@dec@sketch@t0}]{}%
+    \state{draw}[
+        width=\pgfdecorationsegmentlength,
+        auto corner on length=\pgfdecorationsegmentlength,
+        persistent precomputation={
+            \pgfmathsetmacro\pgf@lib@dec@sketch@t{
+                mod(\pgf@lib@dec@sketch@t + pow(\pgfkeysvalueof{/pgf/decoration/randomness}, rand),
+                \pgfkeysvalueof{/pgf/decoration/wavelength})
+            }
+        }]{
+        \pgfmathparse{
+            sin(2*\pgf@lib@dec@sketch@t*pi/\pgfkeysvalueof{/pgf/decoration/wavelength}r)
+        }
+        \pgfpathlineto{
+            \pgfqpoint{\pgfdecorationsegmentlength}{\pgfmathresult\pgfdecorationsegmentamplitude}
+        }
+    }
+    \state{final}{}
+}
+\makeatother
+
+% --- TikZ style definitions ---
+% Note: We don't hardcode 'carandache' in the base pencil style so that
+% explicit color arguments (e.g., \draw[pencil, red]) work correctly.
+% Commands like \lapis and \lapisnote add the color separately.
+\tikzset{
+    % Pencil style - hand-drawn appearance (no default color)
+    pencil/.style={
+        line width=0.05cm,
+        decorate,
+        decoration={
+            sketch, 
+            segment length=1.2pt,
+            amplitude=0.8pt
+        }
+    },
+    % Pencil with default color (for convenience)
+    pencil*/.style={
+        pencil,
+        draw=carandache
+    },
+    % Extra chalky version
+    chalky/.style={
+        line width=0.05cm,
+        decorate,
+        decoration={
+            sketch,
+            segment length=1pt,
+            amplitude=1pt
+        }
+    },
+    % Node styles for overlays
+    nstyle/.style={inner sep=0pt, anchor=base},
+    tstyle/.style={remember picture, baseline},
+    tpstyle/.style={overlay, remember picture},
+    % Arrow with pencil effect
+    arrow/.style={pencil, line width=0.05cm, draw=carandache, ->},
+    % Snake/wavy line style
+    snake/.style={
+        decorate, 
+        line width=0.05cm,
+        draw=carandache,
+        decoration={snake, post length=1.5mm, pre length=1.5mm}
+    },
+    % Box style with pencil effect
+    pencilboxstyle/.style={
+        pencil,
+        draw,
+        line width=0.05cm,
+        inner xsep=0.5pt,
+        inner ysep=0.5pt,
+        baseline
+    }
+}
+
+
+%=============================================================================
+%  MARKER COMMAND
+%=============================================================================
+
+% --- Marker node for TikZ overlay positioning ---
+% Creates an invisible anchor point in text for arrow targeting
+% Usage: \marker{nodename}{visible text}
+\newcommand{\marker}[2]{%
+    \tikz[remember picture, baseline=(#1.base)]{%
+        \node[nstyle, name=#1] (#1) {\strut #2};%
+    }%
+}
+
+
+%=============================================================================
+%  LAPIS: HAND-DRAWN UNDERLINE
+%=============================================================================
+
+% --- Hand-drawn underline (pencil effect) ---
+% Usage: \lapis{text}             → default carandache color
+% Usage: \lapis[red]{text}        → custom color underline
+\newcommand{\lapis}[2][]{%
+    \def\FirstArg{#1}%
+    \ifx\FirstArg\empty
+        \tikz[tstyle]{\node[nstyle](node1){#2}}%
+        \begin{tikzpicture}[tpstyle]
+            \draw[pencil,very thick,draw=carandache] ([yshift=-0.5ex]node1.base west)
+                                      to ([yshift=-0.5ex]node1.base east);
+        \end{tikzpicture}%
+        \hspace{-0.025cm}%
+    \else
+        \tikz[tstyle]{\node[nstyle](node1){#2}}%
+        \begin{tikzpicture}[tpstyle]
+            \draw[pencil,very thick,draw=#1] ([yshift=-0.5ex]node1.base west)
+                                         to ([yshift=-0.5ex]node1.base east);
+        \end{tikzpicture}%
+        \hspace{-0.025cm}%
+    \fi
+}
+
+
+%=============================================================================
+%  LAPISBOX: HAND-DRAWN BOX
+%=============================================================================
+
+% --- Hand-drawn box around text (pencil-style rectangle) ---
+% Usage: \lapisbox{text}                           → simple box
+% Usage: \lapisbox[color=red]{text}                → colored box
+% Usage: \lapisbox[label=mynode]{text}             → box with label for arrows
+% Usage: \lapisbox[color=tomato,label=box1]{text}  → full customization
+\makeatletter
+\pgfkeys{
+    /pencilbox/.is family, /pencilbox,
+    label/.estore in=\lapisbox@label,
+    color/.estore in=\lapisbox@color,
+}
+\def\lapisbox@label{}
+\def\lapisbox@color{jambro@gold}
+
+\newcommand{\lapisbox}[2][]{%
+    \pgfkeys{/pencilbox, #1}%
+    \tikzset{
+        pencilboxstyle/.style={
+            pencil,
+            draw,
+            \lapisbox@color!80,
+            line width=0.04cm,
+            fill=yellow!0,
+            inner xsep=1.2pt,
+            inner ysep=1.4pt,
+            baseline
+        }
+    }%
+    \hspace{0cm}%
+    \raisebox{0pt}[0pt][0pt]{%
+        \ifx\lapisbox@label\@empty
+            \tikz[baseline=(X.base), remember picture]{%
+                \node[pencilboxstyle, text=.] (X) {\strut #2};
+            }
+        \else
+            \tikz[baseline=(\lapisbox@label.base), remember picture]{%
+                \node[pencilboxstyle, text=.=] (\lapisbox@label) {\strut #2};
+            }
+        \fi
+    }%
+    \hspace{-0.1cm}%
+}
+\makeatother
+
+
+%=============================================================================
+%  INLINE PENCIL ARROWS
+%=============================================================================
+
+% --- Inline pencil arrows (one command per direction) ---
+% Usage: \jarrowu                          -> up arrow
+% Usage: \jarrowd[color=tomato]            -> red down arrow
+% Usage: \jarrowr[len=1cm,lw=0.15cm]       -> custom right arrow
+% Usage: \jarrowu[pad=0.15em]              -> tighter spacing
+% Usage: \jarrowl                          -> left arrow
+\pgfkeys{
+    /jarrow/.is family, /jarrow,
+    color/.estore in=\jarrowColor,
+    len/.estore in=\jarrowLen,
+    lw/.estore in=\jarrowLineWidth,
+    pad/.estore in=\jarrowPad,
+}
+\def\jarrowColor{carandache}
+\def\jarrowLen{0.35cm}
+\def\jarrowLineWidth{0.05cm}
+\def\jarrowPad{0.25em}
+
+\makeatletter
+\newcommand{\jarrow@draw}[2]{%
+    \pgfmathsetlengthmacro{\jarrow@half}{\jarrowLen/2}%
+    \pgfmathsetlengthmacro{\jarrow@pad}{\jarrow@half+\jarrowPad}%
+    \newdimen\jarrow@iws\jarrow@iws=\fontdimen2\font
+    \pgfmathsetlengthmacro{\jarrow@shift}{0.5*\the\jarrow@iws}%
+    \tikz[baseline=-0.5ex]{%
+        \useasboundingbox ({-\jarrow@pad+\jarrow@shift},-\jarrow@pad)
+            rectangle ({\jarrow@pad+\jarrow@shift},\jarrow@pad);
+        \draw[pencil, \jarrowColor, line width=\jarrowLineWidth, ->]
+            #1 -- #2;
+    }%
+}
+
+\newcommand{\jarrowup}[1][]{%
+    \def\jarrowColor{carandache}\def\jarrowLen{0.35cm}\def\jarrowLineWidth{0.05cm}\def\jarrowPad{0.25em}%
+    \pgfkeys{/jarrow, #1}%
+    \jarrow@draw{(0,-\jarrow@half)}{(0,\jarrow@half)}%
+}
+\newcommand{\jarrowdown}[1][]{%
+    \def\jarrowColor{carandache}\def\jarrowLen{0.35cm}\def\jarrowLineWidth{0.05cm}\def\jarrowPad{0.25em}%
+    \pgfkeys{/jarrow, #1}%
+    \jarrow@draw{(0,\jarrow@half)}{(0,-\jarrow@half)}%
+}
+\newcommand{\jarrowright}[1][]{%
+    \def\jarrowColor{carandache}\def\jarrowLen{0.35cm}\def\jarrowLineWidth{0.05cm}\def\jarrowPad{0.25em}%
+    \pgfkeys{/jarrow, #1}%
+    \jarrow@draw{(-\jarrow@half,0)}{(\jarrow@half,0)}%
+}
+\newcommand{\jarrowleft}[1][]{%
+    \def\jarrowColor{carandache}\def\jarrowLen{0.35cm}\def\jarrowLineWidth{0.05cm}\def\jarrowPad{0.25em}%
+    \pgfkeys{/jarrow, #1}%
+    \jarrow@draw{(\jarrow@half,0)}{(-\jarrow@half,0)}%
+}
+% Shorthand aliases
+\let\jarrowu\jarrowup
+\let\jarrowd\jarrowdown
+\let\jarrowr\jarrowright
+\let\jarrowl\jarrowleft
+\makeatother
+
+
+%=============================================================================
+%  LAPISNOTE: ANNOTATION WITH ARROW
+%=============================================================================
+
+% --- Flexible annotation command with hand-drawn arrows ---
+% Usage: \lapisnote[options]{node}{text}
+%
+% OPTIONS:
+%   from    : Arrow start position (east/west/north/south/north east/etc.)
+%   to      : Note anchor override (auto/north/south/east/west/etc.)
+%   xshift  : Horizontal offset for note (default: 0.8cm)
+%   yshift  : Vertical offset for note (default: 0.2cm)
+%   color   : Color for both arrow and text (default: carandache)
+%   bend    : Arrow curvature (default/none/left/right/<angle>)
+%   width   : Fixed text width, or 'auto' for natural width
+
+\makeatletter
+\pgfkeys{
+    /pencilnote/.is family, /pencilnote,
+    from/.estore in=\pencilnote@from,
+    to/.estore in=\pencilnote@to,
+    xshift/.estore in=\pencilnote@xshift,
+    yshift/.estore in=\pencilnote@yshift,
+    color/.estore in=\pencilnote@color,
+    bend/.estore in=\pencilnote@bend,
+    width/.estore in=\pencilnote@width,
+}
+
+\def\pencilnote@from{east}
+\def\pencilnote@to{auto}
+\def\pencilnote@xshift{0.8cm}
+\def\pencilnote@yshift{0.3cm}
+\def\pencilnote@color{carandache}
+\def\pencilnote@bend{default}
+\def\pencilnote@width{auto}
+
+\newcommand{\lapisnote}[3][]{%
+    % Reset to defaults
+    \def\pencilnote@from{east}%
+    \def\pencilnote@to{auto}%
+    \def\pencilnote@xshift{0.8cm}%
+    \def\pencilnote@yshift{0.2cm}%
+    \def\pencilnote@color{carandache}%
+    \def\pencilnote@bend{default}%
+    \def\pencilnote@width{auto}%
+    
+    % Parse user options
+    \pgfkeys{/pencilnote, #1}%
+    
+    \tikz[remember picture, overlay]{%
+        % Initialize default positioning parameters
+        \def\noteanchor{west}%
+        \def\xsh{\pencilnote@xshift}%
+        \def\ysh{\pencilnote@yshift}%
+        \def\angleout{0}%
+        \def\anglein{180}%
+        \def\arrowxsh{2pt}%
+        \def\arrowysh{0pt}%
+        
+        % Determine anchor and arrow angles based on 'from' direction
+        \edef\temp{\pencilnote@from}%
+        \ifx\temp\@empty\def\temp{east}\fi
+        
+        % Define test strings
+        \def\testeast{east}%
+        \def\testwest{west}%
+        \def\testnorth{north}%
+        \def\testsouth{south}%
+        \def\testnortheast{north east}%
+        \def\testnorthwest{north west}%
+        \def\testsoutheast{south east}%
+        \def\testsouthwest{south west}%
+        
+        % Set parameters for each direction
+        \ifx\temp\testeast
+            \def\noteanchor{west}%
+            \def\angleout{0}%
+            \def\anglein{180}%
+            \def\arrowxsh{2pt}%
+            \def\arrowysh{0pt}%
+        \fi
+        
+        \ifx\temp\testwest
+            \def\noteanchor{east}%
+            \def\angleout{180}%
+            \def\anglein{0}%
+            \def\arrowxsh{-2pt}%
+            \def\arrowysh{0pt}%
+        \fi
+        
+        \ifx\temp\testnorth
+            \def\noteanchor{south}%
+            \def\angleout{90}%
+            \def\anglein{270}%
+            \def\arrowxsh{0pt}%
+            \def\arrowysh{2pt}%
+        \fi
+        
+        \ifx\temp\testsouth
+            \def\noteanchor{north}%
+            \def\angleout{270}%
+            \def\anglein{90}%
+            \def\arrowxsh{0pt}%
+            \def\arrowysh{-2pt}%
+        \fi
+        
+        \ifx\temp\testnortheast
+            \def\noteanchor{south west}%
+            \def\angleout{45}%
+            \def\anglein{225}%
+            \def\arrowxsh{2pt}%
+            \def\arrowysh{2pt}%
+        \fi
+        
+        \ifx\temp\testnorthwest
+            \def\noteanchor{south east}%
+            \def\angleout{135}%
+            \def\anglein{315}%
+            \def\arrowxsh{-2pt}%
+            \def\arrowysh{2pt}%
+        \fi
+        
+        \ifx\temp\testsoutheast
+            \def\noteanchor{north west}%
+            \def\angleout{315}%
+            \def\anglein{135}%
+            \def\arrowxsh{2pt}%
+            \def\arrowysh{-2pt}%
+        \fi
+        
+        \ifx\temp\testsouthwest
+            \def\noteanchor{north east}%
+            \def\angleout{225}%
+            \def\anglein{45}%
+            \def\arrowxsh{-2pt}%
+            \def\arrowysh{-2pt}%
+        \fi
+        
+        % Override anchor if 'to' is set
+        \edef\toanchor{\pencilnote@to}%
+        \def\testauto{auto}%
+        \ifx\toanchor\testauto\else
+            \edef\noteanchor{\toanchor}%
+        \fi
+        
+        % Create note node
+        \edef\widthtype{\pencilnote@width}%
+        \def\testautowidth{auto}%
+        
+        \ifx\widthtype\testautowidth
+            \node[anchor=\noteanchor, font=\hand, text=\pencilnote@color] 
+                (note) at ([xshift=\xsh, yshift=\ysh]#2.\pencilnote@from) {#3};
+        \else
+            \node[anchor=\noteanchor, text width=\pencilnote@width, 
+                  font=\hand, text=\pencilnote@color] 
+                (note) at ([xshift=\xsh, yshift=\ysh]#2.\pencilnote@from) {#3};
+        \fi
+        
+        % Draw arrow
+        \edef\bendtype{\pencilnote@bend}%
+        \def\testdefault{default}%
+        \def\testnone{none}%
+        \def\teststraight{straight}%
+        \def\testleft{left}%
+        \def\testright{right}%
+        
+        \ifx\bendtype\testdefault
+            \draw[pencil, ->, \pencilnote@color] 
+                ([xshift=\arrowxsh, yshift=\arrowysh]#2.\pencilnote@from) 
+                to[out=\angleout, in=\anglein] (note.\noteanchor);
+        \else\ifx\bendtype\testnone
+            \draw[pencil, ->, \pencilnote@color] 
+                ([xshift=\arrowxsh, yshift=\arrowysh]#2.\pencilnote@from) 
+                -- (note.\noteanchor);
+        \else\ifx\bendtype\teststraight
+            \draw[pencil, ->, \pencilnote@color] 
+                ([xshift=\arrowxsh, yshift=\arrowysh]#2.\pencilnote@from) 
+                -- (note.\noteanchor);
+        \else\ifx\bendtype\testleft
+            \draw[pencil, ->, \pencilnote@color] 
+                ([xshift=\arrowxsh, yshift=\arrowysh]#2.\pencilnote@from) 
+                to[bend left] (note.\noteanchor);
+        \else\ifx\bendtype\testright
+            \draw[pencil, ->, \pencilnote@color] 
+                ([xshift=\arrowxsh, yshift=\arrowysh]#2.\pencilnote@from) 
+                to[bend right] (note.\noteanchor);
+        \else
+            \pgfmathparse{\pencilnote@bend}%
+            \ifdim\pgfmathresult pt<0pt
+                \pgfmathparse{-\pencilnote@bend}%
+                \edef\bendangle{\pgfmathresult}%
+                \draw[pencil, ->, \pencilnote@color] 
+                    ([xshift=\arrowxsh, yshift=\arrowysh]#2.\pencilnote@from) 
+                    to[bend right=\bendangle] (note.\noteanchor);
+            \else
+                \edef\bendangle{\pgfmathresult}%
+                \draw[pencil, ->, \pencilnote@color] 
+                    ([xshift=\arrowxsh, yshift=\arrowysh]#2.\pencilnote@from) 
+                    to[bend left=\bendangle] (note.\noteanchor);
+            \fi
+        \fi\fi\fi\fi\fi
+    }%
+    \vspace{-.4cm}%
+}
+\makeatother
+
+
+%=============================================================================
+%  TEXT HIGHLIGHTING
+%=============================================================================
+
+% --- Highlighter-style text background ---
+% Usage: \stabilo{text}               → default yellow highlight
+% Usage: \stabilo[blue]{text}         → custom color highlight
+\makeatletter
+\@ifclassloaded{beamer}{%
+    \let\HL\hl
+    \renewcommand\hl{%
+        \let\set@color\beamerorig@set@color
+        \let\reset@color\beamerorig@reset@color
+        \HL}
+}{}
+\makeatother
+
+\newcommand{\stabilo}[2][hlight]{%
+    {\sethlcolor{#1}\hl{#2}}%
+}
+
+
+%=============================================================================
+%  END OF JAMBRO-ANNOTATIONS.STY
+%=============================================================================
+
+\endinput
