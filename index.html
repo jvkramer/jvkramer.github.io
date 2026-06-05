@@ -1,19 +1,71 @@
 <!DOCTYPE html>
-<html>
- <head>
-<!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-L3P6B0CP8H"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-L3P6B0CP8H');
-</script>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>John V. Kramer — Economist, University of Copenhagen</title>
+  <meta name="description" content="John V. Kramer is an Assistant Professor at the Department of Economics, University of Copenhagen, working on macroeconomics and heterogeneous agent models.">
+  <!-- Global site tag (gtag.js) - Google Analytics -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L3P6B0CP8H"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-L3P6B0CP8H');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/mondrian.css">
 </head>
 <body>
-<h1>Hello Visitor</h1>
-<p> Please visit my official website <a href="https://sites.google.com/view/john-v-kramer">here</a> </p>
-<p> Explore the interactive S&P 500 / MSCI World profit-loss zones: <a href="buyandhold.html">View the chart</a> </p>
+  <main class="home">
+    <div class="home-grid">
+
+      <header class="tile tile--name">
+        <p class="eyebrow">Assistant Professor · University of Copenhagen</p>
+        <h1>John V. Kramer</h1>
+        <p class="lede">Macroeconomist working on heterogeneous-agent models, monetary policy, and the distribution of income.</p>
+      </header>
+
+      <div class="tile tile--red" aria-hidden="true"></div>
+      <div class="tile tile--yellow" aria-hidden="true"></div>
+
+      <div class="tile tile--photo">
+        <!-- Replace the placeholder below with: <img src="assets/photo.jpg" alt="John V. Kramer"> -->
+        <div class="photo-placeholder" aria-label="Portrait placeholder">JVK</div>
+      </div>
+
+      <a class="tile nav-tile tile--research" href="research.html">
+        <p class="eyebrow">Explore</p>
+        <span class="nav-label">Research</span>
+        <span class="nav-sub">Publications &amp; working papers <span class="arrow" aria-hidden="true">&rarr;</span></span>
+      </a>
+
+      <a class="tile nav-tile tile--cv" href="CV_Kramer.pdf" target="_blank" rel="noopener">
+        <span class="nav-label">CV</span>
+        <span class="nav-sub">PDF <span class="arrow" aria-hidden="true">&rarr;</span></span>
+      </a>
+
+      <div class="tile tile--blue" aria-hidden="true"></div>
+
+      <a class="tile nav-tile tile--teaching" href="teaching.html">
+        <span class="nav-label">Teaching</span>
+        <span class="nav-sub">Courses &amp; supervision <span class="arrow" aria-hidden="true">&rarr;</span></span>
+      </a>
+
+      <a class="tile nav-tile tile--contact" href="contact.html">
+        <span class="nav-label">Contact</span>
+        <span class="nav-sub">Get in touch <span class="arrow" aria-hidden="true">&rarr;</span></span>
+      </a>
+
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; <span id="yr"></span> John V. Kramer</span>
+    <span><a href="mailto:john.kramer@econ.ku.dk">john.kramer@econ.ku.dk</a></span>
+  </footer>
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
 </body>
 </html>
