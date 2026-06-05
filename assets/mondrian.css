@@ -101,7 +101,8 @@ a { color: inherit; }
     "name     name     name     red      photo"
     "name     name     name     yellow   photo"
     "research research cv       teaching contact"
-    "research research blue     teaching contact";
+    "research research blue     teaching contact"
+    "misc     misc     misc     misc     extra";
 }
 
 .tile {
@@ -197,6 +198,19 @@ a { color: inherit; }
 .tile--cv .nav-label,
 .tile--teaching .nav-label,
 .tile--contact .nav-label { font-size: clamp(1.4rem, 1rem + 1.4vw, 1.9rem); }
+
+/* Miscellaneous = wide bottom strip */
+.tile--misc {
+  grid-area: misc;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  background: var(--yellow);
+}
+.tile--misc .nav-label { font-size: clamp(1.4rem, 1rem + 1.4vw, 1.9rem); }
+.tile--misc .nav-sub { margin-top: 0; }
+.tile--extra { grid-area: extra; background: var(--blue); }
 
 /* ==========================================================================
    Content pages (Research, Teaching, Contact)
@@ -351,10 +365,12 @@ a { color: inherit; }
       "red      yellow"
       "research research"
       "cv       teaching"
-      "contact  blue";
+      "contact  blue"
+      "misc     misc"
+      "extra    extra";
   }
   .tile--photo .photo-placeholder { min-height: 220px; }
-  .tile--red, .tile--yellow, .tile--blue { min-height: 56px; }
+  .tile--red, .tile--yellow, .tile--blue, .tile--extra { min-height: 56px; }
 }
 
 @media (max-width: 480px) {
@@ -368,7 +384,9 @@ a { color: inherit; }
       "cv       cv"
       "teaching teaching"
       "contact  contact"
-      "blue     blue";
+      "misc     misc"
+      "blue     blue"
+      "extra    extra";
   }
 }
 
