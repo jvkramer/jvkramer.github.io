@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Miscellaneous — John V. Kramer</title>
+  <meta name="description" content="Interactive charts and side projects by John V. Kramer.">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-L3P6B0CP8H"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-L3P6B0CP8H');
+  </script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/mondrian.css">
+</head>
+<body>
+  <header class="site-header">
+    <a class="site-brand" href="index.html">John V. Kramer</a>
+    <nav class="site-nav">
+      <a href="research.html">Research</a>
+      <a href="CV_Kramer.pdf" target="_blank" rel="noopener">CV</a>
+      <a href="teaching.html">Teaching</a>
+      <a href="contact.html">Contact</a>
+      <a href="misc.html" aria-current="page">Miscellaneous</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <h1 class="page-title">Miscellaneous</h1>
+
+    <p style="max-width:60ch;color:var(--text-soft);margin-top:-1rem;margin-bottom:2.5rem;">
+      A few interactive charts and side projects.
+    </p>
+
+    <div class="contact-grid">
+      <a class="contact-card" href="buyandhold.html">
+        <div class="label">Interactive chart</div>
+        <div class="value">Profit/Loss Shading &mdash; S&amp;P 500 &amp; MSCI World Buy-&amp;-Hold Backtest</div>
+      </a>
+      <a class="contact-card" href="savings_comparison.html">
+        <div class="label">Interactive chart</div>
+        <div class="value">Investment Comparison</div>
+      </a>
+      <a class="contact-card" href="returnguess.html">
+        <div class="label">Game</div>
+        <div class="value">Investment Guess Game</div>
+      </a>
+      <a class="contact-card" href="plane-tracker.html">
+        <div class="label">Tool</div>
+        <div class="value">Overhead Plane Tracker</div>
+      </a>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; <span id="yr"></span> John V. Kramer</span>
+    <span><a href="mailto:john.kramer@econ.ku.dk">john.kramer@econ.ku.dk</a></span>
+  </footer>
+  <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+</body>
+</html>
