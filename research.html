@@ -15,7 +15,7 @@
     <a class="site-brand" href="index.html">John V. Kramer</a>
     <nav class="site-nav">
       <a href="research.html" aria-current="page">Research</a>
-      <a href="CV_Kramer.pdf" target="_blank" rel="noopener">CV</a>
+      <a href="CV_Kramer.pdf" target="_blank" rel="noopener" data-goatcounter-click="cv-download" data-goatcounter-title="CV download (nav)">CV</a>
       <a href="teaching.html">Teaching</a>
       <a href="contact.html">Contact</a>
       <a href="misc.html">Miscellaneous</a>
@@ -116,5 +116,40 @@
     <span>&copy; <span id="yr"></span> John V. Kramer</span>
   </footer>
   <script>document.getElementById('yr').textContent = new Date().getFullYear();</script>
+  <!-- GoatCounter: privacy-friendly, cookieless analytics -->
+  <script data-goatcounter="https://jvkramer.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+  <!-- Per-paper event tracking: PDF/Slides/Replication clicks and abstract opens -->
+  <script>
+    (function () {
+      function gcEvent(path, title) {
+        if (window.goatcounter && window.goatcounter.count) {
+          window.goatcounter.count({ path: path, title: title, event: true });
+        }
+      }
+      function slug(s) {
+        return s.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 50);
+      }
+      document.querySelectorAll('.paper').forEach(function (paper) {
+        var h = paper.querySelector('h3');
+        var title = h ? h.textContent.trim() : 'paper';
+        var s = slug(title);
+        paper.querySelectorAll('.paper-links a').forEach(function (a) {
+          var t = a.textContent.trim().toLowerCase();
+          var type = t.indexOf('slides') > -1 ? 'slides'
+                   : t.indexOf('replication') > -1 ? 'replication'
+                   : 'pdf';
+          a.addEventListener('click', function () {
+            gcEvent(type + '-' + s, type.charAt(0).toUpperCase() + type.slice(1) + ': ' + title);
+          });
+        });
+        var d = paper.querySelector('details.abstract-toggle');
+        if (d) {
+          d.addEventListener('toggle', function () {
+            if (d.open) gcEvent('abstract-' + s, 'Abstract: ' + title);
+          });
+        }
+      });
+    })();
+  </script>
 </body>
 </html>
