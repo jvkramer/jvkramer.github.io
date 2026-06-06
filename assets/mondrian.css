@@ -366,6 +366,9 @@ a { color: inherit; }
   transition: background 0.15s ease, color 0.15s ease;
 }
 .contact-card:hover { background: var(--ink); color: var(--paper); }
+.contact-card--static { cursor: default; }
+.contact-card--static:hover { background: var(--paper); color: inherit; }
+.contact-card--static:hover .label { color: var(--text-soft); }
 .contact-card .label {
   font-size: 0.72rem;
   font-weight: 700;
