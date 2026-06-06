@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  2 APR 2026 15:25
+This is pdfTeX, Version 3.141592653-2.6-1.40.25 (MiKTeX 23.5) (preloaded format=pdflatex 2024.1.13)  6 JUN 2026 06:13
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -433,21 +433,16 @@ Package marginnote Info: right page because not two side mode on input line 57.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/n' will be
 (Font)              scaled to size 10.0pt on input line 57.
 Package marginnote Info: xpos seems to be 93.89418pt on input line 57.
-
-Underfull \hbox (badness 10000) in paragraph at lines 57--58
-
- []
-
-Package marginnote Info: Margin note 1.2 is on absolute page 1 on input line 61
+Package marginnote Info: Margin note 1.2 is on absolute page 1 on input line 58
 .
-Package marginnote Info: right page because not two side mode on input line 61.
+Package marginnote Info: right page because not two side mode on input line 58.
 
-Package marginnote Info: xpos seems to be 93.89418pt on input line 61.
-Package marginnote Info: Margin note 1.3 is on absolute page 1 on input line 64
+Package marginnote Info: xpos seems to be 93.89418pt on input line 58.
+Package marginnote Info: Margin note 1.3 is on absolute page 1 on input line 62
 .
-Package marginnote Info: right page because not two side mode on input line 64.
+Package marginnote Info: right page because not two side mode on input line 62.
 
-Package marginnote Info: xpos seems to be 93.89418pt on input line 64.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 62.
 Package marginnote Info: Margin note 1.4 is on absolute page 1 on input line 65
 .
 Package marginnote Info: right page because not two side mode on input line 65.
@@ -458,65 +453,70 @@ Package marginnote Info: Margin note 1.5 is on absolute page 1 on input line 66
 Package marginnote Info: right page because not two side mode on input line 66.
 
 Package marginnote Info: xpos seems to be 93.89418pt on input line 66.
-Package marginnote Info: Margin note 1.6 is on absolute page 1 on input line 70
+Package marginnote Info: Margin note 1.6 is on absolute page 1 on input line 67
 .
-Package marginnote Info: right page because not two side mode on input line 70.
+Package marginnote Info: right page because not two side mode on input line 67.
 
-Package marginnote Info: xpos seems to be 93.89418pt on input line 70.
-Package marginnote Info: Margin note 1.7 is on absolute page 1 on input line 72
+Package marginnote Info: xpos seems to be 93.89418pt on input line 67.
+Package marginnote Info: Margin note 1.7 is on absolute page 1 on input line 71
 .
-Package marginnote Info: right page because not two side mode on input line 72.
+Package marginnote Info: right page because not two side mode on input line 71.
 
-Package marginnote Info: xpos seems to be 93.89418pt on input line 72.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 71.
+Package marginnote Info: Margin note 1.8 is on absolute page 1 on input line 73
+.
+Package marginnote Info: right page because not two side mode on input line 73.
+
+Package marginnote Info: xpos seems to be 93.89418pt on input line 73.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/n' will be
-(Font)              scaled to size 12.0pt on input line 85.
+(Font)              scaled to size 12.0pt on input line 86.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/sb/n' will be
-(Font)              scaled to size 12.0pt on input line 85.
+(Font)              scaled to size 12.0pt on input line 86.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/sc' will be
-(Font)              scaled to size 12.0pt on input line 85.
+(Font)              scaled to size 12.0pt on input line 86.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/sc' will be
-(Font)              scaled to size 10.95pt on input line 85.
+(Font)              scaled to size 10.95pt on input line 86.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/sb/n' will be
-(Font)              scaled to size 10.95pt on input line 87.
+(Font)              scaled to size 10.95pt on input line 88.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/sb/it' will be
-(Font)              scaled to size 10.95pt on input line 87.
-
-Underfull \hbox (badness 10000) in paragraph at lines 87--88
-
- []
-
+(Font)              scaled to size 10.95pt on input line 88.
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/it' will be
-(Font)              scaled to size 10.95pt on input line 89.
+(Font)              scaled to size 10.95pt on input line 88.
 
-Underfull \hbox (badness 10000) in paragraph at lines 94--95
+Underfull \hbox (badness 10000) in paragraph at lines 88--89
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 90--91
 
  []
 
 
-Underfull \hbox (badness 10000) in paragraph at lines 96--97
+Underfull \hbox (badness 10000) in paragraph at lines 98--99
 
  []
 
-Package marginnote Info: Margin note 1.8 is on absolute page 1 on input line 10
-4.
-Package marginnote Info: right page because not two side mode on input line 104
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 104.
 Package marginnote Info: Margin note 1.9 is on absolute page 1 on input line 10
-6.
-Package marginnote Info: right page because not two side mode on input line 106
+5.
+Package marginnote Info: right page because not two side mode on input line 105
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 106.
-Package marginnote Info: Margin note 1.10 is on absolute page 2 on input line 1
-08.
-Package marginnote Info: right page because not two side mode on input line 108
+Package marginnote Info: xpos seems to be 93.89418pt on input line 105.
+Package marginnote Info: Margin note 1.10 is on absolute page 1 on input line 1
+07.
+Package marginnote Info: right page because not two side mode on input line 107
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 108.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 107.
 Package marginnote Info: Margin note 1.11 is on absolute page 2 on input line 1
-10.
-Package marginnote Info: right page because not two side mode on input line 110
+09.
+Package marginnote Info: right page because not two side mode on input line 109
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 110.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 109.
+Package marginnote Info: Margin note 1.12 is on absolute page 2 on input line 1
+11.
+Package marginnote Info: right page because not two side mode on input line 111
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 111.
 [1
 
 {C:/Users/qwp970/AppData/Local/MiKTeX/fonts/map/pdftex/pdftex.map}{C:/Users/qwp
@@ -525,57 +525,67 @@ Package marginnote Info: xpos seems to be 93.89418pt on input line 110.
 ni.enc}{C:/Users/qwp970/AppData/Local/Programs/MiKTeX/fonts/enc/dvips/ebgaramon
 d/ebg_ljow5q.enc}]
 Package marginnote Info: Margin note 2.1 is on absolute page 2 on input line 11
-4.
-Package marginnote Info: right page because not two side mode on input line 114
+3.
+Package marginnote Info: right page because not two side mode on input line 113
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 114.
-Package marginnote Info: Margin note 2.2 is on absolute page 2 on input line 12
+Package marginnote Info: xpos seems to be 93.89418pt on input line 113.
+Package marginnote Info: Margin note 2.2 is on absolute page 2 on input line 11
 7.
-Package marginnote Info: right page because not two side mode on input line 127
+Package marginnote Info: right page because not two side mode on input line 117
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 127.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 117.
+Package marginnote Info: Margin note 2.3 is on absolute page 2 on input line 13
+0.
+Package marginnote Info: right page because not two side mode on input line 130
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 130.
 
-Underfull \hbox (badness 10000) in paragraph at lines 127--128
+Underfull \hbox (badness 10000) in paragraph at lines 130--131
 
  []
 
-Package marginnote Info: Margin note 2.3 is on absolute page 2 on input line 13
-6.
-Package marginnote Info: right page because not two side mode on input line 136
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 136.
 Package marginnote Info: Margin note 2.4 is on absolute page 2 on input line 13
-7.
-Package marginnote Info: right page because not two side mode on input line 137
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 137.
-Package marginnote Info: Margin note 2.5 is on absolute page 2 on input line 13
-8.
-Package marginnote Info: right page because not two side mode on input line 138
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 138.
-Package marginnote Info: Margin note 2.6 is on absolute page 2 on input line 14
-8.
-Package marginnote Info: right page because not two side mode on input line 148
-.
-Package marginnote Info: xpos seems to be 93.89418pt on input line 148.
-Package marginnote Info: Margin note 2.7 is on absolute page 2 on input line 14
 9.
-Package marginnote Info: right page because not two side mode on input line 149
+Package marginnote Info: right page because not two side mode on input line 139
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 149.
-Package marginnote Info: Margin note 2.8 is on absolute page 2 on input line 17
+Package marginnote Info: xpos seems to be 93.89418pt on input line 139.
+Package marginnote Info: Margin note 2.5 is on absolute page 2 on input line 14
+0.
+Package marginnote Info: right page because not two side mode on input line 140
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 140.
+Package marginnote Info: Margin note 2.6 is on absolute page 2 on input line 14
+1.
+Package marginnote Info: right page because not two side mode on input line 141
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 141.
+Package marginnote Info: Margin note 2.7 is on absolute page 2 on input line 14
 2.
-Package marginnote Info: right page because not two side mode on input line 172
+Package marginnote Info: right page because not two side mode on input line 142
 .
-Package marginnote Info: xpos seems to be 93.89418pt on input line 172.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 142.
+Package marginnote Info: Margin note 2.8 is on absolute page 2 on input line 15
+2.
+Package marginnote Info: right page because not two side mode on input line 152
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 152.
+Package marginnote Info: Margin note 2.9 is on absolute page 2 on input line 15
+3.
+Package marginnote Info: right page because not two side mode on input line 153
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 153.
+Package marginnote Info: Margin note 2.10 is on absolute page 2 on input line 1
+76.
+Package marginnote Info: right page because not two side mode on input line 176
+.
+Package marginnote Info: xpos seems to be 93.89418pt on input line 176.
 
-Underfull \hbox (badness 10000) in paragraph at lines 172--174
+Underfull \hbox (badness 10000) in paragraph at lines 176--178
 
  []
 
 LaTeX Font Info:    Font shape `T1/EBGaramond-OsF/m/n' will be
-(Font)              scaled to size 8.0pt on input line 181.
+(Font)              scaled to size 8.0pt on input line 185.
 [2] (CV_Kramer.aux)
  ***********
 LaTeX2e <2023-06-01> patch level 1
@@ -585,20 +595,20 @@ Package rerunfilecheck Info: File `CV_Kramer.out' has not changed.
 (rerunfilecheck)             Checksum: D41D8CD98F00B204E9800998ECF8427E;0.
  ) 
 Here is how much of TeX's memory you used:
- 10541 strings out of 475502
- 169438 string characters out of 5761341
- 1933248 words of memory out of 5000000
- 31647 multiletter control sequences out of 15000+600000
+ 10544 strings out of 475502
+ 169473 string characters out of 5761341
+ 1934248 words of memory out of 5000000
+ 31650 multiletter control sequences out of 15000+600000
  656832 words of font info for 62 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,9n,82p,527b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 80i,9n,82p,505b,454s stack positions out of 10000i,1000n,20000p,200000b,200000s
 <C:/Users/qwp970/AppData/Local/Programs/MiKTeX/fonts/type1/public/ebgaramond/
 EBGaramond-Italic.pfb><C:/Users/qwp970/AppData/Local/Programs/MiKTeX/fonts/type
 1/public/ebgaramond/EBGaramond-Regular.pfb><C:/Users/qwp970/AppData/Local/Progr
 ams/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiBold.pfb><C:/Users/qwp9
 70/AppData/Local/Programs/MiKTeX/fonts/type1/public/ebgaramond/EBGaramond-SemiB
 oldItalic.pfb>
-Output written on CV_Kramer.pdf (2 pages, 98555 bytes).
+Output written on CV_Kramer.pdf (2 pages, 98015 bytes).
 PDF statistics:
  61 PDF objects out of 1000 (max. 8388607)
  18 named destinations out of 1000 (max. 500000)
