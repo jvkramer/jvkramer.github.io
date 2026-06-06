@@ -115,7 +115,7 @@ a { color: inherit; }
 }
 
 /* Name / intro */
-.tile--name { grid-area: name; gap: 0.4rem; }
+.tile--name { grid-area: name; gap: 0.4rem; justify-content: flex-start; }
 .tile--name h1 {
   font-family: var(--font-display);
   font-weight: 700;
@@ -135,7 +135,10 @@ a { color: inherit; }
   font-size: 0.86rem;
   line-height: 1.5;
   color: var(--text-soft);
-  max-width: 50ch;
+  max-width: none;
+  text-align: justify;
+  hyphens: auto;
+  -webkit-hyphens: auto;
 }
 .tile--name .bio p:last-child { margin-bottom: 0; }
 
@@ -334,7 +337,7 @@ a { color: inherit; }
   line-height: 1.5;
   color: var(--text);
 }
-.abstract-toggle .abstract p { margin: 0; }
+.abstract-toggle .abstract p { margin: 0; text-align: justify; hyphens: auto; -webkit-hyphens: auto; }
 
 /* Generic content rows (teaching, contact) */
 .entry { margin-bottom: 1.4rem; }
