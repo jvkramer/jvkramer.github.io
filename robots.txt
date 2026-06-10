@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://jvkramer.github.io/sitemap.xml
