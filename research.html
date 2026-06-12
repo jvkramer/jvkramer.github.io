@@ -56,6 +56,7 @@
             <div class="abstract"><p>Negative oil supply shocks since the 1980s have increased German inflation and reduced aggregate economic activity and prompted moderate monetary tightening to counter these inflationary effects. Using 45 years of high-frequency German administrative data, we find that these shocks disproportionally harm low-income individuals: their earnings growth falls by two percentage points two years after a 10-percent exogenous oil price rise, while high-income individuals are largely unaffected. Job-finding probabilities for low-income workers also decline significantly. This contrasts with the distributional effects of monetary policy shocks, which, while also stronger at the bottom, primarily impact job-separation probabilities. To understand the role of monetary policy in shaping these outcomes, we analyze counterfactual scenarios of policy non-response. Because the actual policy response to oil shocks involves an initial rate rise followed by a fall, a fully anticipated non-response (estimated following McKay and Wolf, 2023) leaves the oil shock&rsquo;s aggregate and distributional effects little changed. When monetary policy repeatedly surprises by not reacting (following Sims and Zha, 2006), in contrast, the implied initial monetary loosening dominates, boosting activity, inflation, and particularly employment prospects for low-income individuals.</p></div>
           </details>
           <a href="Oil_shocks_distribution_Broer_Kramer_MItman.pdf" target="_blank" rel="noopener">PDF</a>
+          <a class="coverage" href="https://cepr.org/voxeu/columns/unequal-burden-oil-shocks-labour-markets-and-monetary-policy" target="_blank" rel="noopener">VoxEU Column</a>
         </div>
       </article>
 
@@ -137,6 +138,7 @@
           var t = a.textContent.trim().toLowerCase();
           var type = t.indexOf('slides') > -1 ? 'slides'
                    : t.indexOf('replication') > -1 ? 'replication'
+                   : (t.indexOf('voxeu') > -1 || t.indexOf('column') > -1 || a.classList.contains('coverage')) ? 'coverage'
                    : 'pdf';
           a.addEventListener('click', function () {
             gcEvent(type + '-' + s, type.charAt(0).toUpperCase() + type.slice(1) + ': ' + title);
