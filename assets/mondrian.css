@@ -291,13 +291,13 @@ a { color: inherit; }
   transition: background 0.15s ease, color 0.15s ease;
 }
 .paper .paper-links a:hover { background: var(--ink); color: var(--paper); }
-/* Coverage variant — news/policy write-ups about a paper, not the paper itself */
-.paper .paper-links a.coverage {
+/* PDF — the primary link to the paper itself; filled blue so it stands out */
+.paper .paper-links a.pdf {
   background: var(--blue);
   color: #fff;
   border-color: var(--blue);
 }
-.paper .paper-links a.coverage:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.paper .paper-links a.pdf:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); }
 .paper .tag {
   display: inline-block;
   font-size: 0.7rem;
