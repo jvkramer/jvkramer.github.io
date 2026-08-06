@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Copenhagen &rarr; Canc&uacute;n Fare Tracker &mdash; John V. Kramer</title>
+  <meta name="description" content="Where today's Copenhagen to Cancun airfare sits in the distribution of historical fares for the same route.">
+  <link rel="canonical" href="https://jvkramer.github.io/cancun.html">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap">
+  <link rel="stylesheet" href="assets/mondrian.css">
+  <script src="https://cdn.plot.ly/plotly-2.32.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    /* Chart roles. Series hues are the site's own brand blue and red, validated
+       as a categorical pair against the paper surface (#f6f3ec): worst adjacent
+       CVD deltaE 24.7, normal-vision 33.2, both clear of the floors. Brand
+       yellow is deliberately not used for data -- it fails the lightness band
+       and sits at 1.38:1 on paper. */
+    .viz-root {
+      --surface-1: #f6f3ec;
+      --text-primary: #14110f;
+      --text-secondary: #4a4540;
+      --muted: #7a736b;
+      --gridline: #ded7c9;
+      --series-hist: #1d4ed8;   /* historical fare range */
+      --series-hist-fill: rgba(29, 78, 216, 0.14);
+      --series-now: #e63946;    /* fare on sale today */
+      --good: #0ca30c;
+      --warning: #fab219;
+      --critical: #d03b3b;
+    }
+
+    .viz-card {
+      border: 2px solid var(--ink);
+      background: #fffdf7;
+      padding: 1.25rem;
+      margin-bottom: 2rem;
+    }
+    .viz-card h2 {
+      font-size: 1.05rem;
+      margin: 0 0 .25rem;
+      letter-spacing: .01em;
+    }
+    .viz-card .sub {
+      font-size: .85rem;
+      color: var(--text-soft);
+      margin: 0 0 1rem;
+      max-width: 70ch;
+    }
+
+    /* Hero verdict */
+    .verdict {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      gap: 1rem 1.5rem;
+      border-left: 8px solid var(--ink);
+      padding: 1rem 1.25rem;
+      background: #fffdf7;
+      margin-bottom: 2rem;
+    }
+    .verdict .figure {
+      font-size: clamp(2.4rem, 7vw, 3.6rem);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--text-primary);
+    }
+    .verdict .figure sup { font-size: .4em; font-weight: 600; }
+    .verdict .caption { font-size: .95rem; color: var(--text-soft); max-width: 46ch; }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: .4rem;
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .06em;
+      padding: .3rem .6rem;
+      border: 2px solid var(--ink);
+      color: #14110f;
+    }
+    .badge .dot { width: .7rem; height: .7rem; border-radius: 50%; display: inline-block; }
+
+    .chart { width: 100%; height: 460px; }
+
+    /* Filters sit in one row above the chart they act on. */
+    .filter-row {
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+      margin-bottom: .75rem;
+      font-size: .85rem;
+    }
+    .filter-row label { font-weight: 600; color: var(--text-secondary); }
+    .filter-row select {
+      font: inherit;
+      font-size: .85rem;
+      padding: .3rem .5rem;
+      border: 2px solid var(--ink);
+      background: var(--paper);
+      cursor: pointer;
+    }
+
+    /* Table view -- the non-colour route to the same numbers */
+    .table-toggle {
+      font: inherit;
+      font-size: .85rem;
+      font-weight: 600;
+      background: none;
+      border: 2px solid var(--ink);
+      padding: .35rem .7rem;
+      cursor: pointer;
+      margin-top: .5rem;
+    }
+    .table-toggle:hover { background: var(--paper-soft); }
+    table.data { border-collapse: collapse; width: 100%; margin-top: 1rem; font-size: .85rem; }
+    table.data th, table.data td { border-bottom: 1px solid var(--gridline); padding: .4rem .5rem; text-align: right; }
+    table.data th:first-child, table.data td:first-child { text-align: left; }
+    table.data th { font-weight: 700; border-bottom: 2px solid var(--ink); }
+    table.data td { font-variant-numeric: tabular-nums; }
+    .table-wrap { overflow-x: auto; }
+    [hidden] { display: none !important; }
+
+    .empty {
+      border: 2px dashed var(--ink);
+      padding: 1.25rem;
+      background: #fffdf7;
+      margin-bottom: 2rem;
+    }
+    .empty h2 { margin: 0 0 .5rem; font-size: 1.05rem; }
+    .empty p { margin: 0 0 .75rem; font-size: .9rem; color: var(--text-soft); max-width: 72ch; }
+    .empty pre {
+      background: var(--paper-soft);
+      border-left: 4px solid var(--blue);
+      padding: .75rem 1rem;
+      overflow-x: auto;
+      font-size: .82rem;
+      margin: 0;
+    }
+    .note { font-size: .82rem; color: var(--text-soft); max-width: 78ch; }
+  </style>
+</head>
+<body class="viz-root">
+  <header class="site-header">
+    <a class="site-brand" href="index.html">John V. Kramer</a>
+    <nav class="site-nav">
+      <a href="research.html">Research</a>
+      <a href="CV_Kramer.pdf" target="_blank" rel="noopener" data-goatcounter-click="cv-download" data-goatcounter-title="CV download (nav)">CV</a>
+      <a href="teaching.html">Teaching</a>
+      <a href="contact.html">Contact</a>
+      <a href="misc.html" aria-current="page">Miscellaneous</a>
+    </nav>
+  </header>
+
+  <main class="page">
+    <h1 class="page-title">Copenhagen &rarr; Canc&uacute;n</h1>
+    <p style="max-width:64ch;color:var(--text-soft);margin-top:-1rem;margin-bottom:2.5rem;">
+      Whether a fare is <em>expensive</em> is a question about its position in a
+      distribution, not its level. This tracks the cheapest CPH&ndash;CUN return
+      fare on sale and places it against the spread of historical fares for the
+      same route and departure month.
+    </p>
+
+    <!-- shown only when the CSV has no observations yet -->
+    <section class="empty" id="empty-state" hidden>
+      <h2>No observations yet</h2>
+      <p>
+        <code>cph_cancun_prices.csv</code> currently has only a header row. Run the
+        collector to populate it &mdash; each run appends, so the tracked series
+        builds up over time.
+      </p>
+      <pre><code>cd flightprices
+pip install fast-flights                 # keyless source, current fare only
+
+# recommended: historical distribution + today's fare
+export AMADEUS_CLIENT_ID=...             # free key, no card:
+export AMADEUS_CLIENT_SECRET=...         # https://developers.amadeus.com/register
+python fetch_prices.py --source amadeus --scan-year --environment production</code></pre>
+    </section>
+
+    <section class="verdict" id="verdict" hidden>
+      <div>
+        <div class="figure" id="verdict-figure">&mdash;</div>
+        <div style="font-size:.8rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:600;">
+          percentile of historical fares
+        </div>
+      </div>
+      <div>
+        <span class="badge" id="verdict-badge"><span class="dot"></span><span id="verdict-label">&mdash;</span></span>
+        <p class="caption" id="verdict-caption" style="margin:.6rem 0 0;"></p>
+      </div>
+    </section>
+
+    <section class="viz-card" id="card-distribution" hidden>
+      <h2>Today's fare against the historical spread</h2>
+      <p class="sub">
+        Each box is the historical fare distribution for that departure month:
+        the box spans the middle half of past fares (25th&ndash;75th percentile),
+        the line inside is the median, the whiskers reach the cheapest and dearest
+        fares on record. The red dot is what the same trip costs today.
+      </p>
+      <div class="chart" id="chart-distribution"></div>
+      <button class="table-toggle" type="button" data-target="table-distribution" aria-expanded="false">
+        Show the numbers
+      </button>
+      <div class="table-wrap"><table class="data" id="table-distribution" hidden></table></div>
+    </section>
+
+    <section class="viz-card" id="card-tracked" hidden>
+      <h2>Tracked fare over time</h2>
+      <p class="sub">
+        The cheapest fare found on each collection date, for one departure month
+        at a time, against that month's historical median. This fills in as the
+        collector is re-run.
+      </p>
+      <div class="filter-row">
+        <label for="month-select">Departure month</label>
+        <select id="month-select"></select>
+      </div>
+      <div class="chart" id="chart-tracked"></div>
+      <button class="table-toggle" type="button" data-target="table-tracked"
+              data-show="Show all observations" data-hide="Hide all observations" aria-expanded="false">
+        Show all observations
+      </button>
+      <div class="table-wrap"><table class="data" id="table-tracked" hidden></table></div>
+    </section>
+
+    <p class="note" id="method-note"></p>
+  </main>
+
+  <footer class="site-footer">
+    <span>&copy; <span id="yr"></span> John V. Kramer</span>
+  </footer>
+
+  <script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  const CSS = getComputedStyle(document.querySelector('.viz-root'));
+  const C = k => CSS.getPropertyValue(k).trim();
+
+  const num = v => {
+    if (v === null || v === undefined || v === '') return null;
+    const n = Number(v);
+    return Number.isFinite(n) ? n : null;
+  };
+
+  const MONTH_FMT = { year: 'numeric', month: 'short' };
+  const monthLabel = iso => new Date(iso + 'T00:00:00')
+    .toLocaleDateString('en-GB', MONTH_FMT);
+
+  // 1st, 2nd, 3rd, 4th ... 11th/12th/13th are the exceptions.
+  const ordinal = n => {
+    const v = Math.round(n);
+    const tens = v % 100;
+    if (tens >= 11 && tens <= 13) return v + 'th';
+    return v + ({ 1: 'st', 2: 'nd', 3: 'rd' }[v % 10] || 'th');
+  };
+
+  let CURRENCY = 'DKK';
+  const money = v => v === null ? '—'
+    : v.toLocaleString('da-DK', { maximumFractionDigits: 0 }) + ' ' + CURRENCY;
+
+  // Verdict wording. Colour never carries this alone -- the label and the
+  // number say the same thing.
+  function verdictFor(pct) {
+    if (pct === null) return null;
+    if (pct < 25) return { label: 'Low',     color: C('--good'),     text: 'cheaper than roughly ' + Math.round(100 - pct) + '% of past fares. A good time to book.' };
+    if (pct < 60) return { label: 'Typical', color: C('--warning'),  text: 'squarely in the normal range for this route. Nothing unusual either way.' };
+    if (pct < 80) return { label: 'High',    color: C('--critical'), text: 'dearer than most fares on record for this route. Worth waiting if the dates are flexible.' };
+    return           { label: 'Very high',   color: C('--critical'), text: 'near the top of everything on record for this route. Historically expensive.' };
+  }
+
+  // Collapse repeated runs to the most recent observation per departure month.
+  function latestPerDeparture(rows) {
+    const byMonth = new Map();
+    rows.forEach(r => {
+      const prev = byMonth.get(r.departure_date);
+      if (!prev || r.run_date > prev.run_date) byMonth.set(r.departure_date, r);
+    });
+    return [...byMonth.values()]
+      .sort((a, b) => a.departure_date.localeCompare(b.departure_date));
+  }
+
+  function renderVerdict(rows) {
+    // Must read the *latest* run, not the first row that happens to have a
+    // percentile -- an older run for the same month would otherwise win.
+    const scored = latestPerDeparture(rows).filter(r => r.percentile !== null);
+    if (!scored.length) return;
+
+    // The headline is the nearest upcoming departure that has a percentile.
+    const r = scored[0];
+    const v = verdictFor(r.percentile);
+
+    document.getElementById('verdict-figure').innerHTML =
+      ordinal(r.percentile).replace(/(st|nd|rd|th)$/, '<sup>$1</sup>');
+    document.getElementById('verdict-label').textContent = v.label;
+    document.querySelector('#verdict-badge .dot').style.background = v.color;
+    document.getElementById('verdict-caption').textContent =
+      'Departing ' + monthLabel(r.departure_date) + ', the cheapest fare is ' +
+      money(r.current_price) + ' — ' + v.text;
+    document.getElementById('verdict').hidden = false;
+  }
+
+  function renderDistribution(rows) {
+    const withHist = rows.filter(r =>
+      r.hist_q1 !== null && r.hist_median !== null && r.hist_q3 !== null);
+    if (!withHist.length) return;
+
+    const data = latestPerDeparture(withHist);
+    const labels = data.map(r => monthLabel(r.departure_date));
+
+    // Reveal before plotting: a display:none container has no width, and Plotly
+    // would fall back to its 700px default and overflow narrow viewports.
+    document.getElementById('card-distribution').hidden = false;
+
+    const boxTrace = {
+      type: 'box',
+      name: 'Historical fare range',
+      x: labels,
+      q1: data.map(r => r.hist_q1),
+      median: data.map(r => r.hist_median),
+      q3: data.map(r => r.hist_q3),
+      lowerfence: data.map(r => r.hist_min === null ? r.hist_q1 : r.hist_min),
+      upperfence: data.map(r => r.hist_max === null ? r.hist_q3 : r.hist_max),
+      marker: { color: C('--series-hist') },
+      fillcolor: C('--series-hist-fill'),
+      line: { width: 2, color: C('--series-hist') },
+      hoverinfo: 'y',
+      whiskerwidth: 0.5
+    };
+
+    const nowTrace = {
+      type: 'scatter',
+      name: 'On sale today',
+      mode: 'markers',
+      x: labels,
+      y: data.map(r => r.current_price),
+      marker: {
+        color: C('--series-now'),
+        size: 13,
+        line: { color: '#fffdf7', width: 2 }   // 2px surface ring
+      },
+      customdata: data.map(r => [
+        r.percentile === null ? '—' : ordinal(r.percentile) + ' percentile',
+        r.run_date
+      ]),
+      hovertemplate:
+        '<b>%{x}</b><br>On sale today: %{y:,.0f} ' + CURRENCY +
+        '<br>%{customdata[0]}<br><span style="font-size:11px">observed %{customdata[1]}</span><extra></extra>'
+    };
+
+    Plotly.newPlot('chart-distribution', [boxTrace, nowTrace], {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: { family: 'Inter, system-ui, sans-serif', color: C('--text-secondary'), size: 12 },
+      margin: { l: 64, r: 20, t: 12, b: 52 },
+      xaxis: { title: { text: 'Departure month', font: { size: 12 } }, tickfont: { size: 11 }, showgrid: false, linecolor: C('--gridline') },
+      yaxis: {
+        title: { text: 'Return fare (' + CURRENCY + ')', font: { size: 12 } },
+        tickfont: { size: 11 },
+        gridcolor: C('--gridline'),
+        zeroline: false,
+        separatethousands: true
+      },
+      showlegend: true,
+      legend: { orientation: 'h', y: 1.12, x: 0, font: { size: 12 } },
+      hovermode: 'closest',
+      boxgap: 0.5
+    }, { responsive: true, displayModeBar: false });
+
+    buildTable('table-distribution',
+      ['Departure', 'Cheapest historically', '25th pct', 'Median', '75th pct', 'Dearest historically', 'On sale today', 'Percentile'],
+      data.map(r => [
+        monthLabel(r.departure_date),
+        money(r.hist_min), money(r.hist_q1), money(r.hist_median),
+        money(r.hist_q3), money(r.hist_max), money(r.current_price),
+        r.percentile === null ? '—' : ordinal(r.percentile)
+      ]));
+  }
+
+  // Only ever two hues on this chart -- the observed series and the median
+  // reference. Departure months are selected, never assigned their own colour,
+  // so hues are never cycled past the validated pair.
+  function renderTracked(rows) {
+    const priced = rows.filter(r => r.current_price !== null && r.run_date);
+    if (!priced.length) return;
+
+    const byDeparture = new Map();
+    priced.forEach(r => {
+      if (!byDeparture.has(r.departure_date)) byDeparture.set(r.departure_date, []);
+      byDeparture.get(r.departure_date).push(r);
+    });
+
+    const months = [...byDeparture.keys()].sort();
+    const select = document.getElementById('month-select');
+    select.innerHTML = months
+      .map(m => '<option value="' + m + '">' + monthLabel(m) + '</option>')
+      .join('');
+
+    const draw = departure => {
+      const obs = byDeparture.get(departure)
+        .slice()
+        .sort((a, b) => a.run_date.localeCompare(b.run_date));
+
+      const traces = [{
+        type: 'scatter',
+        mode: 'lines+markers',
+        name: 'Cheapest fare found',
+        x: obs.map(o => o.run_date),
+        y: obs.map(o => o.current_price),
+        line: { width: 2, color: C('--series-hist') },
+        marker: { size: 9, color: C('--series-hist'), line: { color: '#fffdf7', width: 2 } },
+        hovertemplate: '%{x}<br><b>%{y:,.0f} ' + CURRENCY + '</b><extra></extra>'
+      }];
+
+      // A single observation gives Plotly no range to work with, and it falls
+      // back to sub-second ticks. Pad the window so one point still reads as a
+      // date, and so the median reference has somewhere to span.
+      const shift = (iso, days) => {
+        const d = new Date(iso + 'T00:00:00');
+        d.setDate(d.getDate() + days);
+        return d.toISOString().slice(0, 10);
+      };
+      const pad = obs.length === 1 ? 3 : 1;
+      const xStart = shift(obs[0].run_date, -pad);
+      const xEnd = shift(obs[obs.length - 1].run_date, pad);
+
+      // The historical median for this month, as a reference level.
+      const median = obs.map(o => o.hist_median).filter(v => v !== null).pop();
+      if (median !== undefined) {
+        traces.push({
+          type: 'scatter',
+          mode: 'lines',
+          name: 'Historical median',
+          x: [xStart, xEnd],
+          y: [median, median],
+          line: { width: 2, color: C('--series-now'), dash: 'dash' },
+          hovertemplate: 'Historical median<br><b>%{y:,.0f} ' + CURRENCY + '</b><extra></extra>'
+        });
+      }
+
+      Plotly.react('chart-tracked', traces,
+                   trackedLayout(traces.length > 1, [xStart, xEnd]),
+                   { responsive: true, displayModeBar: false });
+    };
+
+    select.addEventListener('change', () => draw(select.value));
+    document.getElementById('card-tracked').hidden = false;   // see note above
+    draw(months[0]);
+
+    buildTable('table-tracked',
+      ['Departure', 'Observed', 'Cheapest fare'],
+      priced
+        .slice()
+        .sort((a, b) => a.departure_date.localeCompare(b.departure_date) || a.run_date.localeCompare(b.run_date))
+        .map(r => [monthLabel(r.departure_date), r.run_date, money(r.current_price)]));
+  }
+
+  function trackedLayout(showLegend, xRange) {
+    return {
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      font: { family: 'Inter, system-ui, sans-serif', color: C('--text-secondary'), size: 12 },
+      margin: { l: 64, r: 20, t: 12, b: 52 },
+      xaxis: {
+        title: { text: 'Date observed', font: { size: 12 } },
+        type: 'date',
+        range: xRange,
+        tickformat: '%d %b %Y',
+        tickfont: { size: 11 },
+        showgrid: false,
+        linecolor: C('--gridline')
+      },
+      yaxis: {
+        title: { text: 'Cheapest fare (' + CURRENCY + ')', font: { size: 12 } },
+        tickfont: { size: 11 }, gridcolor: C('--gridline'), zeroline: false, separatethousands: true
+      },
+      showlegend: showLegend,
+      legend: { orientation: 'h', y: 1.12, x: 0, font: { size: 12 } },
+      hovermode: 'x unified'
+    };
+  }
+
+  function buildTable(id, headers, rows) {
+    const t = document.getElementById(id);
+    const thead = '<thead><tr>' + headers.map(h => '<th scope="col">' + h + '</th>').join('') + '</tr></thead>';
+    const tbody = '<tbody>' + rows.map(r =>
+      '<tr>' + r.map((c, i) => i === 0 ? '<th scope="row" style="font-weight:500">' + c + '</th>' : '<td>' + c + '</td>').join('') + '</tr>'
+    ).join('') + '</tbody>';
+    t.innerHTML = thead + tbody;
+  }
+
+  document.querySelectorAll('.table-toggle').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const target = document.getElementById(btn.dataset.target);
+      const nowHidden = !target.hidden;
+      target.hidden = nowHidden;
+      btn.setAttribute('aria-expanded', String(!nowHidden));
+      btn.textContent = nowHidden
+        ? (btn.dataset.show || 'Show the numbers')
+        : (btn.dataset.hide || 'Hide the numbers');
+    });
+  });
+
+  Papa.parse('cph_cancun_prices.csv', {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete: results => {
+      const rows = (results.data || [])
+        .filter(r => r.departure_date)
+        .map(r => ({
+          run_date: r.run_date,
+          departure_date: r.departure_date,
+          return_date: r.return_date,
+          source: r.source,
+          currency: r.currency || 'DKK',
+          current_price: num(r.current_price),
+          hist_min: num(r.hist_min),
+          hist_q1: num(r.hist_q1),
+          hist_median: num(r.hist_median),
+          hist_q3: num(r.hist_q3),
+          hist_max: num(r.hist_max),
+          percentile: num(r.percentile)
+        }));
+
+      if (!rows.length) {
+        document.getElementById('empty-state').hidden = false;
+        return;
+      }
+
+      CURRENCY = rows[0].currency;
+      renderVerdict(rows);
+      renderDistribution(rows);
+      renderTracked(rows);
+
+      const sources = [...new Set(rows.map(r => r.source).filter(Boolean))].join(', ');
+      const latest = rows.map(r => r.run_date).filter(Boolean).sort().pop();
+      document.getElementById('method-note').textContent =
+        'Source: ' + (sources || 'n/a') + '. Last collected ' + (latest || 'n/a') +
+        '. Historical quartiles describe fares previously seen on this route for the ' +
+        'same departure period; they are not a forecast. Collected with ' +
+        'flightprices/fetch_prices.py in this repository.';
+
+      // Nothing rendered but rows exist -- e.g. keyless source with no history yet.
+      const anyChart = !document.getElementById('card-distribution').hidden ||
+                       !document.getElementById('card-tracked').hidden;
+      if (!anyChart) document.getElementById('empty-state').hidden = false;
+    },
+    error: () => { document.getElementById('empty-state').hidden = false; }
+  });
+  </script>
+
+  <!-- GoatCounter: privacy-friendly, cookieless analytics -->
+  <script data-goatcounter="https://jvkramer.goatcounter.com/count" async src="//gc.zgo.at/count.js"></script>
+</body>
+</html>

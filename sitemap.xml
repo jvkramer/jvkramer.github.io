@@ -20,4 +20,8 @@
     <loc>https://jvkramer.github.io/misc.html</loc>
     <priority>0.5</priority>
   </url>
+  <url>
+    <loc>https://jvkramer.github.io/cancun.html</loc>
+    <priority>0.4</priority>
+  </url>
 </urlset>
