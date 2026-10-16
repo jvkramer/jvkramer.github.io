@@ -1,0 +1,1114 @@
+<title>HHJK Note, Illustrated</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<script>
+window.MathJax = {
+  tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+  svg: { fontCache: 'global' },
+  options: { enableMenu: false }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-svg.js" async></script>
+<style>
+/* Palette: four series colours used in order: 1 dark red (144 26 30), 2 mid-grey (102 102 102), 3 steel blue (52 90 117), 4 muted gold (189 138 31).
+   Series patterns in order: solid, dash, dash-dot, short dash; markers in order: circle, diamond, triangle, square. Reference lines in a lighter grey.
+   Layout: one reading column of ~66ch inside an 840px page; figures sit on plates at full page width, like a working paper's figure pages */
+:root {
+  --bg: #f4f4f4;
+  --plate: #ffffff;
+  --ink: #1a1a1a;
+  --ink-2: #4a4a4a;
+  --muted: #666666;
+  --rule: #dadada;
+  --grid: #ececec;
+  --accent: #901a1e;
+  --c1: #901a1e;
+  --c2: #666666;
+  --c3: #345a75;
+  --c4: #bd8a1f;
+  --c1-wash: rgba(144, 26, 30, 0.08);
+  --c1-wash-2: rgba(144, 26, 30, 0.17);
+  --c2-wash: rgba(102, 102, 102, 0.10);
+  --ref: #a0a0a0;
+  --band: rgba(160, 160, 160, 0.16);
+  --font-display: 'Newsreader', 'Iowan Old Style', Georgia, 'Times New Roman', serif;
+  --font-body: 'IBM Plex Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  --step--1: 0.8125rem;
+  --step-0: 1rem;
+  --step-1: 1.1875rem;
+  --step-2: 1.5rem;
+  --step-3: 2.25rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #141414;
+    --plate: #1c1c1c;
+    --ink: #eeeeee;
+    --ink-2: #c6c6c6;
+    --muted: #9c9c9c;
+    --rule: #343434;
+    --grid: #282828;
+    --accent: #c64a50;
+    --c1: #c64a50;
+    --c2: #909090;
+    --c3: #4f8fd8;
+    --c4: #d3a23d;
+    --c1-wash: rgba(198, 74, 80, 0.15);
+    --c1-wash-2: rgba(198, 74, 80, 0.28);
+    --c2-wash: rgba(144, 144, 144, 0.12);
+    --ref: #5a5a5a;
+    --band: rgba(160, 160, 160, 0.10);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #141414;
+  --plate: #1c1c1c;
+  --ink: #eeeeee;
+  --ink-2: #c6c6c6;
+  --muted: #9c9c9c;
+  --rule: #343434;
+  --grid: #282828;
+  --accent: #c64a50;
+  --c1: #c64a50;
+  --c2: #909090;
+  --c3: #4f8fd8;
+  --c4: #d3a23d;
+  --c1-wash: rgba(198, 74, 80, 0.15);
+  --c1-wash-2: rgba(198, 74, 80, 0.28);
+  --c2-wash: rgba(144, 144, 144, 0.12);
+  --ref: #5a5a5a;
+  --band: rgba(160, 160, 160, 0.10);
+  color-scheme: dark;
+}
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-size: var(--step-0);
+  line-height: 1.6;
+}
+.page {
+  max-width: 840px;
+  margin: 0 auto;
+  padding-block: 48px 72px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 56px;
+}
+.prose { max-width: 66ch; display: grid; gap: 14px; }
+.prose p, .prose ul, .prose ol { margin: 0; }
+.prose ul, .prose ol { padding-left: 1.25em; display: grid; gap: 6px; }
+h1, h2, h3 { font-family: var(--font-display); font-weight: 500; text-wrap: balance; margin: 0; letter-spacing: -0.005em; }
+h1 { font-size: var(--step-3); line-height: 1.1; }
+h2 { font-size: var(--step-2); line-height: 1.2; }
+h3 { font-size: var(--step-1); line-height: 1.3; }
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0;
+}
+.lede { font-size: var(--step-1); color: var(--ink-2); line-height: 1.5; font-family: var(--font-display); }
+.meta { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); overflow-wrap: anywhere; }
+code { font-family: var(--font-mono); font-size: 0.9em; }
+section { display: grid; gap: 24px; }
+section > header { display: grid; gap: 8px; }
+
+.oneline {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.oneline > div { padding: 16px 20px 16px 0; display: grid; gap: 6px; align-content: start; min-width: 0; }
+.oneline > div + div { padding-left: 20px; border-left: 1px solid var(--rule); }
+@media (max-width: 560px) {
+  .oneline > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+}
+.oneline .tag { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.oneline p { margin: 0; }
+
+.stmt {
+  border-top: 1px solid var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding-block: 12px 14px;
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+.stmt .tag { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.stmt .eq { overflow-x: auto; overflow-y: hidden; min-width: 0; }
+mjx-container[display="true"] { margin: 0.6em 0 !important; }
+
+.fig {
+  margin: 0;
+  background: var(--plate);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+  padding: 18px 18px 16px;
+  display: grid;
+  gap: 14px;
+  position: relative;
+  min-width: 0;
+}
+.fig-head { display: grid; gap: 2px; }
+.fig-num { font-family: var(--font-mono); font-size: var(--step--1); color: var(--muted); letter-spacing: 0.04em; text-transform: uppercase; }
+.fig-title { font-family: var(--font-display); font-size: var(--step-1); font-weight: 500; line-height: 1.3; }
+.fig figcaption { font-size: 0.9rem; color: var(--ink-2); max-width: 74ch; line-height: 1.55; }
+.fig figcaption p { margin: 0; }
+.fig figcaption p + p { margin-top: 8px; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 24px; align-items: center; }
+.ctl { display: grid; grid-template-columns: auto minmax(110px, 160px) 3.2em; align-items: center; gap: 8px; }
+.ctl label { font-family: var(--font-mono); font-size: 0.9rem; color: var(--ink); white-space: nowrap; }
+.ctl label small { font-family: var(--font-body); font-size: 0.78rem; color: var(--muted); margin-left: 4px; }
+.ctl output { font-family: var(--font-mono); font-size: 0.9rem; font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; }
+input[type="range"] { width: 100%; accent-color: var(--accent); margin: 0; }
+input[type="range"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.presets { display: flex; flex-wrap: wrap; gap: 8px; }
+.presets button {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 5px 11px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  background: var(--bg);
+  color: var(--ink);
+  cursor: pointer;
+}
+.presets button:hover { border-color: var(--accent); }
+.presets button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 0.85rem; color: var(--ink-2); }
+.legend .lg { display: inline-flex; align-items: center; gap: 7px; }
+.legend svg.sw { width: 28px; height: 12px; flex: none; overflow: visible; }
+
+.pair { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.pair > div { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.panel-head { font-size: 0.9rem; color: var(--ink); display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: baseline; }
+.panel-head b { font-weight: 600; }
+.panel-head span { font-family: var(--font-mono); font-size: 0.8rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+.scroll { overflow-x: auto; min-width: 0; }
+.chart { display: block; width: 100%; height: auto; font-family: var(--font-mono); font-size: 11px; }
+.scroll .chart.wide { min-width: 520px; }
+.chart .grid { stroke: var(--grid); stroke-width: 1; }
+.chart .axis { stroke: var(--rule); stroke-width: 1; }
+.chart .box { fill: none; stroke: var(--rule); }
+.chart .tick { fill: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; }
+.chart .atitle { fill: var(--ink-2); font-family: var(--font-body); font-size: 12px; }
+.chart .lbl { fill: var(--ink); font-family: var(--font-body); font-size: 12px; }
+.chart .lbl-b { fill: var(--ink); font-family: var(--font-body); font-size: 12px; font-weight: 600; }
+.chart .lbl-m { fill: var(--muted); font-family: var(--font-body); font-size: 11.5px; }
+.chart .num { fill: var(--ink); font-family: var(--font-mono); font-size: 11.5px; font-variant-numeric: tabular-nums; }
+.chart .halo { paint-order: stroke; stroke: var(--plate); stroke-width: 4px; stroke-linejoin: round; }
+.chart .shade { fill: var(--c1-wash); }
+.chart .diag { stroke: var(--ref); stroke-width: 1.25; stroke-dasharray: 2 3; fill: none; }
+.chart .dot-off { fill: var(--c2); opacity: 0.5; }
+.chart .dot-on { fill: var(--c1); }
+.chart .area-pop { fill: var(--c2-wash); }
+.chart .curve-pop { fill: none; stroke: var(--c2); stroke-width: 2; stroke-dasharray: 7 4; }
+.chart .area-ent { fill: var(--c1-wash-2); }
+.chart .curve-ent { fill: none; stroke: var(--c1); stroke-width: 2; }
+.chart .mean-pop { stroke: var(--c2); stroke-width: 1.5; }
+.chart .mean-ent { stroke: var(--c1); stroke-width: 1.5; }
+.chart .arrow { stroke: var(--ink); stroke-width: 1.5; fill: none; }
+.chart .ah { fill: var(--ink); }
+.chart .s1 { fill: none; stroke: var(--c1); stroke-width: 2.5; stroke-linecap: round; }
+.chart .s2 { fill: none; stroke: var(--c2); stroke-width: 2.25; stroke-dasharray: 7 4; }
+.chart .s3 { fill: none; stroke: var(--c3); stroke-width: 2.25; stroke-dasharray: 9 3 2 3; }
+.chart .s4 { fill: none; stroke: var(--c4); stroke-width: 2; stroke-dasharray: 4 3; }
+.chart .h-0 { fill: none; stroke: var(--c1); stroke-width: 1.75; }
+.chart .h-1 { fill: none; stroke: var(--c2); stroke-width: 1.75; stroke-dasharray: 7 4; }
+.chart .h-2 { fill: none; stroke: var(--c3); stroke-width: 1.75; stroke-dasharray: 9 3 2 3; }
+.chart .theory { fill: none; stroke: var(--c4); stroke-width: 1.75; stroke-dasharray: 4 3; }
+.chart .zero { stroke: var(--ref); stroke-width: 1.25; stroke-dasharray: 2 3; }
+.chart .gapseg { stroke: var(--ink); stroke-width: 1.5; fill: none; }
+.chart .gapdot { stroke: var(--ref); stroke-width: 1.25; stroke-dasharray: 2 3; fill: none; }
+.chart .tri { stroke: var(--ref); stroke-width: 1.25; stroke-dasharray: 3 3; fill: none; }
+.chart .band { fill: var(--band); }
+.chart .vmark { stroke: var(--ref); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.chart .pt { stroke: var(--plate); stroke-width: 2; }
+.chart .pt-1 { fill: var(--c1); }
+.chart .pt-2 { fill: var(--c2); }
+.chart .pt-hollow { fill: var(--plate); stroke: var(--c1); stroke-width: 2; }
+.chart .xhair { stroke: var(--ink-2); stroke-width: 1; stroke-dasharray: 2 3; pointer-events: none; }
+.chart .hit { fill: transparent; cursor: crosshair; }
+
+.tip {
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  background: var(--plate);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 7px 9px;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  min-width: 150px;
+}
+.tip .row { display: flex; justify-content: space-between; gap: 14px; }
+.tip .row span:last-child { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.tip .hd { font-family: var(--font-mono); color: var(--muted); margin-bottom: 2px; }
+
+.b1-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
+.ledger { margin: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); font-size: 0.9rem; }
+.ledger > div { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; padding: 7px 0; border-bottom: 1px solid var(--rule); align-items: baseline; }
+.ledger dt { color: var(--ink-2); min-width: 0; }
+.ledger dd { margin: 0; font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink); text-align: right; white-space: nowrap; }
+.ledger .total { border-bottom: 1px solid var(--ink); }
+.ledger .total dt, .ledger .total dd { color: var(--ink); font-weight: 600; }
+.ledger .gap-row { margin-top: 10px; border-top: 1px solid var(--rule); }
+
+.see { display: grid; gap: 10px; counter-reset: see; padding: 0; margin: 0; list-style: none; max-width: 70ch; }
+.see li { display: grid; grid-template-columns: 1.6em minmax(0, 1fr); gap: 6px; counter-increment: see; }
+.see li::before { content: counter(see); font-family: var(--font-mono); font-size: 0.85rem; color: var(--muted); padding-top: 0.15em; }
+
+.buys { width: 100%; border-collapse: collapse; font-size: 0.9rem; min-width: 620px; }
+.buys th, .buys td { text-align: left; vertical-align: top; padding: 10px 12px 10px 0; border-bottom: 1px solid var(--rule); }
+.buys thead th { font-family: var(--font-mono); font-size: 0.75rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); font-weight: 500; border-bottom: 1px solid var(--ink); }
+.buys td:first-child { font-weight: 500; width: 30%; }
+.buys td:last-child { color: var(--ink-2); }
+
+.costs { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; max-width: 70ch; }
+.costs li { padding-left: 16px; position: relative; }
+.costs li::before { content: ""; position: absolute; left: 0; top: 0.72em; width: 7px; height: 1.5px; background: var(--muted); }
+
+footer.src { border-top: 1px solid var(--rule); padding-top: 16px; font-size: var(--step--1); color: var(--muted); display: grid; gap: 6px; }
+footer.src p { margin: 0; }
+
+@media (prefers-reduced-motion: reduce) {
+  * { scroll-behavior: auto !important; }
+}
+</style>
+
+<main class="page">
+
+  <header class="prose" style="max-width: 72ch;">
+    <p class="eyebrow">Companion to hhjk_note.tex · Propositions 2 and 3</p>
+    <h1>Who enters, and what they earn</h1>
+    <p class="lede">Proposition 2 says that the sons who enter an occupation are selected on talent, and by how much. Proposition 3 turns that into their earnings. Both rest on one property of the Fréchet distribution, which the last section takes apart.</p>
+    <p class="meta">maincode/analysis/Model_stuff/john_v2/skills_direct/hhjk_note.tex · figures computed from the note's formulas; sliders move θ, δ and the family wedges</p>
+  </header>
+
+  <section aria-labelledby="setup-h">
+    <header><h2 id="setup-h">The setup</h2></header>
+    <div class="prose">
+      <p>A son of type \((g,x)\), with \(g\) his father's occupation and \(x\) his enlistment scores, takes the occupation \(i\) with the largest \(\tilde w_{ig}(x)\,\epsilon_i\,\mu_i\). The reward index \(\tilde w_{ig}\) collects pay, productivity, preferences and the family wedges. In his father's occupation it is higher by \(d+t\) in logs: the preference discount plus the pay premium.</p>
+      <p>A share \(1-\delta\) of sons sort on <em>talent</em>: they draw \(\epsilon_i\) from a Fréchet with shape \(\theta\) (larger \(\theta\), less dispersion) and have no taste draws. The other \(\delta\) sort on <em>taste</em>: they draw \(\mu_i\) from the same Fréchet and are equally talented everywhere. Proposition 1 gives the logit \(p_{ig}=\tilde w_{ig}^{\theta}/m_g\). Throughout, \(\rho=(1-\delta)/\theta\).</p>
+    </div>
+    <div class="oneline">
+      <div><span class="tag">Proposition 2, in words</span><p>Among the sons who entered \(i\), average log talent is higher the less likely they were to enter, by \(\rho\) per log point of entry probability.</p></div>
+      <div><span class="tag">Proposition 3, in words</span><p>Their mean log earnings are what a random son of their type would earn in \(i\), plus that selection bonus.</p></div>
+    </div>
+  </section>
+
+  <!-- ================= PROPOSITION 2 ================= -->
+  <section id="prop2" aria-labelledby="p2-h">
+    <header>
+      <p class="eyebrow">Proposition 2 · HHJK eq. 5</p>
+      <h2 id="p2-h">The less likely the entry, the better the draw</h2>
+    </header>
+    <div class="stmt">
+      <span class="tag">Statement</span>
+      <div class="eq">\[ \mathbb{E}\big[\log\epsilon_i \,\big|\, i\text{ chosen},g,x\big]=\text{const}-\rho\,\log p_{ig}(x),\qquad \rho=\frac{1-\delta}{\theta}. \]</div>
+    </div>
+    <div class="prose">
+      <p>Take the note's example: two sons with the same skills, one the son of an office clerk and one the son of a physician. Neither father is related to electrician. The physician's son is pulled harder toward his father's occupation, so he is less likely to become an electrician. Figure 1 shows what that does to the electricians each family produces.</p>
+    </div>
+
+    <figure class="fig" id="fig1">
+      <div class="fig-head">
+        <span class="fig-num">Figure 1</span>
+        <span class="fig-title">Selection on talent, son by son</span>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="f1-theta">θ <small>talent dispersion</small></label><input type="range" id="f1-theta" data-k="theta" min="2" max="8" step="0.1"><output data-o="theta"></output></div>
+      </div>
+      <div class="legend">
+        <span class="lg" data-sw="dot:1:O">becomes an electrician</span>
+        <span class="lg" data-sw="dot:2:D">goes elsewhere</span>
+        <span class="lg" data-sw="line:1">talent of the electricians</span>
+        <span class="lg" data-sw="line:2">talent of all sons</span>
+      </div>
+      <div class="pair">
+        <div>
+          <div class="panel-head"><b>Office clerk's son</b><span id="f1-clerk-n"></span></div>
+          <svg class="chart" id="f1-clerk" role="img" aria-label="Scatter of talent against the bar to clear for the office clerk's son, with p equal to 0.10. Entrants' talent density is the population density shifted right."></svg>
+        </div>
+        <div>
+          <div class="panel-head"><b>Physician's son</b><span id="f1-phys-n"></span></div>
+          <svg class="chart" id="f1-phys" role="img" aria-label="The same scatter for the physician's son, with p equal to 0.05. His bars are higher, fewer dots enter, and the entrants' talent density is shifted further right."></svg>
+        </div>
+      </div>
+      <figcaption>
+        <p>Each dot is a talent-sorting son with these skills. Across: his talent as an electrician, \(\log\epsilon_i\). Up: the talent he would need as an electrician to beat his best other option, \(\log\big(\max_{s\neq i}\tilde w_{sg}\epsilon_s/\tilde w_{ig}\big)\). He becomes an electrician when his dot falls in the shaded region below the diagonal. Both panels use the same 800 talent draws. The physician's son's bars are higher by \(\tfrac1\theta\log\tfrac{19}{9}\) because medicine and its related occupations carry a family advantage for him, \(C=\theta(d+t)\). For the selection logic it does not matter whether that advantage is a discount or a pay premium. Only its size matters, through his option value \(m_g\).</p>
+        <p>Under each scatter: the density of talent among all sons (grey, dashed) and among the electricians (red, solid). The arrow is the gap between their means.</p>
+      </figcaption>
+    </figure>
+
+    <ol class="see">
+      <li><span>The red density is the grey density moved to the right. Its shape and spread are unchanged. Only its location moves, by exactly \(\tfrac1\theta\log(1/p)\). This is Proposition 2 for talent sorters, and it is a special property of Fréchet talent.</span></li>
+      <li><span>The physician's son is half as likely to become an electrician (0.05 against 0.10). The electricians among physicians' sons are therefore better by \(\tfrac1\theta\log 2\): <b id="f1-diff"></b> log points at the current θ.</span></li>
+      <li><span>Move θ. A lower θ spreads the cloud, and the same entry probabilities now imply bigger talent gaps. θ does not change who enters here, because the probabilities are held fixed. It changes how different the entrants are.</span></li>
+    </ol>
+
+    <figure class="fig" id="fig2">
+      <div class="fig-head">
+        <span class="fig-num">Figure 2</span>
+        <span class="fig-title">Proposition 2 is a straight line in log p</span>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="f2-theta">θ <small>talent dispersion</small></label><input type="range" id="f2-theta" data-k="theta" min="2" max="8" step="0.1"><output data-o="theta"></output></div>
+        <div class="ctl"><label for="f2-delta">δ <small>share sorting on taste</small></label><input type="range" id="f2-delta" data-k="delta" min="0" max="1" step="0.05"><output data-o="delta"></output></div>
+      </div>
+      <div class="legend">
+        <span class="lg" data-sw="line:1">all entrants, slope −ρ</span>
+        <span class="lg" data-sw="line:2">talent sorters, slope −1/θ</span>
+        <span class="lg" data-sw="line:3">taste sorters, flat</span>
+      </div>
+      <div class="scroll">
+        <svg class="chart wide" id="f2" role="img" aria-label="Average log talent of entrants relative to all sons, against the entry probability on a log scale. Talent sorters lie on a line with slope minus one over theta, taste sorters on zero, and all entrants on a line with slope minus rho."></svg>
+      </div>
+      <p class="panel-head">Electricians from physicians' families are better than those from clerks' families by ρ·log 2 = <b id="f2-gap"></b> log points.</p>
+      <figcaption>
+        <p>Average log talent of entrants, relative to all sons of the same type, against the probability of entering (log scale). Talent sorters are on the dashed line. Taste sorters chose on \(\mu\), so they are average. Both types enter with the same probability \(p_{ig}\), so entrants are a share \(1-\delta\) talent sorters at every \(p\), and the slope of the mix is \(\rho=(1-\delta)/\theta\). At \(p=1\) everyone enters and nobody is selected. Hover for values.</p>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ================= PROPOSITION 3 ================= -->
+  <section id="prop3" aria-labelledby="p3-h">
+    <header>
+      <p class="eyebrow">Proposition 3 · HHJK eq. 6</p>
+      <h2 id="p3-h">Entrants earn their potential plus a selection bonus</h2>
+    </header>
+    <div class="stmt">
+      <span class="tag">Statement, first line</span>
+      <div class="eq">\[ \mathbb{E}\big[\log\text{wage}\,\big|\,i,g,x\big]=\underbrace{\log w_i+\log\bar h_{ig}(x)-\log\tau_{ig}}_{\text{potential earnings}}\;\underbrace{-\,\rho\,\log p_{ig}(x)}_{\text{selection bonus}}\;+\;\text{const}. \]</div>
+    </div>
+    <div class="prose">
+      <p>A son's log wage in \(i\) is log pay per efficiency unit, plus log productivity, minus the log wedge, plus log talent. Average over the sons who entered and use Proposition 2 for the talent term. The first bracket is what a randomly chosen son of type \((g,x)\) would earn in \(i\). The second is Proposition 2's bonus.</p>
+      <p>Sons of the clerk and the physician have the same potential earnings as electricians (Assumptions 1–3: same residual talent, same productivity, no family wedge in an unrelated occupation). So their electricians differ only through the bonus, and they lie on one line. The electrician's own son is different twice over: he enters more easily, and he may be paid a premium \(t\).</p>
+    </div>
+
+    <figure class="fig" id="fig3">
+      <div class="fig-head">
+        <span class="fig-num">Figure 3</span>
+        <span class="fig-title">Electricians with the same skills, by father's occupation</span>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="f3-theta">θ <small>talent dispersion</small></label><input type="range" id="f3-theta" data-k="theta" min="2" max="8" step="0.1"><output data-o="theta"></output></div>
+        <div class="ctl"><label for="f3-delta">δ <small>share sorting on taste</small></label><input type="range" id="f3-delta" data-k="delta" min="0" max="1" step="0.05"><output data-o="delta"></output></div>
+        <div class="ctl"><label for="f3-d">d <small>preference discount</small></label><input type="range" id="f3-d" data-k="d" min="0" max="1" step="0.05"><output data-o="d"></output></div>
+        <div class="ctl"><label for="f3-t">t <small>pay premium</small></label><input type="range" id="f3-t" data-k="t" min="-0.2" max="0.4" step="0.02"><output data-o="t"></output></div>
+      </div>
+      <div class="presets" role="group" aria-label="Presets">
+        <button type="button" id="f3-p0" data-delta="0">δ = 0 · talent only</button>
+        <button type="button" id="f3-p1" data-delta="1">δ = 1 · taste only, the submitted paper</button>
+        <button type="button" id="f3-reset">Reset all</button>
+      </div>
+      <div class="legend">
+        <span class="lg" data-sw="dot:1:O">electrician's son (follower)</span>
+        <span class="lg" data-sw="line:1">pay premium t</span>
+        <span class="lg" data-sw="dot:2:D">sons of unrelated fathers</span>
+        <span class="lg" data-sw="line:2">selection line, slope −ρ</span>
+        <span class="lg" data-sw="ink">raw gap to the clerk's son</span>
+      </div>
+      <div class="b1-wrap">
+        <div class="scroll">
+          <svg class="chart wide" id="f3" role="img" aria-label="Mean log earnings as an electrician against the probability of becoming one. The clerk's and physician's sons lie on a line with slope minus rho. The electrician's son enters with a higher probability and sits above the line by the pay premium t."></svg>
+        </div>
+        <dl class="ledger" aria-live="polite">
+          <div><dt>ρ = (1 − δ)/θ</dt><dd id="f3-rho"></dd></div>
+          <div><dt>Following advantage seen in choices, C = θ(d + t)</dt><dd id="f3-C"></dd></div>
+          <div><dt>Entry probability: electrician's son, clerk's son</dt><dd id="f3-p"></dd></div>
+          <div class="gap-row"><dt>Raw earnings gap, electrician's son minus clerk's son</dt><dd id="f3-raw"></dd></div>
+          <div><dt>plus the selection correction, ρ · log(p<sub>follower</sub> / p<sub>clerk</sub>)</dt><dd id="f3-corr"></dd></div>
+          <div class="total"><dt>equals the pay premium t</dt><dd id="f3-tt"></dd></div>
+        </dl>
+      </div>
+      <figcaption>
+        <p>Mean log earnings as an electrician, relative to the potential earnings of a son of an unrelated father, against the probability of becoming one (log scale). Toy numbers: the clerk's and physician's sons enter with probability 0.10 and 0.05. The electrician's son's probability comes from Proposition 1: his log-odds are raised by \(C=\theta(d+t)\), so \(p=e^{C}/(8+e^{C})\), where 1/9 is the probability for a son whose father pulls him nowhere.</p>
+        <p>The dotted triangle is how Proposition 4 identifies \(\rho\): two unrelated fathers, two entry probabilities, one slope. If fathers pass on electrician-specific productivity that \(x\) misses, it lands in \(t\) too (the note's section on R2).</p>
+      </figcaption>
+    </figure>
+
+    <ol class="see">
+      <li><span>The raw gap compares a less selected son (the follower) with a more selected one (the clerk's son). It understates \(t\), and at the defaults it even has the wrong sign. Adding back \(\rho\log(p_{\text{follower}}/p_{\text{clerk}})\) recovers \(t\) exactly. That is the formula for \(t\) in Proposition 4 of the note.</span></li>
+      <li><span>Press <b>δ = 1</b>. The line goes flat: taste sorters are not selected on talent, so there is no bonus, and the raw gap is \(t\). This is the submitted paper's world, and the editor's selection question is whether the line has a slope.</span></li>
+      <li><span>Press <b>δ = 0</b>, then move <b>t</b>. The raw gap barely moves. A higher premium draws in more followers, each less selected, and the two effects cancel up to a small option-value term. What is left in the raw gap is about \(-d\): followers took the job with worse draws because they liked it more. Earnings alone would not reveal \(t\) here; the correction does.</span></li>
+    </ol>
+
+    <div class="stmt">
+      <span class="tag">Statement, second line</span>
+      <div class="eq">\[ \mathbb{E}\big[\log\text{wage}\,\big|\,i,g,x\big]=\text{const}+\delta\log\frac{w_i\,\bar h_{ig}(x)}{\tau_{ig}}-(1-\delta)\log z_{ig}(x)+\rho\log m_g(x). \]</div>
+    </div>
+    <div class="prose">
+      <p>The second line is the same equation after substituting Proposition 1 for \(\log p\). It says how entrants' earnings respond when something in \(i\) changes. Anything that raises pay, productivity or the wedge passes through with weight \(\delta\) only. The rest is eaten by weaker selection. Figure 4 shows it for a rise in electrician pay.</p>
+    </div>
+
+    <figure class="fig" id="fig4">
+      <div class="fig-head">
+        <span class="fig-num">Figure 4</span>
+        <span class="fig-title">Raise electrician pay; the clerk's sons who enter earn only δ of it</span>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="f4-theta">θ <small>talent dispersion</small></label><input type="range" id="f4-theta" data-k="theta" min="2" max="8" step="0.1"><output data-o="theta"></output></div>
+      </div>
+      <div class="legend">
+        <span class="lg" data-sw="line:1">δ = 0</span>
+        <span class="lg" data-sw="line:2">δ = 0.5</span>
+        <span class="lg" data-sw="line:3">δ = 1</span>
+      </div>
+      <div class="scroll">
+        <svg class="chart wide" id="f4" role="img" aria-label="Change in electricians' mean log earnings against the rise in electrician pay, for delta equal to one, one half and zero. The slopes are close to delta."></svg>
+      </div>
+      <figcaption>
+        <p>Raise \(\log w_{\text{electrician}}\) by \(\Delta\). Potential earnings rise by \(\Delta\). More clerk's sons enter (\(\log p\) rises by about \(\theta\Delta\)), and the marginal ones are less talented, so the selection bonus falls by about \((1-\delta)\Delta\). The net is \(\delta\Delta\) plus a small option-value gain, \(\rho\,\Delta\log m_g\), because the son's best choice improved too. At \(\delta=0\) average earnings of entrants hardly move, whatever happens to pay. Hover for values.</p>
+      </figcaption>
+    </figure>
+  </section>
+
+  <!-- ================= FRECHET ================= -->
+  <section id="frechet" aria-labelledby="fr-h">
+    <header>
+      <p class="eyebrow">The distributional assumption</p>
+      <h2 id="fr-h">What Fréchet buys</h2>
+    </header>
+    <div class="prose">
+      <p>Talent is Fréchet: \(\Pr(\epsilon_i\le e)=\exp(-e^{-\theta})\), drawn independently across occupations. Equivalently, \(\log\epsilon_i\) is Gumbel with spread \(1/\theta\). In one sentence, Fréchet lets choices and earnings be linked by a single number. A son's own entry probability is all you need to know about how selected he is. The selection is linear in its log, and the slope is \(1/\theta\), the inverse of the same \(\theta\) that turns log-odds into log earnings.</p>
+      <p>The key fact behind Propositions 2 and 3 is in the appendix proof of Proposition 2. The best value a son can get, \(Y=\max_s\tilde w_{sg}\epsilon_s\), has the same distribution whichever occupation delivers it. An entrant's talent is \(\epsilon_i=Y/\tilde w_{ig}\), so it depends on occupation \(i\) only through \(\tilde w_{ig}\), that is, through \(p_{ig}\). Figure 5 checks this by simulation.</p>
+    </div>
+
+    <figure class="fig" id="fig5">
+      <div class="fig-head">
+        <span class="fig-num">Figure 5</span>
+        <span class="fig-title">The winning value does not depend on which job won</span>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="f5-theta">θ <small>talent dispersion</small></label><input type="range" id="f5-theta" data-k="theta" min="2" max="8" step="0.1"><output data-o="theta"></output></div>
+      </div>
+      <div class="legend">
+        <span class="lg" data-sw="line:1">low-reward job, p = 0.10</span>
+        <span class="lg" data-sw="line:2">middle job, p = 0.25</span>
+        <span class="lg" data-sw="line:3">high-reward job, p = 0.65</span>
+        <span class="lg" data-sw="line:4">Gumbel density from the formula</span>
+      </div>
+      <div class="pair">
+        <div>
+          <div class="panel-head"><b>Talent of entrants</b><span>log ε</span></div>
+          <svg class="chart" id="f5-eps" role="img" aria-label="Histograms of log talent among entrants of three jobs. The lower the job's reward, the further right its entrants' talent."></svg>
+        </div>
+        <div>
+          <div class="panel-head"><b>Reward × talent of the same entrants</b><span>log(w̃ ε)</span></div>
+          <svg class="chart" id="f5-val" role="img" aria-label="Histograms of log reward times talent among the same entrants. The three histograms coincide."></svg>
+        </div>
+      </div>
+      <figcaption>
+        <p>60,000 simulated talent-sorting sons of one type choose among three jobs whose rewards give entry probabilities 0.10, 0.25 and 0.65. Left: the talent of those who chose each job. The less rewarding the job, the better its entrants' draws, each shifted by \(\tfrac1\theta\log(1/p)\). Right: the same people's realized value \(\tilde w\,\epsilon\). The three histograms lie on top of each other. Low-reward jobs attract exactly those whose talent makes up the difference.</p>
+      </figcaption>
+    </figure>
+
+    <figure class="fig" id="fig6">
+      <div class="fig-head">
+        <span class="fig-num">Figure 6</span>
+        <span class="fig-title">Linear in log p is a Fréchet property</span>
+      </div>
+      <div class="controls">
+        <div class="ctl"><label for="f6-theta">θ <small>talent dispersion</small></label><input type="range" id="f6-theta" data-k="theta" min="2" max="8" step="0.1"><output data-o="theta"></output></div>
+      </div>
+      <div class="legend">
+        <span class="lg" data-sw="line:1">Fréchet talent (Gumbel log-talent)</span>
+        <span class="lg" data-sw="line:2">normal log-talent, same variance</span>
+        <span class="lg" data-sw="line:3">normal case, straight line fitted on unrelated sons</span>
+        <span class="lg" data-sw="band">where the unrelated sons are</span>
+        <span class="lg" data-sw="ref">the follower's entry probability</span>
+      </div>
+      <div class="scroll">
+        <svg class="chart wide" id="f6" role="img" aria-label="Average log talent of entrants against entry probability. The Fréchet case is a straight line in log p; the normal case bends, so a line fitted on unrelated sons mispredicts the follower."></svg>
+      </div>
+      <figcaption>
+        <p>Selection on talent in a two-option Roy model when log-talent is Gumbel (red, solid) and when it is normal with the same variance (grey, dashed). In the normal case the bonus still depends only on \(p\) here, but it bends: \(\tfrac{\sigma}{\sqrt2}\,\phi(\Phi^{-1}(p))/p\). Proposition 4 measures the slope among unrelated sons (shaded, \(p\) from 0.05 to 0.10) and applies it to the follower (vertical mark, his \(p\) from Figure 3). Under Fréchet that extrapolation is exact. Under normal talent the dash-dot line misses by <b id="f6-err"></b> log points at the follower. With normal talent and many occupations the bonus would also depend on every other occupation's index, not on \(p_{ig}\) alone. Hover for values.</p>
+      </figcaption>
+    </figure>
+
+    <h3>Property by property</h3>
+    <div class="scroll">
+      <table class="buys">
+        <thead><tr><th scope="col">Property of Fréchet</th><th scope="col">What it delivers</th><th scope="col">Where the note uses it</th></tr></thead>
+        <tbody>
+          <tr><td>The maximum of independent Fréchets is Fréchet (max-stability)</td><td>Logit choice probabilities, \(p_{ig}=\tilde w_{ig}^\theta/m_g\)</td><td>Proposition 1. Step 1 is the <code>skills_direct</code> logit, and its tier discounts are \(C=\theta(d+t)\).</td></tr>
+          <tr><td>The winning value has the same distribution whichever occupation wins</td><td>Entrants' talent depends on their own \(p_{ig}\) only, not on the other 90 occupations</td><td>Proposition 2; Figure 5. The selection term needs one regressor, \(\log p_{ig}\).</td></tr>
+          <tr><td>Conditioning on entry shifts the Gumbel without changing its shape</td><td>A selection term exactly linear in \(\log p\) with slope \(1/\theta\); entrants' log-talent variance stays \(\pi^2/(6\theta^2)\)</td><td>Propositions 2–4; Figures 1 and 6. The linear Dahl term in Step 2, and the lower bound on \(\theta\) from residual variance.</td></tr>
+          <tr><td>One parameter sets both the choice elasticity and the strength of selection</td><td>Choices and earnings speak about the same \(\theta\)</td><td>Earnings identify \(\rho\); \(\theta\) turns the log-odds \(C\) into the money discount \(d=C/\theta-t\).</td></tr>
+          <tr><td>Talent sorters and taste sorters face draws with the same distribution</td><td>They choose with the same probabilities, so \(\delta\) dilutes selection without changing choices</td><td>\(\rho=(1-\delta)/\theta\); the submitted paper is the case \(\delta=1\).</td></tr>
+          <tr><td>Closed-form moments</td><td>\(\mathbb{E}[\epsilon_i\mid i]=\Gamma(1-\tfrac1\theta)\,p_{ig}^{-1/\theta}\); expected log utility \(\tfrac1\theta\log m_g+\text{const}\)</td><td>Efficiency units \(H_i\) in general equilibrium; welfare in consumption units.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h3>What it costs</h3>
+    <ul class="costs">
+      <li>Independence of irrelevant alternatives. In the counterfactual that removes physicians' following discount, some physicians' sons who would have become physicians choose something else. The model splits them across all other occupations in proportion to how often physicians' sons with the same skills already choose each one: every other occupation's share is scaled up by the same factor. A son who leaves medicine is as likely, relative to current shares, to become an electrician as a dentist. In reality those who leave medicine probably have tastes and talents suited to nearby occupations, so more would go there. Conditioning on skills \(x\) and the tier-1 and tier-2 discounts soften this; correlated draws within one-digit groups (nested Fréchet) would fix it.</li>
+      <li>One θ for all occupations. Selection is equally strong in every occupation. The note's test is \(\rho\) by one-digit group.</li>
+      <li>Independent draws across occupations. A son good at one manual trade is not more likely to be good at another. Correlated draws (nested Fréchet) lose the closed forms at 91 occupations.</li>
+      <li>The linear selection term is a functional form. The step from unrelated sons (p around 0.05–0.10) to followers (p several times higher) leans on it, as Figure 6 shows. Dahl's flexible \(\lambda(p)\) in <code>sd_selection.m</code> is the robustness check.</li>
+      <li>A long right tail. Gumbel log-talent makes rare entrants very selected, and mean talent exists only for \(\theta&gt;1\).</li>
+    </ul>
+  </section>
+
+  <footer class="src">
+    <p>Source: <code>hhjk_note.tex</code>, Propositions 1–4 and the appendix proofs; Hsieh, Hurst, Jones and Klenow (2019), eqs. 4–6.</p>
+    <p>In the figures, taste sorters' talent \(\bar\epsilon\) is set to the population average, so the constants in Propositions 2 and 3 are zero when talent and earnings are measured relative to all sons. Figures 1 and 5 are simulations with a fixed seed; the rest are the closed forms.</p>
+  </footer>
+</main>
+
+<script>
+(function () {
+  'use strict';
+  var GAMMA = 0.5772156649015329;
+  var NS = 'http://www.w3.org/2000/svg';
+  var DEF = { theta: 3, delta: 0.3, d: 0.4, t: 0.1 };
+  var S = { theta: DEF.theta, delta: DEF.delta, d: DEF.d, t: DEF.t };
+  var P_CLERK = 0.10, P_PHYS = 0.05, M0 = 9;   // toy economy: a son with no pull anywhere enters with 1/9
+
+  // ---------- helpers ----------
+  function el(tag, attrs, parent) {
+    var e = document.createElementNS(NS, tag);
+    if (attrs) for (var k in attrs) e.setAttribute(k, attrs[k]);
+    if (parent) parent.appendChild(e);
+    return e;
+  }
+  function txt(parent, x, y, s, cls, anchor) {
+    var t = el('text', { x: x, y: y, 'class': cls || 'lbl', 'text-anchor': anchor || 'start' }, parent);
+    t.textContent = s;
+    return t;
+  }
+  function setT(t, x, y, s, anchor) {
+    t.setAttribute('x', x); t.setAttribute('y', y);
+    if (anchor) t.setAttribute('text-anchor', anchor);
+    if (s !== undefined) t.textContent = s;
+  }
+  function lin(d0, d1, r0, r1) {
+    var f = function (v) { return r0 + (v - d0) / (d1 - d0) * (r1 - r0); };
+    f.inv = function (y) { return d0 + (y - r0) / (r1 - r0) * (d1 - d0); };
+    return f;
+  }
+  function logS(p0, p1, r0, r1) {
+    var l = lin(Math.log(p0), Math.log(p1), r0, r1);
+    var f = function (p) { return l(Math.log(p)); };
+    f.inv = function (x) { return Math.exp(l.inv(x)); };
+    return f;
+  }
+  function pathD(pts) {
+    var s = '';
+    for (var i = 0; i < pts.length; i++) s += (i ? 'L' : 'M') + pts[i][0].toFixed(1) + ' ' + pts[i][1].toFixed(1);
+    return s;
+  }
+  function areaD(pts, base) {
+    return pathD(pts) + 'L' + pts[pts.length - 1][0].toFixed(1) + ' ' + base + 'L' + pts[0][0].toFixed(1) + ' ' + base + 'Z';
+  }
+  function line(e, x1, y1, x2, y2) {
+    e.setAttribute('x1', x1); e.setAttribute('y1', y1); e.setAttribute('x2', x2); e.setAttribute('y2', y2);
+  }
+  function show(e, on) { e.setAttribute('visibility', on ? 'visible' : 'hidden'); }
+  var MINUS = '−';
+  function fmt(v, k) { if (k === undefined) k = 2; var s = Math.abs(v).toFixed(k); return (v < 0 && +s !== 0 ? MINUS : '') + s; }
+  function fmtS(v, k) { if (k === undefined) k = 2; var s = Math.abs(v).toFixed(k); return (v < 0 && +s !== 0 ? MINUS : '+') + s; }
+  function fmtP(p) { return p >= 0.995 ? '1' : p >= 0.1 ? p.toFixed(2) : (+p.toFixed(3)).toString(); }
+  function fmtTk(p) { return (+p.toFixed(3)).toString(); }
+  function gumbelPdf(u, loc, sc) { var z = (u - loc) / sc; return Math.exp(-z - Math.exp(-z)) / sc; }
+  function mulberry32(a) {
+    return function () {
+      a |= 0; a = a + 0x6D2B79F5 | 0;
+      var t = Math.imul(a ^ a >>> 15, 1 | a);
+      t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t;
+      return ((t ^ t >>> 14) >>> 0) / 4294967296;
+    };
+  }
+  var rng = mulberry32(20261015);
+  function stdG() { var u; do { u = rng(); } while (u <= 1e-12 || u >= 1 - 1e-12); return -Math.log(-Math.log(u)); }
+  function normPdf(z) { return Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI); }
+  function normInv(p) {
+    var a = [-3.969683028665376e+01, 2.209460984245205e+02, -2.759285104469687e+02, 1.383577518672690e+02, -3.066479806614716e+01, 2.506628277459239e+00];
+    var b = [-5.447609879822406e+01, 1.615858368580409e+02, -1.556989798598866e+02, 6.680131188771972e+01, -1.328068155288572e+01];
+    var c = [-7.784894002430293e-03, -3.223964580411365e-01, -2.400758277161838e+00, -2.549732539343734e+00, 4.374664141464968e+00, 2.938163982698783e+00];
+    var d = [7.784695709041462e-03, 3.224671290700398e-01, 2.445134137142996e+00, 3.754408661907416e+00];
+    var pl = 0.02425, q, r;
+    if (p < pl) { q = Math.sqrt(-2 * Math.log(p)); return (((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1); }
+    if (p <= 1 - pl) { q = p - 0.5; r = q * q; return (((((a[0] * r + a[1]) * r + a[2]) * r + a[3]) * r + a[4]) * r + a[5]) * q / (((((b[0] * r + b[1]) * r + b[2]) * r + b[3]) * r + b[4]) * r + 1); }
+    q = Math.sqrt(-2 * Math.log(1 - p)); return -(((((c[0] * q + c[1]) * q + c[2]) * q + c[3]) * q + c[4]) * q + c[5]) / ((((d[0] * q + d[1]) * q + d[2]) * q + d[3]) * q + 1);
+  }
+  // marker paths in series order: O circle, D diamond, T triangle, S square
+  function symD(s, x, y, r) {
+    var f = function (v) { return v.toFixed(1); };
+    if (s === 'D') return 'M' + f(x) + ' ' + f(y - r) + 'L' + f(x + r) + ' ' + f(y) + 'L' + f(x) + ' ' + f(y + r) + 'L' + f(x - r) + ' ' + f(y) + 'Z';
+    if (s === 'T') return 'M' + f(x) + ' ' + f(y - r) + 'L' + f(x + 0.95 * r) + ' ' + f(y + 0.7 * r) + 'L' + f(x - 0.95 * r) + ' ' + f(y + 0.7 * r) + 'Z';
+    if (s === 'S') { var h = 0.85 * r; return 'M' + f(x - h) + ' ' + f(y - h) + 'h' + f(2 * h) + 'v' + f(2 * h) + 'h' + f(-2 * h) + 'Z'; }
+    return 'M' + f(x - r) + ' ' + f(y) + 'a' + r + ' ' + r + ' 0 1 0 ' + f(2 * r) + ' 0a' + r + ' ' + r + ' 0 1 0 ' + f(-2 * r) + ' 0Z';
+  }
+  function rho() { return (1 - S.delta) / S.theta; }
+  function pFollower() { var e = Math.exp(S.theta * (S.d + S.t)); return e / (M0 - 1 + e); }
+
+  // grid, ticks and axis titles for a plot box
+  function frame(svg, o) {
+    var g = el('g', null, svg);
+    o.yt.forEach(function (v) {
+      var Y = o.y(v);
+      el('line', { x1: o.x0, x2: o.x1, y1: Y, y2: Y, 'class': 'grid' }, g);
+      txt(g, o.x0 - 8, Y + 4, o.yf(v), 'tick', 'end');
+    });
+    o.xt.forEach(function (v) {
+      var X = o.x(v);
+      el('line', { x1: X, x2: X, y1: o.y0, y2: o.y1, 'class': 'grid' }, g);
+      txt(g, X, o.y1 + 17, o.xf(v), 'tick', 'middle');
+    });
+    el('line', { x1: o.x0, x2: o.x1, y1: o.y1, y2: o.y1, 'class': 'axis' }, g);
+    if (o.xTitle) txt(g, (o.x0 + o.x1) / 2, o.y1 + 37, o.xTitle, 'atitle', 'middle');
+    if (o.yTitle) {
+      var t = txt(g, 0, 0, o.yTitle, 'atitle', 'middle');
+      t.setAttribute('transform', 'translate(' + (o.x0 - 46) + ',' + ((o.y0 + o.y1) / 2) + ') rotate(-90)');
+    }
+    return g;
+  }
+  function arrowDef(svg, id) {
+    var defs = svg.querySelector('defs') || el('defs', null, svg);
+    var m = el('marker', { id: id, viewBox: '0 0 10 10', refX: 9, refY: 5, markerWidth: 7, markerHeight: 7, orient: 'auto-start-reverse' }, defs);
+    el('path', { d: 'M0 0L10 5L0 10Z', 'class': 'ah' }, m);
+  }
+  // crosshair + tooltip for line charts
+  function hover(fig, svg, box, xs, rowsAt) {
+    var tip = document.createElement('div');
+    tip.className = 'tip'; tip.hidden = true;
+    fig.appendChild(tip);
+    var vl = el('line', { 'class': 'xhair', y1: box.y0, y2: box.y1 }, svg);
+    show(vl, false);
+    var hit = el('rect', { 'class': 'hit', x: box.x0, y: box.y0, width: box.x1 - box.x0, height: box.y1 - box.y0 }, svg);
+    function move(ev) {
+      var pt = svg.createSVGPoint(); pt.x = ev.clientX; pt.y = ev.clientY;
+      var ctm = svg.getScreenCTM(); if (!ctm) return;
+      var loc = pt.matrixTransform(ctm.inverse());
+      var X = Math.max(box.x0, Math.min(box.x1, loc.x));
+      line(vl, X, box.y0, X, box.y1); show(vl, true);
+      var r = rowsAt(xs.inv(X));
+      var html = '<div class="hd">' + r.head + '</div>';
+      r.rows.forEach(function (row) { html += '<div class="row"><span>' + row[0] + '</span><span>' + row[1] + '</span></div>'; });
+      tip.innerHTML = html; tip.hidden = false;
+      var fr = fig.getBoundingClientRect();
+      var left = ev.clientX - fr.left + 16;
+      if (left + tip.offsetWidth > fr.width - 8) left = ev.clientX - fr.left - tip.offsetWidth - 16;
+      tip.style.left = Math.max(8, left) + 'px';
+      tip.style.top = (ev.clientY - fr.top - tip.offsetHeight - 12) + 'px';
+    }
+    hit.addEventListener('pointermove', move);
+    hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', function () { tip.hidden = true; show(vl, false); });
+  }
+
+  // ---------- Figure 1: scatter of talent vs bar ----------
+  var F1 = (function () {
+    var N = 800, L1 = [], L2 = [], n;
+    for (n = 0; n < N; n++) { L1.push(stdG()); L2.push(stdG()); }
+    var D0 = -1, D1 = 3.5, ml = 54, mt = 10, pw = 300, ph = 300, gap = 30, dh = 74;
+    var W = ml + pw + 14, H = mt + ph + gap + dh + 46;
+    var ticks = [-1, 0, 1, 2, 3];
+    var panels = [['f1-clerk', P_CLERK], ['f1-phys', P_PHYS]].map(function (spec) {
+      var id = spec[0], p = spec[1];
+      var svg = document.getElementById(id);
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      var x = lin(D0, D1, ml, ml + pw), y = lin(D0, D1, mt + ph, mt);
+      var dTop = mt + ph + gap, dBot = dTop + dh;
+      arrowDef(svg, id + '-ah');
+      var defs = svg.querySelector('defs');
+      var cp = el('clipPath', { id: id + '-clip' }, defs);
+      el('rect', { x: ml, y: mt, width: pw, height: ph }, cp);
+      var cp2 = el('clipPath', { id: id + '-clip2' }, defs);
+      el('rect', { x: ml, y: dTop - 4, width: pw, height: dh + 4 }, cp2);
+      var g = el('g', null, svg);
+      el('polygon', { points: x(D0) + ',' + y(D0) + ' ' + x(D1) + ',' + y(D1) + ' ' + x(D1) + ',' + y(D0), 'class': 'shade' }, g);
+      ticks.forEach(function (v) {
+        el('line', { x1: x(v), x2: x(v), y1: mt, y2: mt + ph, 'class': 'grid' }, g);
+        el('line', { x1: ml, x2: ml + pw, y1: y(v), y2: y(v), 'class': 'grid' }, g);
+        txt(g, ml - 8, y(v) + 4, fmt(v, 0), 'tick', 'end');
+        el('line', { x1: x(v), x2: x(v), y1: dTop, y2: dBot, 'class': 'grid' }, g);
+        txt(g, x(v), dBot + 16, fmt(v, 0), 'tick', 'middle');
+      });
+      el('rect', { x: ml, y: mt, width: pw, height: ph, 'class': 'box' }, g);
+      el('line', { x1: x(D0), y1: y(D0), x2: x(D1), y2: y(D1), 'class': 'diag' }, g);
+      var dl = txt(g, 0, 0, 'indifferent', 'lbl-m', 'middle');
+      dl.setAttribute('transform', 'translate(' + (x(2.75) - 7) + ',' + (y(2.75) - 7) + ') rotate(-45)');
+      var dg = el('g', { 'clip-path': 'url(#' + id + '-clip)' }, g);
+      var dots = [], on = [], count = 0, cut = Math.log(1 / p - 1);
+      for (n = 0; n < N; n++) {
+        var isOn = L1[n] > cut + L2[n];   // entry is theta-invariant when p is held fixed
+        on.push(isOn); if (isOn) count++;
+        dots.push(isOn ? el('circle', { r: 2.6, 'class': 'dot-on' }, dg) : el('path', { 'class': 'dot-off' }, dg));
+      }
+      dots.forEach(function (c, k) { if (on[k]) dg.appendChild(c); });
+      txt(g, x(D1) - 8, y(D0) - 10, 'becomes an electrician', 'lbl-b halo', 'end');
+      var yt = txt(g, 0, 0, 'talent needed to beat best alternative', 'atitle', 'middle');
+      yt.setAttribute('transform', 'translate(' + (ml - 38) + ',' + (mt + ph / 2) + ') rotate(-90)');
+      // density strip
+      var dgp = el('g', { 'clip-path': 'url(#' + id + '-clip2)' }, g);
+      var popA = el('path', { 'class': 'area-pop' }, dgp), popL = el('path', { 'class': 'curve-pop' }, dgp);
+      var entA = el('path', { 'class': 'area-ent' }, dgp), entL = el('path', { 'class': 'curve-ent' }, dgp);
+      el('line', { x1: ml, x2: ml + pw, y1: dBot, y2: dBot, 'class': 'axis' }, g);
+      var m0 = el('line', { 'class': 'mean-pop' }, g), m1 = el('line', { 'class': 'mean-ent' }, g);
+      var ar = el('line', { 'class': 'arrow', 'marker-end': 'url(#' + id + '-ah)' }, g);
+      var arL = txt(g, 0, 0, '', 'num halo', 'middle');
+      txt(g, ml + pw / 2, dBot + 34, 'talent as an electrician, log ε', 'atitle', 'middle');
+      document.getElementById(id + '-n').textContent = 'p = ' + fmtP(p) + ' · ' + count + ' of ' + N + ' enter';
+      return { p: p, x: x, y: y, dTop: dTop, dBot: dBot, dots: dots, on: on, popA: popA, popL: popL, entA: entA, entL: entL, m0: m0, m1: m1, ar: ar, arL: arL };
+    });
+    function update() {
+      var th = S.theta, sc = 1 / th, peak = th / Math.E;
+      panels.forEach(function (P) {
+        var cut = Math.log(1 / P.p - 1);
+        for (var k = 0; k < N; k++) {
+          var DX = P.x(L1[k] / th), DY = P.y((cut + L2[k]) / th);
+          if (P.on[k]) { P.dots[k].setAttribute('cx', DX.toFixed(1)); P.dots[k].setAttribute('cy', DY.toFixed(1)); }
+          else P.dots[k].setAttribute('d', symD('D', DX, DY, 2.8));
+        }
+        var shift = sc * Math.log(1 / P.p);
+        var yd = lin(0, peak * 1.55, P.dBot, P.dTop);
+        var us = [], i;
+        for (i = 0; i <= 180; i++) us.push(D0 + (D1 - D0) * i / 180);
+        var pop = us.map(function (u) { return [P.x(u), yd(gumbelPdf(u, 0, sc))]; });
+        var ent = us.map(function (u) { return [P.x(u), yd(gumbelPdf(u, shift, sc))]; });
+        P.popL.setAttribute('d', pathD(pop)); P.popA.setAttribute('d', areaD(pop, P.dBot));
+        P.entL.setAttribute('d', pathD(ent)); P.entA.setAttribute('d', areaD(ent, P.dBot));
+        var mu0 = GAMMA * sc, mu1 = mu0 + shift, hm = gumbelPdf(mu0, 0, sc);
+        line(P.m0, P.x(mu0), P.dBot, P.x(mu0), yd(hm));
+        line(P.m1, P.x(mu1), P.dBot, P.x(mu1), yd(hm));
+        var ya = yd(peak * 1.2);
+        line(P.ar, P.x(mu0), ya, P.x(mu1), ya);
+        setT(P.arL, (P.x(mu0) + P.x(mu1)) / 2, ya - 6, '+' + shift.toFixed(2));
+      });
+      document.getElementById('f1-diff').textContent = (Math.log(2) / th).toFixed(2);
+    }
+    return { update: update };
+  })();
+
+  // ---------- Figure 2: Proposition 2 as a line ----------
+  var F2 = (function () {
+    var svg = document.getElementById('f2');
+    var W = 640, H = 340, ml = 62, mr = 20, mt = 16, mb = 50;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var box = { x0: ml, x1: W - mr, y0: mt, y1: H - mb };
+    var x = logS(0.02, 1, box.x0, box.x1), y = lin(-0.1, 2.0, box.y1, box.y0);
+    frame(svg, { x: x, y: y, xt: [0.02, 0.05, 0.1, 0.2, 0.5, 1], yt: [0, 0.5, 1, 1.5, 2], xf: fmtTk, yf: function (v) { return fmt(v, 1); },
+      x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1, xTitle: 'probability of entering, p (log scale)', yTitle: 'log talent of entrants vs all sons' });
+    var g = el('g', null, svg);
+    var lTaste = el('path', { 'class': 's3' }, g), lTal = el('path', { 'class': 's2' }, g), lAll = el('path', { 'class': 's1' }, g);
+    var labs = [txt(g, 0, 0, 'talent sorters', 'lbl-m halo'), txt(g, 0, 0, 'all entrants', 'lbl-b halo'), txt(g, 0, 0, 'taste sorters', 'lbl-m halo')];
+    var pts = [P_PHYS, P_CLERK].map(function (p, k) {
+      var c = el('circle', { r: 5.5, 'class': 'pt pt-1' }, g);
+      var t = txt(g, 0, 0, k ? "clerk's son" : "physician's son", 'lbl halo', 'end');
+      return { p: p, c: c, t: t };
+    });
+    function update() {
+      var th = S.theta, r = rho();
+      function seg(sl) { return pathD([[x(0.02), y(sl * Math.log(50))], [x(1), y(0)]]); }
+      lTal.setAttribute('d', seg(1 / th)); lAll.setAttribute('d', seg(r)); lTaste.setAttribute('d', seg(0));
+      // direct labels at the left end, pushed apart if they collide
+      var X0 = x(0.021) + 4;
+      var ys = [y((1 / th) * Math.log(1 / 0.021)) - 8, y(r * Math.log(1 / 0.021)) - 8, y(0) - 8];
+      if (ys[0] > ys[1] - 15) ys[0] = ys[1] - 15;
+      if (ys[2] < ys[1] + 15) { ys[2] = Math.max(ys[2], ys[1] + 15); }
+      labs.forEach(function (t, k) { setT(t, X0, ys[k]); });
+      if (Math.abs(r * Math.log(1 / 0.021) - 0) < 0.12) setT(labs[2], X0, y(0) + 16);
+      pts.forEach(function (P) {
+        var X = x(P.p), Y = y(r * Math.log(1 / P.p));
+        P.c.setAttribute('cx', X); P.c.setAttribute('cy', Y);
+        setT(P.t, X - 9, Y + 18);
+      });
+      document.getElementById('f2-gap').textContent = (r * Math.log(2)).toFixed(2);
+    }
+    hover(document.getElementById('fig2'), svg, box, x, function (p) {
+      var th = S.theta, r = rho();
+      return { head: 'p = ' + fmtP(p), rows: [
+        ['talent sorters', '+' + ((1 / th) * Math.log(1 / p)).toFixed(3)],
+        ['all entrants', '+' + (r * Math.log(1 / p)).toFixed(3)],
+        ['taste sorters', '0.000']] };
+    });
+    return { update: update };
+  })();
+
+  // ---------- Figure 3: the selection line with a follower ----------
+  var F3 = (function () {
+    var svg = document.getElementById('f3');
+    var W = 640, H = 380, ml = 62, mr = 22, mt = 16, mb = 50;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var box = { x0: ml, x1: W - mr, y0: mt, y1: H - mb };
+    var x = logS(0.03, 1, box.x0, box.x1), y = lin(-0.5, 2.0, box.y1, box.y0);
+    frame(svg, { x: x, y: y, xt: [0.03, 0.05, 0.1, 0.2, 0.5, 1], yt: [-0.5, 0, 0.5, 1, 1.5, 2], xf: fmtTk, yf: function (v) { return fmt(v, 1); },
+      x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1, xTitle: 'probability of becoming an electrician (log scale)', yTitle: 'mean log earnings as electrician' });
+    var defs = el('defs', null, svg);
+    var cp = el('clipPath', { id: 'f3-clip' }, defs);
+    el('rect', { x: box.x0, y: box.y0, width: box.x1 - box.x0, height: box.y1 - box.y0 }, cp);
+    var g = el('g', { 'clip-path': 'url(#f3-clip)' }, svg);
+    var g2 = el('g', null, svg);
+    el('line', { x1: box.x0, x2: box.x1, y1: y(0), y2: y(0), 'class': 'zero' }, g);
+    var zl = txt(g2, box.x1 - 6, y(0) + 16, 'potential earnings, no selection', 'lbl-m halo', 'end');
+    var sel = el('path', { 'class': 's2' }, g);
+    var tri = el('path', { 'class': 'tri' }, g);
+    var runL = txt(g2, 0, 0, '', 'lbl-m halo', 'middle');
+    var selL = txt(g2, 0, 0, 'slope \u2212\u03c1', 'lbl-m halo', 'start');
+    var gapH = el('line', { 'class': 'gapdot' }, g), gapV = el('line', { 'class': 'gapseg' }, g);
+    var gapL = txt(g2, 0, 0, '', 'num halo', 'end');
+    var tSeg = el('line', { 'class': 's1' }, g);
+    var tL = txt(g2, 0, 0, '', 'num halo', 'start');
+    var hol = el('circle', { r: 4.5, 'class': 'pt-hollow' }, g2);
+    var uns = [[P_PHYS, "physician's son"], [P_CLERK, "clerk's son"]].map(function (s) {
+      var c = el('path', { 'class': 'pt pt-2' }, g2);
+      var t = txt(g2, 0, 0, s[1], 'lbl halo', 'end');
+      var ti = el('title', null, c);
+      return { p: s[0], c: c, t: t, ti: ti, name: s[1] };
+    });
+    var fc = el('circle', { r: 6.5, 'class': 'pt pt-1' }, g2);
+    var fti = el('title', null, fc);
+    var fL = txt(g2, 0, 0, "electrician's son", 'lbl-b halo', 'start');
+    var out = {
+      rho: document.getElementById('f3-rho'), C: document.getElementById('f3-C'), p: document.getElementById('f3-p'),
+      raw: document.getElementById('f3-raw'), corr: document.getElementById('f3-corr'), tt: document.getElementById('f3-tt')
+    };
+    function update() {
+      var r = rho(), pf = pFollower(), C = S.theta * (S.d + S.t);
+      var yl = function (p) { return -r * Math.log(p); };
+      sel.setAttribute('d', pathD([[x(0.03), y(yl(0.03))], [x(1), y(0)]]));
+      // unrelated sons and the identifying triangle
+      var Xp = x(P_PHYS), Yp = y(yl(P_PHYS)), Xc = x(P_CLERK), Yc = y(yl(P_CLERK));
+      uns.forEach(function (U) {
+        var X = x(U.p), Y = y(yl(U.p));
+        U.c.setAttribute('d', symD('D', X, Y, 7.5));
+        setT(U.t, X - 9, Y + 19);
+        U.ti.textContent = U.name + ': p = ' + fmtP(U.p) + ', mean log earnings ' + fmtS(yl(U.p), 3);
+      });
+      tri.setAttribute('d', 'M' + Xp + ' ' + Yp + 'H' + Xc + 'V' + Yc);
+      setT(runL, (Xp + Xc) / 2, Yp - 8, 'log 2');
+      setT(selL, x(0.031) + 2, y(yl(0.031)) - 9);
+      // follower
+      var yf = S.t - r * Math.log(pf);
+      var Xf = x(pf), Yf = y(yf), Yline = y(yl(pf));
+      fc.setAttribute('cx', Xf); fc.setAttribute('cy', Yf);
+      hol.setAttribute('cx', Xf); hol.setAttribute('cy', Yline);
+      show(hol, Math.abs(Yf - Yline) > 9);
+      fti.textContent = "electrician's son: p = " + fmtP(pf) + ', mean log earnings ' + fmtS(yf, 3);
+      var right = Xf < box.x1 - 150;
+      setT(fL, right ? Xf + 11 : Xf - 11, Yf - 12, undefined, right ? 'start' : 'end');
+      line(tSeg, Xf, Yline, Xf, Yf);
+      show(tSeg, Math.abs(Yf - Yline) > 1);
+      setT(tL, Xf + 9, (Yline + Yf) / 2 + 4, 't = ' + fmtS(S.t));
+      if (!right) { tL.setAttribute('text-anchor', 'end'); tL.setAttribute('x', Xf - 9); } else { tL.setAttribute('text-anchor', 'start'); }
+      // raw gap against the clerk's son
+      var gx = Xf + (Xf > Xc ? -12 : 12);
+      line(gapH, Xc + 7, Yc, gx, Yc);
+      line(gapV, gx, Yc, gx, Yf);
+      var raw = yf - yl(P_CLERK);
+      var gy = Math.abs(Yf - Yc) > 40 ? (Yc + Yf) / 2 + 4 : (Yf > Yc ? Yc - 7 : Yc + 16);
+      setT(gapL, Xf > Xc ? gx - 6 : gx + 6, gy, 'raw gap ' + fmtS(raw), Xf > Xc ? 'end' : 'start');
+      // ledger
+      out.rho.textContent = r.toFixed(3);
+      out.C.textContent = fmt(C) + ' log-odds';
+      out.p.textContent = fmtP(pf) + ', ' + fmtP(P_CLERK);
+      out.raw.textContent = fmtS(raw);
+      out.corr.textContent = fmtS(r * Math.log(pf / P_CLERK));
+      out.tt.textContent = fmtS(raw + r * Math.log(pf / P_CLERK));
+    }
+    return { update: update };
+  })();
+
+  // ---------- Figure 4: raise pay, delta pass-through ----------
+  var F4 = (function () {
+    var svg = document.getElementById('f4');
+    var W = 640, H = 320, ml = 62, mr = 150, mt = 16, mb = 50;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var box = { x0: ml, x1: W - mr, y0: mt, y1: H - mb };
+    var x = lin(0, 0.5, box.x0, box.x1), y = lin(0, 0.55, box.y1, box.y0);
+    frame(svg, { x: x, y: y, xt: [0, 0.1, 0.2, 0.3, 0.4, 0.5], yt: [0, 0.1, 0.2, 0.3, 0.4, 0.5], xf: function (v) { return v.toFixed(1); }, yf: function (v) { return v.toFixed(1); },
+      x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1, xTitle: 'rise in electrician pay, Δ log w', yTitle: 'change in entrants’ mean log earnings' });
+    var g = el('g', null, svg);
+    var DS = [0, 0.5, 1], cls = ['s1', 's2', 's3'];
+    var names = ['δ = 0 · talent only', 'δ = 0.5', 'δ = 1 · no selection'];
+    var paths = DS.map(function (d, k) { return el('path', { 'class': cls[k] }, g); });
+    var labs = DS.map(function (d, k) { return txt(g, 0, 0, names[k], 'lbl', 'start'); });
+    function dE(D, dl) {
+      var th = S.theta, e = Math.exp(th * D), mNew = M0 + e, mOld = 1 / P_CLERK;
+      var dlogp = th * D - Math.log(mNew / mOld);
+      return D - ((1 - dl) / th) * dlogp;
+    }
+    function update() {
+      var ends = [];
+      DS.forEach(function (dl, k) {
+        var pts = [];
+        for (var i = 0; i <= 60; i++) { var D = 0.5 * i / 60; pts.push([x(D), y(dE(D, dl))]); }
+        paths[k].setAttribute('d', pathD(pts));
+        ends.push(y(dE(0.5, dl)));
+      });
+      var ord = ends.map(function (v, k) { return k; }).sort(function (a, b) { return ends[a] - ends[b]; });
+      for (var j = 1; j < ord.length; j++) if (ends[ord[j]] < ends[ord[j - 1]] + 15) ends[ord[j]] = ends[ord[j - 1]] + 15;
+      labs.forEach(function (t, k) { setT(t, box.x1 + 8, ends[k] + 4); });
+    }
+    hover(document.getElementById('fig4'), svg, box, x, function (D) {
+      return { head: 'Δ log w = ' + D.toFixed(2), rows: DS.map(function (dl) { return ['δ = ' + dl, fmtS(dE(D, dl), 3)]; }) };
+    });
+    return { update: update };
+  })();
+
+  // ---------- Figure 5: winning value is the same everywhere ----------
+  var F5 = (function () {
+    var PS = [0.10, 0.25, 0.65], N = 60000;
+    var ch = new Uint8Array(N), Lc = new Float64Array(N), cnt = [0, 0, 0];
+    for (var n = 0; n < N; n++) {
+      var best = -Infinity, bi = 0, bL = 0;
+      for (var s = 0; s < 3; s++) { var L = stdG(), v = Math.log(PS[s]) + L; if (v > best) { best = v; bi = s; bL = L; } }
+      ch[n] = bi; Lc[n] = bL; cnt[bi]++;
+    }
+    var D0 = -1, D1 = 3, NB = 64, bw = (D1 - D0) / NB;
+    var W = 360, H = 250, ml = 16, mr = 16, mt = 14, mb = 46;
+    function mk(id, title) {
+      var svg = document.getElementById(id);
+      svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+      var x = lin(D0, D1, ml, W - mr), yb = H - mb;
+      var g = el('g', null, svg);
+      [-1, 0, 1, 2, 3].forEach(function (v) {
+        el('line', { x1: x(v), x2: x(v), y1: mt, y2: yb, 'class': 'grid' }, g);
+        txt(g, x(v), yb + 16, fmt(v, 0), 'tick', 'middle');
+      });
+      el('line', { x1: ml, x2: W - mr, y1: yb, y2: yb, 'class': 'axis' }, g);
+      txt(g, (ml + W - mr) / 2, yb + 34, title, 'atitle', 'middle');
+      var hs = [0, 1, 2].map(function (k) { return el('path', { 'class': 'h-' + k }, g); });
+      var th = [0, 1, 2].map(function () { return el('path', { 'class': 'theory' }, g); });
+      var labs = [0, 1, 2].map(function (k) { return txt(g, 0, 0, '', 'num halo', 'middle'); });
+      return { x: x, yb: yb, hs: hs, th: th, labs: labs };
+    }
+    var A = mk('f5-eps', 'log talent, log ε'), B = mk('f5-val', 'log reward × talent, log(w̃ε)');
+    function hist(P, valFn, ymap) {
+      var counts = [new Float64Array(NB), new Float64Array(NB), new Float64Array(NB)];
+      for (var n = 0; n < N; n++) {
+        var v = valFn(n), b = Math.floor((v - D0) / bw);
+        if (b >= 0 && b < NB) counts[ch[n]][b]++;
+      }
+      [0, 1, 2].forEach(function (k) {
+        var d = 'M' + P.x(D0).toFixed(1) + ' ' + P.yb;
+        for (var b = 0; b < NB; b++) {
+          var h = counts[k][b] / (cnt[k] * bw);
+          d += 'V' + ymap(h).toFixed(1) + 'H' + P.x(D0 + (b + 1) * bw).toFixed(1);
+        }
+        d += 'V' + P.yb;
+        P.hs[k].setAttribute('d', d);
+      });
+    }
+    function update() {
+      var t = S.theta, sc = 1 / t, peak = t / Math.E;
+      var ymap = lin(0, peak * 1.45, A.yb, mt);
+      hist(A, function (n) { return Lc[n] / t; }, ymap);
+      hist(B, function (n) { return (Math.log(PS[ch[n]]) + Lc[n]) / t; }, ymap);
+      var us = []; for (var i = 0; i <= 160; i++) us.push(D0 + (D1 - D0) * i / 160);
+      [0, 1, 2].forEach(function (k) {
+        var loc = -sc * Math.log(PS[k]);
+        A.th[k].setAttribute('d', pathD(us.map(function (u) { return [A.x(u), ymap(gumbelPdf(u, loc, sc))]; })));
+        B.th[k].setAttribute('d', k === 0 ? pathD(us.map(function (u) { return [B.x(u), ymap(gumbelPdf(u, 0, sc))]; })) : '');
+        setT(A.labs[k], A.x(loc), ymap(peak) - 8 - 13 * (2 - k), 'p = ' + PS[k].toFixed(2));
+        setT(B.labs[k], 0, 0, '');
+      });
+      setT(B.labs[0], B.x(0) + 2, ymap(peak) - 10, 'all three coincide');
+    }
+    return { update: update };
+  })();
+
+  // ---------- Figure 6: Frechet line vs normal curve ----------
+  var F6 = (function () {
+    var svg = document.getElementById('f6');
+    var W = 640, H = 340, ml = 62, mr = 20, mt = 16, mb = 50;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+    var box = { x0: ml, x1: W - mr, y0: mt, y1: H - mb };
+    var x = logS(0.01, 1, box.x0, box.x1), y = lin(0, 2.4, box.y1, box.y0);
+    var band = el('rect', { x: x(0.05), y: box.y0, width: x(0.10) - x(0.05), height: box.y1 - box.y0, 'class': 'band' }, svg);
+    frame(svg, { x: x, y: y, xt: [0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1], yt: [0, 0.5, 1, 1.5, 2], xf: fmtTk, yf: function (v) { return fmt(v, 1); },
+      x0: box.x0, x1: box.x1, y0: box.y0, y1: box.y1, xTitle: 'probability of entering, p (log scale)', yTitle: 'log talent of entrants vs all sons' });
+    var g = el('g', null, svg);
+    txt(g, (x(0.05) + x(0.10)) / 2, box.y0 + 14, 'unrelated', 'lbl-m', 'middle');
+    var vm = el('line', { 'class': 'vmark' }, g);
+    var vmL = txt(g, 0, box.y0 + 14, 'follower', 'lbl-m halo', 'start');
+    var lF = el('path', { 'class': 's1' }, g), lN = el('path', { 'class': 's2' }, g), lX = el('path', { 'class': 's3' }, g);
+    var eSeg = el('line', { 'class': 'gapseg' }, g), eL = txt(g, 0, 0, '', 'num halo', 'start');
+    var lFL = txt(g, 0, 0, 'Fréchet', 'lbl-b halo', 'start'), lNL = txt(g, 0, 0, 'normal', 'lbl-b halo', 'start');
+    function sig() { return Math.PI / (S.theta * Math.sqrt(6)); }
+    function nrm(p) { if (p > 0.99999) return 0; return (sig() / Math.SQRT2) * normPdf(normInv(p)) / p; }
+    function update() {
+      var th = S.theta, pf = pFollower();
+      lF.setAttribute('d', pathD([[x(0.01), y(Math.log(100) / th)], [x(1), y(0)]]));
+      var pts = [];
+      for (var i = 0; i <= 140; i++) { var p = Math.exp(Math.log(0.01) * (1 - i / 140)); pts.push([x(p), y(nrm(p))]); }
+      lN.setAttribute('d', pathD(pts));
+      var a = nrm(0.05), b = nrm(0.10), slope = (b - a) / Math.log(2);
+      var ext = function (p) { return b + slope * Math.log(p / 0.10); };
+      lX.setAttribute('d', pathD([[x(0.05), y(a)], [x(Math.min(1, Math.max(pf, 0.10))), y(ext(Math.min(1, Math.max(pf, 0.10))))]]));
+      var Xf = x(pf);
+      line(vm, Xf, box.y0 + 20, Xf, box.y1);
+      setT(vmL, Xf + 5, box.y0 + 14);
+      if (Xf > box.x1 - 60) { vmL.setAttribute('text-anchor', 'end'); vmL.setAttribute('x', Xf - 5); } else vmL.setAttribute('text-anchor', 'start');
+      var err = ext(pf) - nrm(pf);
+      line(eSeg, Xf, y(nrm(pf)), Xf, y(ext(pf)));
+      setT(eL, Xf - 7, Math.max(y(nrm(pf)), y(ext(pf)), y(Math.log(1 / pf) / th)) + 22, 'miss ' + fmtS(err), 'end');
+      document.getElementById('f6-err').textContent = fmt(Math.abs(err));
+      setT(lFL, x(0.012), y(Math.log(1 / 0.012) / th) - 10);
+      setT(lNL, x(0.012), y(nrm(0.012)) + 20);
+    }
+    hover(document.getElementById('fig6'), svg, box, x, function (p) {
+      return { head: 'p = ' + fmtP(p), rows: [['Fréchet', '+' + (Math.log(1 / p) / S.theta).toFixed(3)], ['normal', '+' + nrm(p).toFixed(3)]] };
+    });
+    return { update: update };
+  })();
+
+  // ---------- legend swatches: colour, pattern and marker follow the series order ----------
+  var DASH = { 1: '', 2: '7 4', 3: '9 3 2 3', 4: '4 3' };
+  Array.prototype.forEach.call(document.querySelectorAll('.lg[data-sw]'), function (node) {
+    var p = node.getAttribute('data-sw').split(':');
+    var svg = el('svg', { viewBox: '0 0 28 12', 'class': 'sw', 'aria-hidden': 'true', focusable: 'false' });
+    if (p[0] === 'line') el('line', { x1: 1, y1: 6, x2: 27, y2: 6, style: 'fill:none;stroke-width:2.5;stroke:var(--c' + p[1] + ')' + (DASH[p[1]] ? ';stroke-dasharray:' + DASH[p[1]] : '') }, svg);
+    else if (p[0] === 'dot') el('path', { d: symD(p[2], 14, 6, 4.6), style: 'fill:var(--c' + p[1] + ')' }, svg);
+    else if (p[0] === 'ref') el('line', { x1: 1, y1: 6, x2: 27, y2: 6, style: 'stroke:var(--ref);stroke-width:1.5;stroke-dasharray:4 3' }, svg);
+    else if (p[0] === 'ink') el('line', { x1: 1, y1: 6, x2: 27, y2: 6, style: 'stroke:var(--ink);stroke-width:1.5' }, svg);
+    else if (p[0] === 'band') el('rect', { x: 3, y: 1, width: 22, height: 10, rx: 1, style: 'fill:var(--band);stroke:var(--ref);stroke-width:0.75' }, svg);
+    node.insertBefore(svg, node.firstChild);
+  });
+
+  // ---------- state binding ----------
+  var figs = [F1, F2, F3, F4, F5, F6];
+  var inputs = Array.prototype.slice.call(document.querySelectorAll('input[data-k]'));
+  var outs = Array.prototype.slice.call(document.querySelectorAll('output[data-o]'));
+  var fmtK = { theta: function (v) { return v.toFixed(1); }, delta: function (v) { return v.toFixed(2); }, d: function (v) { return v.toFixed(2); }, t: function (v) { return fmtS(v); } };
+  function sync() {
+    inputs.forEach(function (i) { if (+i.value !== S[i.dataset.k]) i.value = S[i.dataset.k]; });
+    outs.forEach(function (o) { o.textContent = fmtK[o.dataset.o](S[o.dataset.o]); });
+  }
+  var pending = false;
+  function render() {
+    if (pending) return;
+    pending = true;
+    requestAnimationFrame(function () { pending = false; sync(); figs.forEach(function (f) { f.update(); }); });
+  }
+  inputs.forEach(function (i) {
+    i.addEventListener('input', function () { S[i.dataset.k] = +i.value; render(); });
+  });
+  document.getElementById('f3-p0').addEventListener('click', function () { S.delta = 0; render(); });
+  document.getElementById('f3-p1').addEventListener('click', function () { S.delta = 1; render(); });
+  document.getElementById('f3-reset').addEventListener('click', function () { for (var k in DEF) S[k] = DEF[k]; render(); });
+  sync();
+  figs.forEach(function (f) { f.update(); });
+})();
+</script>
